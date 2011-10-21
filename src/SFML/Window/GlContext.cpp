@@ -30,7 +30,11 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glext.h>
+#if defined(SFML_SYSTEM_GP2X_WIZ)
+	#include <GL/glext.h>
+#else
+	#include <SFML/Window/glext/glext.h>
+#endif
 #include <set>
 #include <cstdlib>
 #include <cassert>
@@ -282,9 +286,14 @@ void GlContext::Initialize()
         mySettings.MinorVersion = 0;
     }
 
-    // Enable antialiasing if needed
-    if (mySettings.AntialiasingLevel > 0)
-        glEnable(GL_MULTISAMPLE_ARB);
+	#if defined(SFML_WINDOW_OPENGLES)
+	#else
+	
+		// Enable antialiasing if needed
+		if (mySettings.AntialiasingLevel > 0)
+			glEnable(GL_MULTISAMPLE_ARB);
+	
+	#endif
 }
 
 } // namespace priv

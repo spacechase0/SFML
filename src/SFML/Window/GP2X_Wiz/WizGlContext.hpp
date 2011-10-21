@@ -51,7 +51,7 @@ public :
     /// \param shared Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    WizGlContext(WizContext* shared);
+    WizGlContext(WizGlContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -59,9 +59,10 @@ public :
     /// \param shared       Context to share the new one with
     /// \param settings     Creation parameters
     /// \param owner        Pointer to the owner window
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    WizGlContext(WizContext* shared, const ContextSettings& settings, const WindowImpl* owner);
+    WizGlContext(WizGlContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target

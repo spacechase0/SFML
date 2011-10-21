@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/GP2X_Wiz/WizInputImpl.hpp>
 #include <linux/input.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -63,6 +64,18 @@ WizInputImpl::WizInputImpl()
 	{
 		sf::Err() << "Failed to open /dev/input/event0." << std::endl;
 		return;
+	}
+}
+
+WizInputImpl::~WizInputImpl()
+{
+	if (buttonFd >= 0)
+	{
+		close(buttonFd);
+	}
+	if (mouseFd >= 0)
+	{
+		close(mouseFd);
 	}
 }
 
@@ -105,18 +118,6 @@ void WizInputImpl::Update()
 				mousePos.y += event.value;
 			}
 		}
-	}
-}
-
-WizInputImpl::~WizInputImpl()
-{
-	if (buttonFd >= 0)
-	{
-		close(buttonFd);
-	}
-	if (mouseFd >= 0)
-	{
-		close(mouseFd);
 	}
 }
 

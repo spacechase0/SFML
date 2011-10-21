@@ -38,14 +38,11 @@ namespace sf
 namespace priv
 {
 
-typedef void* WizWindowHandle;
-typedef void* WizDisplayHandle;
-
 ////////////////////////////////////////////////////////////
 /// \brief GP2X Wiz implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
-class WindowImplX11 : public WindowImpl
+class WindowImplWiz : public WindowImpl
 {
 public :
 
@@ -76,9 +73,9 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Get the display used by the window
     ///
-    /// This functions is meant to be used internally by ContextGLX.
+    /// This functions is meant to be used internally by WizGlContext.
     ///
-    /// \return Pointer to the X display of the window
+    /// \return Pointer to the OS_Diplay of the window
     ///
     ////////////////////////////////////////////////////////////
     ::OS_Display* GetDisplay() const;

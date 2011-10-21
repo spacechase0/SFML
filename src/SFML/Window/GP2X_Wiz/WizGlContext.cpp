@@ -42,7 +42,7 @@ myWindow    (0),
 myGlDisplay (0),
 myGlConfig  (0),
 myGlContext (0),
-myGlSurface (0)
+myGlSurface (0),
 myOwnsWindow(true)
 {
     CreateContext(shared, ContextSettings());
@@ -50,13 +50,13 @@ myOwnsWindow(true)
 
 
 ////////////////////////////////////////////////////////////
-WizGlContext::WizGlContext(WizGlContext* shared, const ContextSettings& settings, const WindowImpl* owner) :
+WizGlContext::WizGlContext(WizGlContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
 myDisplay   (0),
 myWindow    (0),
 myGlDisplay (0),
 myGlConfig  (0),
 myGlContext (0),
-myGlSurface (0)
+myGlSurface (0),
 myOwnsWindow(true)
 {
     // Use the same display as the owner window (important!)
@@ -78,7 +78,7 @@ myWindow    (0),
 myGlDisplay (0),
 myGlConfig  (0),
 myGlContext (0),
-myGlSurface (0)
+myGlSurface (0),
 myOwnsWindow(true)
 {
     // Create the context
@@ -90,7 +90,7 @@ myOwnsWindow(true)
 WizGlContext::~WizGlContext()
 {
     // Destroy the context
-    if (myContext)
+    if (myGlContext)
     {
         if (eglGetCurrentContext() == myGlContext)
 			eglMakeCurrent( myGlDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );

@@ -28,6 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 
 namespace sf
@@ -41,8 +43,6 @@ struct WizInputImpl
 	~WizInputImpl();
 	
 	void Update();
-
-	~WizInputImpl();
 
 	int buttonFd;
 	volatile sf::Uint32* reg32;

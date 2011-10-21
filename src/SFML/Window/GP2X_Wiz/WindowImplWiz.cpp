@@ -67,13 +67,10 @@ WindowImplWiz::~WindowImplWiz()
 {
 }
 
-
-////////////////////////////////////////////////////////////
-::Display* WindowImplWiz::GetDisplay() const
+::OS_Display* WindowImplWiz::GetDisplay() const
 {
-    return myDisplay;
+	return myDisplay;
 }
-
 
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplWiz::GetSystemHandle() const

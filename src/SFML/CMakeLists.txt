@@ -20,12 +20,14 @@ if (WINDOWS)
         endif()
     endif()
 elseif(GP2X_WIZ)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers-gp2x-wiz")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers")
+    include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers-gp2x-wiz" )
+    include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-gp2x-wiz")
+    link_directories("${PROJECT_SOURCE_DIR}/extlibs/libs-gp2x-wiz")
     
-    # Also define SFML_SYSTEM_GP2X_WIZ
-	add_definitions(-DSMFL_SYSTEM_GP2X_WIZ)
+    # Also define SFML_SYSTEM_GP2X_WIZ and SFML_WINDOW_OPENGLES
+	add_definitions(-DSFML_SYSTEM_GP2X_WIZ)
+	add_definitions(-DSFML_WINDOW_OPENGLES)
 elseif(MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/lib/")

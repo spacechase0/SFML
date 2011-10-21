@@ -48,11 +48,8 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 	
-	// GP2X Wiz
 	#if defined(SFML_SYSTEM_GP2X_WIZ)
 		#include <GL/egl.h>
-		#include <OpenGLES/gl.h>
-		#include <OpenGLES/libogl.h>
 		#include <GL/nanogl.h>
 	#else
 		#include <GL/gl.h>
