@@ -65,7 +65,7 @@ endif()
 
 # build the list of external libraries to link
 set(SYSTEM_EXT_LIBS)
-if(UNIX)
+if(UNIX OR GP2X_WIZ)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} pthread)
 endif()
 
