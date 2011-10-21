@@ -1,4 +1,9 @@
 
+if(GP2X_WIZ)
+	message("No OpenAL on Wiz... Software OpenAL is really slow, need to look into it.")
+	exit()
+endif()
+
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Audio)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 
