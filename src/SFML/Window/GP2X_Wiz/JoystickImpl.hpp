@@ -28,21 +28,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#if defined(SFML_SYSTEM_LINUX)
-    #include <linux/joystick.h>
-    #include <fcntl.h>
-#elif defined(SFML_SYSTEM_FREEBSD)
-    // #include <sys/joystick.h> ?
-    #define ABS_MAX 1
-#endif
-
-
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Linux implementation of joysticks
+/// \brief GP2X Wiz implementation of joysticks
 ///
 ////////////////////////////////////////////////////////////
 class JoystickImpl
@@ -96,9 +87,6 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int           myFile;                 ///< File descriptor of the joystick
-    char          myMapping[ABS_MAX + 1]; ///< Axes mapping (index to axis id)
-    JoystickState myState;                ///< Current state of the joystick
 };
 
 } // namespace priv
