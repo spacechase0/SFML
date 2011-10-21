@@ -48,7 +48,7 @@ namespace sf
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 	
-	#if defined(SFML_SYSTEM_WIZ)
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
 	
 		// Window handle is OS_Window (void*) on GP2X Wiz
 		typedef void* WindowHandle;
