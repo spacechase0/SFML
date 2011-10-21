@@ -94,4 +94,4 @@ private :
 } // namespace sf
 
 
-#endif // SFML_JOYSTICKIMPLLINUX_HPP
+#endif // SFML_JOYSTICKIMPLWIZ_HPP

@@ -135,4 +135,4 @@ private :
 
 } // namespace sf
 
-#endif // SFML_GLXCONTEXT_HPP
+#endif // SFML_WIZGLCONTEXT_HPP

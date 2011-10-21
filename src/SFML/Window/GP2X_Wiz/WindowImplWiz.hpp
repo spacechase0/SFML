@@ -224,4 +224,4 @@ private :
 } // namespace sf
 
 
-#endif // SFML_WINDOWIMPLX11_HPP
+#endif // SFML_WINDOWIMPLWIZ_HPP

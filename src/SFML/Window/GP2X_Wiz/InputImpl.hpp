@@ -37,7 +37,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Linux (X11) implementation of inputs (keyboard + mouse)
+/// \brief GP2X Wiz implementation of inputs (keyboard + mouse)
 ///
 ////////////////////////////////////////////////////////////
 class InputImpl
@@ -120,4 +120,4 @@ public :
 } // namespace sf
 
 
-#endif // SFML_INPUTIMPLX11_HPP
+#endif // SFML_INPUTIMPLWIZ_HPP
