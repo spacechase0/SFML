@@ -77,7 +77,11 @@ bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::GetMousePosition()
 {
-    return inputImpl.mousePos;
+	// For some reason x=0 is on the right side
+    sf::Vector2i pos = inputImpl.mousePos;
+    pos.x = -pos.x + 320;
+    
+    return pos;
 }
 
 
