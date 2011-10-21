@@ -30,17 +30,19 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <X11/Xlib.h>
-#include <set>
-#include <string>
+#include <Panel/fake_os.h>
 
 
 namespace sf
 {
 namespace priv
 {
+
+typedef void* WizWindowHandle;
+typedef void* WizDisplayHandle;
+
 ////////////////////////////////////////////////////////////
-/// \brief Linux (X11) implementation of WindowImpl
+/// \brief GP2X Wiz implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
 class WindowImplX11 : public WindowImpl
@@ -53,7 +55,7 @@ public :
     /// \param handle Platform-specific handle of the control
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(WindowHandle handle);
+    WindowImplWiz(WindowHandle handle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the window implementation
@@ -63,13 +65,13 @@ public :
     /// \param style Window style (resizable, fixed, or fullscren)
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(VideoMode mode, const std::string& title, unsigned long style);
+    WindowImplWiz(VideoMode mode, const std::string& title, unsigned long style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~WindowImplX11();
+    ~WindowImplWiz();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the display used by the window
@@ -79,7 +81,7 @@ public :
     /// \return Pointer to the X display of the window
     ///
     ////////////////////////////////////////////////////////////
-    ::Display* GetDisplay() const;
+    ::OS_Display* GetDisplay() const;
 
 private :
 
@@ -166,57 +168,12 @@ private :
     void SwitchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Do some common initializations after the window has been created
-    ///
-    ////////////////////////////////////////////////////////////
-    void Initialize();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a transparent mouse cursor
-    ///
-    ////////////////////////////////////////////////////////////
-    void CreateHiddenCursor();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Cleanup graphical resources attached to the window
-    ///
-    ////////////////////////////////////////////////////////////
-    void CleanUp();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Process an incoming event from the window
-    ///
-    /// \param windowEvent Event which has been received
-    ///
-    /// \return True if the event was processed, false if it was discarded
-    ///
-    ////////////////////////////////////////////////////////////
-    bool ProcessEvent(XEvent windowEvent);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert a X11 keysym to SFML key code
-    ///
-    /// \param symbol Key symbol to convert
-    ///
-    /// \return Corrsponding SFML key code
-    ///
-    ////////////////////////////////////////////////////////////
-    static Keyboard::Key KeysymToSF(KeySym symbol);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window   myWindow;              ///< X11 structure defining our window
-    ::Display* myDisplay;             ///< Pointer to the display
-    int        myScreen;              ///< Screen identifier
-    XIM        myInputMethod;         ///< Input method linked to the X display
-    XIC        myInputContext;        ///< Input context used to get unicode input in our window
-    bool       myIsExternal;          ///< Tell whether the window has been created externally or by SFML
-    Atom       myAtomClose;           ///< Atom used to identify the close event
-    int        myOldVideoMode;        ///< Video mode in use before we switch to fullscreen
-    Cursor     myHiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    bool       myKeyRepeat;           ///< Is the KeyRepeat feature enabled ?
-    XEvent     myLastKeyReleaseEvent; ///< Last key release event we received (needed for discarding repeated key events)
+    ::OS_Window   myWindow;  ///< Window
+    ::OS_Display* myDisplay; ///< Display
+    int        myScreen;     ///< Screen identifier
+    bool       myKeyRepeat;  ///< Is the KeyRepeat feature enabled ?
 };
 
 } // namespace priv
