@@ -53,6 +53,7 @@
 		#include <GL/egl.h>
 		#include <OpenGLES/gl.h>
 		#include <OpenGLES/libogl.h>
+		#include <GL/nanogl.h>
 	#else
 		#include <GL/gl.h>
 		#include <GL/glu.h>
