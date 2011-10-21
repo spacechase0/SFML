@@ -36,7 +36,15 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Linux/InputImpl.hpp>
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	
+		#include <SFML/Window/GP2X_Wiz/InputImpl.hpp>
+	
+	#else
+	
+		#include <SFML/Window/Linux/InputImpl.hpp>
+	
+	#endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 

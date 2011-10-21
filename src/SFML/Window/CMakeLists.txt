@@ -48,18 +48,33 @@ if(WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
 elseif(LINUX)
-    set(SRC
-        ${SRC}
-        ${SRCROOT}/Linux/GlxContext.cpp
-        ${SRCROOT}/Linux/GlxContext.hpp
-        ${SRCROOT}/Linux/InputImpl.cpp
-        ${SRCROOT}/Linux/InputImpl.hpp
-        ${SRCROOT}/Linux/JoystickImpl.cpp
-        ${SRCROOT}/Linux/JoystickImpl.hpp
-        ${SRCROOT}/Linux/VideoModeImpl.cpp
-        ${SRCROOT}/Linux/WindowImplX11.cpp
-        ${SRCROOT}/Linux/WindowImplX11.hpp
-    )
+	if(GP2X_WIZ)
+		set(SRC
+			${SRC}
+			${SRCROOT}/GP2X_Wiz/WizGlContext.cpp
+			${SRCROOT}/GP2X_Wiz/WizGlContext.hpp
+			${SRCROOT}/GP2X_Wiz/InputImpl.cpp
+			${SRCROOT}/GP2X_Wiz/InputImpl.hpp
+			${SRCROOT}/GP2X_Wiz/JoystickImpl.cpp
+			${SRCROOT}/GP2X_Wiz/JoystickImpl.hpp
+			${SRCROOT}/GP2X_Wiz/VideoModeImpl.cpp
+			${SRCROOT}/GP2X_Wiz/WindowImplWiz.cpp
+			${SRCROOT}/GP2X_Wiz/WindowImplWiz.hpp
+		)
+	else() # Normal Linux
+		set(SRC
+			${SRC}
+			${SRCROOT}/Linux/GlxContext.cpp
+			${SRCROOT}/Linux/GlxContext.hpp
+			${SRCROOT}/Linux/InputImpl.cpp
+			${SRCROOT}/Linux/InputImpl.hpp
+			${SRCROOT}/Linux/JoystickImpl.cpp
+			${SRCROOT}/Linux/JoystickImpl.hpp
+			${SRCROOT}/Linux/VideoModeImpl.cpp
+			${SRCROOT}/Linux/WindowImplX11.cpp
+			${SRCROOT}/Linux/WindowImplX11.hpp
+		)
+	endif()
 else() # MACOSX
     set(SRC
         ${SRC}
