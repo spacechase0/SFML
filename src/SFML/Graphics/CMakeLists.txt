@@ -1,9 +1,4 @@
 
-if(GP2X_WIZ)
-	message("Graphics module not implemented. Waiting for new API.")
-	exit()
-endif()
-
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Graphics)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 

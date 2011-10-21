@@ -2,6 +2,8 @@
 # detect the OS
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(WINDOWS 1)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "GP2X Wiz")
+    set(GP2X_WIZ 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
