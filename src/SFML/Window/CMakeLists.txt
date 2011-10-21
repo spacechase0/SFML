@@ -60,6 +60,8 @@ elseif(LINUX)
 			${SRCROOT}/GP2X_Wiz/VideoModeImpl.cpp
 			${SRCROOT}/GP2X_Wiz/WindowImplWiz.cpp
 			${SRCROOT}/GP2X_Wiz/WindowImplWiz.hpp
+			${SRCROOT}/GP2X_Wiz/WizInputImpl.cpp
+			${SRCROOT}/GP2X_Wiz/WizInputImpl.hpp
 		)
 	else() # Normal Linux
 		set(SRC
