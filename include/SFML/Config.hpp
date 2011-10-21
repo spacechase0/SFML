@@ -48,6 +48,8 @@
 
     // Linux
     #define SFML_SYSTEM_LINUX
+    
+    // TO DO: Find a way to differentiate the Wiz from this
 
 #elif defined(__APPLE__) || defined(MACOSX) || defined(macintosh) || defined(Macintosh)
 

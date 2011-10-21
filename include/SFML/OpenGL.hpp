@@ -47,9 +47,16 @@
     #include <GL/glu.h>
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-
-    #include <GL/gl.h>
-    #include <GL/glu.h>
+	
+	// GP2X Wiz
+	#if defined( SFML_SYSTEM_WIZ )
+		#include <GL/egl.h>
+		#include <OpenGLES/gl.h>
+		#include <OpenGLES/libogl.h>
+	#else
+		#include <GL/gl.h>
+		#include <GL/glu.h>
+	#endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 

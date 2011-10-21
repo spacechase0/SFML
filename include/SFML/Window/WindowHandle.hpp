@@ -47,9 +47,18 @@ namespace sf
     typedef HWND__* WindowHandle;
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-
-    // Window handle is Window (unsigned long) on Unix - X11
-    typedef unsigned long WindowHandle;
+	
+	#if defined(SFML_SYSTEM_WIZ)
+	
+		// Window handle is OS_Window (void*) on GP2X Wiz
+		typedef void* WindowHandle;
+	
+	#else
+	
+		// Window handle is Window (unsigned long) on Unix - X11
+		typedef unsigned long WindowHandle;
+		
+	#endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
