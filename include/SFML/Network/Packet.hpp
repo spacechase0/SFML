@@ -71,17 +71,30 @@ public :
     /// \param data        Pointer to the sequence of bytes to append
     /// \param sizeInBytes Number of bytes to append
     ///
-    /// \see Clear
+    /// \see Clear, Read
     ///
     ////////////////////////////////////////////////////////////
     void Append(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Read data from the packet
+    ///
+    /// \param data        Pointer to the sequence of bytes to read to
+    /// \param sizeInBytes Number of bytes to read
+    ///
+    /// \return Pointer to the data
+    ///
+    /// \see Clear, Append
+    ///
+    ////////////////////////////////////////////////////////////
+    void Read(char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the packet
     ///
     /// After calling Clear, the packet is empty.
     ///
-    /// \see Append
+    /// \see Append, Read
     ///
     ////////////////////////////////////////////////////////////
     void Clear();
@@ -96,10 +109,21 @@ public :
     ///
     /// \return Pointer to the data
     ///
-    /// \see GetDataSize
+    /// \see GetDataSize, SetData
     ///
     ////////////////////////////////////////////////////////////
     const char* GetData() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the data contained in the packet
+    ///
+    /// \param data        Pointer to the sequence of bytes to write
+    /// \param sizeInBytes Number of bytes to write
+    ///
+    /// \see GetData, GetDataSize
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetData(const char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the data contained in the packet
@@ -109,10 +133,28 @@ public :
     ///
     /// \return Data size, in bytes
     ///
-    /// \see GetData
+    /// \see GetData, SetData
     ///
     ////////////////////////////////////////////////////////////
     std::size_t GetDataSize() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change the current reading position
+    ///
+    /// \param position The position to seek to, from the beginning
+    ///
+    /// \return The position actually seeked to, or -1 on error
+    ///
+    ////////////////////////////////////////////////////////////
+    void Seek(std::size_t position);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current reading position
+    ///
+    /// \return The current position, or -1 on error.
+    ///
+    ////////////////////////////////////////////////////////////
+    std::size_t Tell() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the reading position has reached the
