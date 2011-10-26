@@ -121,7 +121,7 @@ void WizGlContext::Display()
 ////////////////////////////////////////////////////////////
 void WizGlContext::EnableVerticalSync(bool enabled)
 {
-    #warning WizGlContext::EnableVerticalSyn not implemented.
+    #warning WizGlContext::EnableVerticalSync not implemented.
 }
 
 
@@ -195,7 +195,7 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
     	return;
     }
     
-    MakeCurrent();
+    //MakeCurrent();
 }
 
 } // namespace priv
