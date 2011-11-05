@@ -30,6 +30,24 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 
+namespace
+{
+	class NanoGl
+	{
+		NanoGl()
+		{
+			nanoGL_Init();
+		}
+		
+		~NanoGl()
+		{
+			nanoGL_Destroy();
+		}
+		
+		static NanoGl nanoGl;
+	};
+	NanoGl NanoGl::nanoGl;
+}
 
 namespace sf
 {
@@ -96,9 +114,7 @@ WizGlContext::~WizGlContext()
 			eglMakeCurrent( myGlDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
 		eglDestroySurface( myGlDisplay, myGlSurface ); 
 		eglDestroyContext( myGlDisplay, myGlContext );
-		eglTerminate( myGlDisplay );  
-
-		nanoGL_Destroy();
+		eglTerminate( myGlDisplay );
     }
 }
 
@@ -128,10 +144,7 @@ void WizGlContext::EnableVerticalSync(bool enabled)
 ////////////////////////////////////////////////////////////
 void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& settings)
 {
-	// Initialize nanoGL
-    nanoGL_Init();
-    
-    // Save the creation settings
+	// Save the creation settings
     mySettings = settings;
 
     // Get the attributes of the target window
@@ -157,7 +170,7 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
     myGlDisplay = eglGetDisplay(static_cast< NativeDisplayType >(0));
     if (myGlDisplay == EGL_NO_DISPLAY)
     {
-    	Err() << "Failed to create display." << std::endl;
+    	Err() << "Failed to create display: " << glGetError() << std::endl;
     	return;
     }
     
@@ -168,14 +181,14 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
     // Intiailize EGL
     if (!eglInitialize(myGlDisplay, &majorVersion, &minorVersion))
     {
-    	Err() << "Failed to init EGL." << std::endl;
+    	Err() << "Failed to init EGL: " << glGetError() << std::endl;
     	return;
     }
     
     // Choose config
     if(!eglChooseConfig(myGlDisplay, attrib_list, &myGlConfig, 1, &numConfigs))
     {
-    	Err() << "Failed to choose config." << std::endl;
+    	Err() << "Failed to choose config: " << glGetError() << std::endl;
     	return;
     }
     
@@ -183,7 +196,7 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
     myGlContext = eglCreateContext( myGlDisplay, myGlConfig, NULL, NULL );
     if ( myGlContext == 0 )
     {
-    	Err() << "Failed to create context." << std::endl;
+    	Err() << "Failed to create context: " << glGetError() << std::endl;
     	return;
     }
     
@@ -191,11 +204,9 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
     myGlSurface = eglCreateWindowSurface( myGlDisplay, myGlConfig, myWindow, NULL );
     if ( myGlSurface == NULL )
     {
-    	Err() << "Failed to create surface." << std::endl;
+    	Err() << "Failed to create surface: " << glGetError() << std::endl;
     	return;
     }
-    
-    //MakeCurrent();
 }
 
 } // namespace priv
