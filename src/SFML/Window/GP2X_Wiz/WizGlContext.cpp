@@ -130,7 +130,7 @@ bool WizGlContext::MakeCurrent()
 void WizGlContext::Display()
 {
     if (myWindow)
-        eglSwapBuffers(myGlDisplay, myGlContext);
+        eglSwapBuffers(myGlDisplay, myGlSurface);
 }
 
 
