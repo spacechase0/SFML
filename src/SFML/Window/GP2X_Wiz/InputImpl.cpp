@@ -79,7 +79,8 @@ Vector2i InputImpl::GetMousePosition()
 {
 	// For some reason x=0 is on the right side
     sf::Vector2i pos = inputImpl.mousePos;
-    pos.x = -pos.x + 320;
+    pos.x = static_cast< int >( -( ( pos.x / 1000.f ) * 320 ) + 320 );
+    pos.y = static_cast< int >(    ( pos.y / 1000.f ) * 240         );
     
     return pos;
 }
