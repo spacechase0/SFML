@@ -39,7 +39,7 @@ bool InputImpl::IsKeyPressed(Keyboard::Key key)
     sf::Uint32 buttons = GetButtons();
     
     // Get the right key
-    #define DoKey(a) a ## _E:  return buttons & a;
+    #define DoKey(a) case a ## _E:  return buttons & a;
     switch ( key )
     {
     	DoKey( LEFT_SHOULDER );

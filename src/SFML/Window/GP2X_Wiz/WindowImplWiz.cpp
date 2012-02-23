@@ -82,7 +82,7 @@ WindowHandle WindowImplWiz::GetSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplWiz::ProcessEvents()
 {
-    #warning Not implemented
+    inputImpl.Update();
 }
 
 
