@@ -28,7 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Network/Export.hpp>
+#include <SFML/System/Time.hpp>
 #include <istream>
 #include <ostream>
 #include <string>
@@ -40,7 +41,7 @@ namespace sf
 /// \brief Encapsulate an IPv4 network address
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API IpAddress
+class SFML_NETWORK_API IpAddress
 {
 public :
 
@@ -168,20 +169,21 @@ public :
     /// to be possibly stuck waiting in case there is a problem; this
     /// limit is deactivated by default.
     ///
-    /// \param timeout Maximum time to wait, in milliseconds
+    /// \param timeout Maximum time to wait
     ///
     /// \return Public IP address of the computer
     ///
     /// \see GetLocalAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress GetPublicAddress(Uint32 timeout = 0);
+    static IpAddress GetPublicAddress(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     static const IpAddress None;      ///< Value representing an empty/invalid address
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
+    static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
 
 private :
 
@@ -200,7 +202,7 @@ private :
 /// \return True if both addresses are equal
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator ==(const IpAddress& left, const IpAddress& right);
+SFML_NETWORK_API bool operator ==(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of != operator to compare two IP addresses
@@ -211,7 +213,7 @@ SFML_API bool operator ==(const IpAddress& left, const IpAddress& right);
 /// \return True if both addresses are different
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator !=(const IpAddress& left, const IpAddress& right);
+SFML_NETWORK_API bool operator !=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of < operator to compare two IP addresses
@@ -222,7 +224,7 @@ SFML_API bool operator !=(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is lesser than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator <(const IpAddress& left, const IpAddress& right);
+SFML_NETWORK_API bool operator <(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of > operator to compare two IP addresses
@@ -233,7 +235,7 @@ SFML_API bool operator <(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator >(const IpAddress& left, const IpAddress& right);
+SFML_NETWORK_API bool operator >(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of <= operator to compare two IP addresses
@@ -244,7 +246,7 @@ SFML_API bool operator >(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is lesser or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator <=(const IpAddress& left, const IpAddress& right);
+SFML_NETWORK_API bool operator <=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of >= operator to compare two IP addresses
@@ -255,7 +257,7 @@ SFML_API bool operator <=(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is greater or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_API bool operator >=(const IpAddress& left, const IpAddress& right);
+SFML_NETWORK_API bool operator >=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of >> operator to extract an IP address from an input stream
@@ -266,7 +268,7 @@ SFML_API bool operator >=(const IpAddress& left, const IpAddress& right);
 /// \return Reference to the input stream
 ///
 ////////////////////////////////////////////////////////////
-SFML_API std::istream& operator >>(std::istream& stream, IpAddress& address);
+SFML_NETWORK_API std::istream& operator >>(std::istream& stream, IpAddress& address);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of << operator to print an IP address to an output stream
@@ -277,7 +279,7 @@ SFML_API std::istream& operator >>(std::istream& stream, IpAddress& address);
 /// \return Reference to the output stream
 ///
 ////////////////////////////////////////////////////////////
-SFML_API std::ostream& operator <<(std::ostream& stream, const IpAddress& address);
+SFML_NETWORK_API std::ostream& operator <<(std::ostream& stream, const IpAddress& address);
 
 } // namespace sf
 
@@ -299,7 +301,7 @@ SFML_API std::ostream& operator <<(std::ostream& stream, const IpAddress& addres
 /// sf::IpAddress a0;                                     // an invalid address
 /// sf::IpAddress a1 = sf::IpAddress::None;               // an invalid address (same as a0)
 /// sf::IpAddress a2("127.0.0.1");                        // the local host address
-/// sf::IpAddress a3 = sf::IpAddress::LocalHost;          // the local host address (same as a2)
+/// sf::IpAddress a3 = sf::IpAddress::Broadcast;          // the broadcast address
 /// sf::IpAddress a4(192, 168, 1, 56);                    // a local address
 /// sf::IpAddress a5("my_computer");                      // a local address created from a network name
 /// sf::IpAddress a6("89.54.1.169");                      // a distant address

@@ -37,9 +37,6 @@
 #include <cstring>
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     // FreeType callbacks that operate on a sf::InputStream
@@ -77,7 +74,6 @@ myRefCount (NULL)
 
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
-Resource<Font>(),
 myLibrary    (copy.myLibrary),
 myFace       (copy.myFace),
 myStreamRec  (copy.myStreamRec),
@@ -200,7 +196,7 @@ bool Font::LoadFromStream(InputStream& stream)
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     FT_StreamRec* rec = new FT_StreamRec;
-    std::memset(rec, 0, sizeof(rec));
+    std::memset(rec, 0, sizeof(*rec));
     rec->base               = NULL;
     rec->size               = static_cast<unsigned long>(stream.GetSize());
     rec->pos                = 0;
@@ -339,7 +335,7 @@ const Font& Font::GetDefaultFont()
     // Load the default font on first call
     if (!loaded)
     {
-        static const char data[] =
+        static const signed char data[] =
         {
             #include <SFML/Graphics/Arial.hpp>
         };
@@ -452,7 +448,7 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         Page& page = myPages[characterSize];
 
         // Find a good position for the new glyph into the texture
-        glyph.SubRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
+        glyph.TextureRect = FindGlyphRect(page, width + 2 * padding, height + 2 * padding);
 
         // Compute the glyph's bounding box
         glyph.Bounds.Left   = bitmapGlyph->left - padding;
@@ -493,10 +489,10 @@ Glyph Font::LoadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         }
 
         // Write the pixels to the texture
-        unsigned int x      = glyph.SubRect.Left + padding;
-        unsigned int y      = glyph.SubRect.Top + padding;
-        unsigned int width  = glyph.SubRect.Width - 2 * padding;
-        unsigned int height = glyph.SubRect.Height - 2 * padding;
+        unsigned int x      = glyph.TextureRect.Left + padding;
+        unsigned int y      = glyph.TextureRect.Top + padding;
+        unsigned int width  = glyph.TextureRect.Width - 2 * padding;
+        unsigned int height = glyph.TextureRect.Height - 2 * padding;
         page.Texture.Update(&myPixelBuffer[0], width, height, x, y);
     }
 

@@ -106,7 +106,7 @@ unsigned short TcpSocket::GetRemotePort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::Connect(const IpAddress& remoteAddress, unsigned short remotePort, Uint32 timeout)
+Socket::Status TcpSocket::Connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout)
 {
     // Create the internal socket if it doesn't exist
     Create();
@@ -114,7 +114,7 @@ Socket::Status TcpSocket::Connect(const IpAddress& remoteAddress, unsigned short
     // Create the remote address
     sockaddr_in address = priv::SocketImpl::CreateAddress(remoteAddress.ToInteger(), remotePort);
 
-    if (timeout == 0)
+    if (timeout <= Time::Zero)
     {
         // ----- We're not using a timeout: just try to connect -----
 
@@ -160,8 +160,8 @@ Socket::Status TcpSocket::Connect(const IpAddress& remoteAddress, unsigned short
 
             // Setup the timeout
             timeval time;
-            time.tv_sec  = timeout / 1000;
-            time.tv_usec = (timeout - time.tv_sec * 1000) * 1000;
+            time.tv_sec  = static_cast<long>(timeout.AsMicroseconds() / 1000000);
+            time.tv_usec = static_cast<long>(timeout.AsMicroseconds() % 1000000);
 
             // Wait for something to write on our socket (which means that the connection request has returned)
             if (select(static_cast<int>(GetHandle() + 1), NULL, &selector, NULL, &time) > 0)
@@ -277,7 +277,7 @@ Socket::Status TcpSocket::Send(Packet& packet)
     const char* data = packet.OnSend(size);
 
     // First send the packet size
-    Uint32 packetSize = htonl(static_cast<unsigned long>(size));
+    Uint32 packetSize = htonl(static_cast<Uint32>(size));
     Status status = Send(reinterpret_cast<const char*>(&packetSize), sizeof(packetSize));
 
     // Make sure that the size was properly sent
@@ -308,7 +308,7 @@ Socket::Status TcpSocket::Receive(Packet& packet)
     if (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
     {
         // Loop until we've received the entire size of the packet
-        // (even a 4 bytes variable may be received in more than one call)
+        // (even a 4 byte variable may be received in more than one call)
         while (myPendingPacket.SizeReceived < sizeof(myPendingPacket.Size))
         {
             char* data = reinterpret_cast<char*>(&myPendingPacket.Size) + myPendingPacket.SizeReceived;

@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <string>
@@ -42,7 +43,7 @@ class InputStream;
 /// \brief Class for loading, manipulating and saving images
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Image
+class SFML_GRAPHICS_API Image
 {
 public :
 
@@ -65,9 +66,9 @@ public :
     void Create(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the image from an arry of pixels
+    /// \brief Create the image from an array of pixels
     ///
-    /// The \a pixels array is assumed to contain 32-bits RGBA pixels,
+    /// The \a pixel array is assumed to contain 32-bits RGBA pixels,
     /// and have the given \a width and \a height. If not, this is
     /// an undefined behaviour.
     /// If \a pixels is null, an empty image is created.

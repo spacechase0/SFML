@@ -8,15 +8,12 @@ set(SRC
     ${INCROOT}/Clock.hpp
     ${SRCROOT}/Err.cpp
     ${INCROOT}/Err.hpp
+    ${INCROOT}/Export.hpp
     ${SRCROOT}/Lock.cpp
     ${INCROOT}/Lock.hpp
     ${SRCROOT}/Mutex.cpp
     ${INCROOT}/Mutex.hpp
     ${INCROOT}/NonCopyable.hpp
-    ${SRCROOT}/Platform.hpp
-    ${INCROOT}/Resource.hpp
-    ${INCROOT}/Resource.inl
-    ${INCROOT}/ResourcePtr.inl
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
     ${SRCROOT}/String.cpp
@@ -28,6 +25,8 @@ set(SRC
     ${INCROOT}/ThreadLocal.hpp
     ${INCROOT}/ThreadLocalPtr.hpp
     ${INCROOT}/ThreadLocalPtr.inl
+    ${SRCROOT}/Time.cpp
+    ${INCROOT}/Time.hpp
     ${INCROOT}/Utf.hpp
     ${INCROOT}/Utf.inl
     ${INCROOT}/Vector2.hpp
@@ -40,10 +39,12 @@ set(SRC
 if(WINDOWS)
     set(SRC
         ${SRC}
+        ${SRCROOT}/Win32/ClockImpl.cpp
+        ${SRCROOT}/Win32/ClockImpl.hpp
         ${SRCROOT}/Win32/MutexImpl.cpp
         ${SRCROOT}/Win32/MutexImpl.hpp
-        ${SRCROOT}/Win32/Platform.cpp
-        ${SRCROOT}/Win32/Platform.hpp
+        ${SRCROOT}/Win32/SleepImpl.cpp
+        ${SRCROOT}/Win32/SleepImpl.hpp
         ${SRCROOT}/Win32/ThreadImpl.cpp
         ${SRCROOT}/Win32/ThreadImpl.hpp
         ${SRCROOT}/Win32/ThreadLocalImpl.cpp
@@ -52,10 +53,12 @@ if(WINDOWS)
 else()
     set(SRC
         ${SRC}
+        ${SRCROOT}/Unix/ClockImpl.cpp
+        ${SRCROOT}/Unix/ClockImpl.hpp
         ${SRCROOT}/Unix/MutexImpl.cpp
         ${SRCROOT}/Unix/MutexImpl.hpp
-        ${SRCROOT}/Unix/Platform.cpp
-        ${SRCROOT}/Unix/Platform.hpp
+        ${SRCROOT}/Unix/SleepImpl.cpp
+        ${SRCROOT}/Unix/SleepImpl.hpp
         ${SRCROOT}/Unix/ThreadImpl.cpp
         ${SRCROOT}/Unix/ThreadImpl.hpp
         ${SRCROOT}/Unix/ThreadLocalImpl.cpp
@@ -67,6 +70,9 @@ endif()
 set(SYSTEM_EXT_LIBS)
 if(UNIX OR GP2X_WIZ)
     set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} pthread)
+endif()
+if(LINUX)
+    set(SYSTEM_EXT_LIBS ${SYSTEM_EXT_LIBS} rt)
 endif()
 
 # define the sfml-system target

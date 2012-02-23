@@ -4,7 +4,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -16,6 +15,7 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL", sf::Style::Default, sf::ContextSettings(32));
+    window.EnableVerticalSync(true);
 
     // Create a sprite for the background
     sf::Texture backgroundTexture;
@@ -57,7 +57,7 @@ int main()
     sf::Clock clock;
 
     // Start game loop
-    while (window.IsOpened())
+    while (window.IsOpen())
     {
         // Process events
         sf::Event event;
@@ -77,9 +77,9 @@ int main()
         }
 
         // Draw the background
-        window.SaveGLStates();
+        window.PushGLStates();
         window.Draw(background);
-        window.RestoreGLStates();
+        window.PopGLStates();
 
         // Activate the window before using OpenGL commands.
         // This is useless here because we have only one window which is
@@ -97,9 +97,9 @@ int main()
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glTranslatef(x, y, -100.f);
-        glRotatef(clock.GetElapsedTime() * 0.05f, 1.f, 0.f, 0.f);
-        glRotatef(clock.GetElapsedTime() * 0.03f, 0.f, 1.f, 0.f);
-        glRotatef(clock.GetElapsedTime() * 0.09f, 0.f, 0.f, 1.f);
+        glRotatef(clock.GetElapsedTime().AsSeconds() * 50.f, 1.f, 0.f, 0.f);
+        glRotatef(clock.GetElapsedTime().AsSeconds() * 30.f, 0.f, 1.f, 0.f);
+        glRotatef(clock.GetElapsedTime().AsSeconds() * 90.f, 0.f, 0.f, 1.f);
 
         // Draw a cube
         float size = 20.f;
@@ -138,12 +138,12 @@ int main()
         glEnd();
 
         // Draw some text on top of our OpenGL object
-        window.SaveGLStates();
+        window.PushGLStates();
         sf::Text text("SFML / OpenGL demo");
-        text.SetPosition(250.f, 450.f);
         text.SetColor(sf::Color(255, 255, 255, 170));
+        text.SetPosition(250.f, 450.f);
         window.Draw(text);
-        window.RestoreGLStates();
+        window.PopGLStates();
 
         // Finally, display the rendered frame on screen
         window.Display();

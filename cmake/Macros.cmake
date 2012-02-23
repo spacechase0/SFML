@@ -7,8 +7,9 @@
 # - VC++ supports it directly through the static library flags
 # - MinGW/gcc doesn't support it, but as a static library is nothing more than an archive,
 #   we can simply merge the external dependencies to our generated target as a post-build step
-# - we don't do anything for other compilers and OSes; static build is not encouraged on Unix (Linux, Mac OS X)
-#   where shared libraries are properly managed and have many advantages over static libraries
+# - for other compilers and OSes, static build is not encouraged so we don't try to
+#   pre-link dependencies, we just "link" them so that the SFML samples can compile
+#   out-of-the-box (CMake forwards the dependencies automatically)
 macro(sfml_static_add_libraries target)
     if(WINDOWS AND COMPILER_GCC)
         # Windows - gcc
@@ -33,7 +34,7 @@ macro(sfml_static_add_libraries target)
             if(NOT ${lib} MATCHES ".*\\.lib")
                 set(lib ${lib}.lib)
             endif()
-            if(MSVC_IDE AND COMPILER_MSVC LESS 2010)
+            if(MSVC_IDE AND MSVC_VERSION LESS 2010)
                 # for Visual Studio projects < 2010, we must add double quotes
                 # around paths because they may contain spaces
                 set(LIBRARIES "${LIBRARIES} &quot\\;${lib}&quot\\;")
@@ -42,6 +43,9 @@ macro(sfml_static_add_libraries target)
             endif()
         endforeach()
         set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS ${LIBRARIES})
+   else()
+        # All other platforms
+        target_link_libraries(${target} ${ARGN})
     endif()
 endmacro()
 
@@ -102,6 +106,11 @@ macro(sfml_add_library target)
     # create the target
     add_library(${target} ${THIS_SOURCES})
 
+    # define the export symbol of the module
+    string(REPLACE "-" "_" NAME_UPPER "${target}")
+    string(TOUPPER "${NAME_UPPER}" NAME_UPPER)
+    set_target_properties(${target} PROPERTIES DEFINE_SYMBOL ${NAME_UPPER}_EXPORTS)
+
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS)
         if(WINDOWS)
@@ -120,25 +129,24 @@ macro(sfml_add_library target)
     else()
         set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -s-d)
         set_target_properties(${target} PROPERTIES RELEASE_POSTFIX -s)
+        set_target_properties(${target} PROPERTIES MINSIZEREL_POSTFIX -s)
     endif()
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
     set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
-    # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
+    # for gcc >= 4.0 on Windows, apply the STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
-        if(${GCC_VERSION} MATCHES "4\\..*")
+        if(NOT GCC_VERSION VERSION_LESS "4")
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()
 
-    # on Unix systems with gcc 4.x, we must hide public symbols by default
+    # If using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitely marked)
-    if((LINUX OR GP2X_WIZ OR MACOSX) AND COMPILER_GCC)
-        if(${GCC_VERSION} MATCHES "4\\..*")
-            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
-        endif()
+    if(NOT WINDOWS AND ((COMPILER_GCC AND NOT GCC_VERSION VERSION_LESS "4") OR (COMPILER_CLANG AND NOT CLANG_VERSION VERSION_LESS "3")))
+        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
     # link the target to its SFML dependencies
@@ -205,9 +213,9 @@ macro(sfml_add_example target)
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
 
-    # for gcc 4.x on Windows, apply the STATIC_STD_LIBS option if it is enabled
+    # for gcc >= 4.0 on Windows, apply the STATIC_STD_LIBS option if it is enabled
     if(WINDOWS AND COMPILER_GCC AND STATIC_STD_LIBS)
-        if(${GCC_VERSION} MATCHES "4\\..*")
+        if(NOT GCC_VERSION VERSION_LESS "4")
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         endif()
     endif()

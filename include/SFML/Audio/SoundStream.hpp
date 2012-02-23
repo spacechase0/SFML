@@ -28,8 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Thread.hpp>
+#include <SFML/System/Time.hpp>
 #include <cstdlib>
 
 
@@ -39,7 +41,7 @@ namespace sf
 /// \brief Abstract base class for streamed audio sources
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundStream : public SoundSource
+class SFML_AUDIO_API SoundStream : public SoundSource
 {
 public :
 
@@ -49,8 +51,8 @@ public :
     ////////////////////////////////////////////////////////////
     struct Chunk
     {
-        const Int16* Samples;   ///< Pointer to the audio samples
-        std::size_t  NbSamples; ///< Number of samples pointed by Samples
+        const Int16* Samples;     ///< Pointer to the audio samples
+        std::size_t  SampleCount; ///< Number of samples pointed by Samples
     };
 
     ////////////////////////////////////////////////////////////
@@ -104,7 +106,7 @@ public :
     /// \return Number of channels
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int GetChannelsCount() const;
+    unsigned int GetChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the stream sample rate of the stream
@@ -131,22 +133,22 @@ public :
     /// The playing position can be changed when the stream is
     /// either paused or playing.
     ///
-    /// \param timeOffset New playing position, in milliseconds
+    /// \param timeOffset New playing position, from the beginning of the stream
     ///
     /// \see GetPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void SetPlayingOffset(Uint32 timeOffset);
+    void SetPlayingOffset(Time timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the stream
     ///
-    /// \return Current playing position, in milliseconds
+    /// \return Current playing position, from the beginning of the stream
     ///
     /// \see SetPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 GetPlayingOffset() const;
+    Time GetPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the stream should loop after reaching the end
@@ -193,11 +195,11 @@ protected :
     /// It can be called multiple times if the settings of the
     /// audio stream change, but only when the stream is stopped.
     ///
-    /// \param channelsCount Number of channels of the stream
-    /// \param sampleRate    Sample rate, in samples per second
+    /// \param channelCount Number of channels of the stream
+    /// \param sampleRate   Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    void Initialize(unsigned int channelsCount, unsigned int sampleRate);
+    void Initialize(unsigned int channelCount, unsigned int sampleRate);
 
 private :
 
@@ -232,10 +234,10 @@ private :
     /// This function must be overriden by derived classes to
     /// allow random seeking into the stream source.
     ///
-    /// \param timeOffset New playing position, in milliseconds
+    /// \param timeOffset New playing position, relative to the beginning of the stream
     ///
     ////////////////////////////////////////////////////////////
-    virtual void OnSeek(Uint32 timeOffset) = 0;
+    virtual void OnSeek(Time timeOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill a new buffer with audio samples, and append
@@ -245,7 +247,7 @@ private :
     /// consumed; it fills it again and inserts it back into the
     /// playing queue.
     ///
-    /// \param buffer Number of the buffer to fill (in [0, BuffersCount])
+    /// \param buffer Number of the buffer to fill (in [0, BufferCount])
     ///
     /// \return True if the stream source has requested to stop, false otherwise
     ///
@@ -273,21 +275,21 @@ private :
 
     enum
     {
-        BuffersCount = 3 ///< Number of audio buffers used by the streaming loop
+        BufferCount = 3 ///< Number of audio buffers used by the streaming loop
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread        myThread;                   ///< Thread running the background tasks
-    bool          myIsStreaming;              ///< Streaming state (true = playing, false = stopped)
-    unsigned int  myBuffers[BuffersCount];    ///< Sound buffers used to store temporary audio data
-    unsigned int  myChannelsCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int  mySampleRate;               ///< Frequency (samples / second)
-    unsigned long myFormat;                   ///< Format of the internal sound buffers
-    bool          myLoop;                     ///< Loop flag (true to loop, false to play once)
-    Uint64        mySamplesProcessed;         ///< Number of buffers processed since beginning of the stream
-    bool          myEndBuffers[BuffersCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
+    Thread        myThread;                  ///< Thread running the background tasks
+    bool          myIsStreaming;             ///< Streaming state (true = playing, false = stopped)
+    unsigned int  myBuffers[BufferCount];    ///< Sound buffers used to store temporary audio data
+    unsigned int  myChannelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int  mySampleRate;              ///< Frequency (samples / second)
+    Uint32        myFormat;                  ///< Format of the internal sound buffers
+    bool          myLoop;                    ///< Loop flag (true to loop, false to play once)
+    Uint64        mySamplesProcessed;        ///< Number of buffers processed since beginning of the stream
+    bool          myEndBuffers[BufferCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
 };
 
 } // namespace sf
@@ -338,11 +340,11 @@ private :
 ///     {
 ///         // Open the source and get audio settings
 ///         ...
-///         unsigned int channelsCount = ...;
+///         unsigned int channelCount = ...;
 ///         unsigned int sampleRate = ...;
 ///
 ///         // Initialize the stream -- important!
-///         Initialize(channelsCount, sampleRate);
+///         Initialize(channelCount, sampleRate);
 ///     }
 ///
 /// private :
@@ -351,7 +353,7 @@ private :
 ///     {
 ///         // Fill the chunk with audio data from the stream source
 ///         data.Samples = ...;
-///         data.NbSamples = ...;
+///         data.SampleCount = ...;
 ///
 ///         // Return true to continue playing
 ///         return true;

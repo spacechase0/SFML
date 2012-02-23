@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
 
@@ -38,7 +38,7 @@ namespace sf
 /// \brief Structure describing a glyph
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Glyph
+class SFML_GRAPHICS_API Glyph
 {
 public :
 
@@ -51,9 +51,9 @@ public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int     Advance; ///< Offset to move horizontically to the next character
-    IntRect Bounds;  ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
-    IntRect SubRect; ///< Texture coordinates of the glyph inside the font's texture
+    int     Advance;     ///< Offset to move horizontically to the next character
+    IntRect Bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
+    IntRect TextureRect; ///< Texture coordinates of the glyph inside the font's texture
 };
 
 } // namespace sf
@@ -71,7 +71,7 @@ public :
 /// The sf::Glyph structure provides the information needed
 /// to handle the glyph:
 /// \li its coordinates in the font's texture
-/// \li its bounding rect
+/// \li its bounding rectangle
 /// \li the offset to apply to get the starting position of the next glyph
 ///
 /// \see sf::Font

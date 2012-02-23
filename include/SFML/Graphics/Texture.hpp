@@ -28,15 +28,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Resource.hpp>
-#include <SFML/Window/GlResource.hpp>
+#include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Window/GlResource.hpp>
 
 
 namespace sf
 {
 class Window;
-class Renderer;
+class RenderTarget;
 class RenderTexture;
 class InputStream;
 
@@ -44,8 +44,20 @@ class InputStream;
 /// \brief Image living on the graphics card that can be used for drawing
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Texture : public Resource<Texture>, GlResource
+class SFML_GRAPHICS_API Texture : GlResource
 {
+public :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Types of texture coordinates that can be used for rendering
+    ///
+    ////////////////////////////////////////////////////////////
+    enum CoordinateType
+    {
+        Normalized, ///< Texture coordinates in range [0 .. 1]
+        Pixels      ///< Texture coordinates in range [0 .. size]
+    };
+
 public :
 
     ////////////////////////////////////////////////////////////
@@ -239,7 +251,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Update the whole texture from an array of pixels
     ///
-    /// The \a pixels array is assumed to have the same size as
+    /// The \a pixel array is assumed to have the same size as
     /// the \a area rectangle, and to contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
@@ -257,7 +269,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an array of pixels
     ///
-    /// The size of the \a pixels array must match the \a width and
+    /// The size of the \a pixel array must match the \a width and
     /// \a height arguments, and it must contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
@@ -354,12 +366,23 @@ public :
     /// \brief Activate the texture for rendering
     ///
     /// This function is mainly used internally by the SFML
-    /// render system. However it can be useful when
+    /// rendering system. However it can be useful when
     /// using sf::Texture together with OpenGL code (this function
     /// is equivalent to glBindTexture).
     ///
+    /// The \a coordinateType argument controls how texture
+    /// coordinates will be interpreted. If Normalized (the default), they
+    /// must be in range [0 .. 1], which is the default way of handling
+    /// texture coordinates with OpenGL. If Pixels, they must be given
+    /// in pixels (range [0 .. size]). This mode is used internally by
+    /// the graphics classes of SFML, it makes the definition of texture
+    /// coordinates more intuitive for the high-level API, users don't need
+    /// to compute normalized values.
+    ///
+    /// \param coordinateType Type of texture coordinates to use
+    ///
     ////////////////////////////////////////////////////////////
-    void Bind() const;
+    void Bind(CoordinateType coordinateType = Normalized) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the smooth filter
@@ -388,18 +411,38 @@ public :
     bool IsSmooth() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a rectangle of pixels into texture coordinates
+    /// \brief Enable or disable repeating
     ///
-    /// This function is used by code that needs to map the texture
-    /// to some OpenGL geometry. It converts the source rectangle,
-    /// expressed in pixels, to float coordinates in the range [0, 1].
+    /// Repeating is involved when using texture coordinates
+    /// outside the texture rectangle [0, 0, width, height].
+    /// In this case, if repeat mode is enabled, the whole texture
+    /// will be repeated as many times as needed to reach the
+    /// coordinate (for example, if the X texture coordinate is
+    /// 3 * width, the texture will be repeated 3 times).
+    /// If repeat mode is disabled, the "extra space" will instead
+    /// be filled with border pixels.
+    /// Warning: on very old graphics cards, white pixels may appear
+    /// when the texture is repeated. With such cards, repeat mode
+    /// can be used reliably only if the texture has power-of-two
+    /// dimensions (such as 256x128).
+    /// Repeating is disabled by default.
     ///
-    /// \param rectangle Rectangle to convert
+    /// \param repeated True to repeat the texture, false to disable repeating
     ///
-    /// \return Texture coordinates corresponding to \a rectangle
+    /// \see IsRepeated
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect GetTexCoords(const IntRect& rectangle) const;
+    void SetRepeated(bool repeated);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether the texture is repeated or not
+    ///
+    /// \return True if repeat mode is enabled, false if it is disabled
+    ///
+    /// \see SetRepeated
+    ///
+    ////////////////////////////////////////////////////////////
+    bool IsRepeated() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -425,8 +468,8 @@ public :
 
 private :
 
-    friend class Renderer;
     friend class RenderTexture;
+    friend class RenderTarget;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a valid image size according to hardware support
@@ -452,7 +495,9 @@ private :
     unsigned int myTextureHeight; ///< Actual texture height (can be greater than image height because of padding)
     unsigned int myTexture;       ///< Internal texture identifier
     bool         myIsSmooth;      ///< Status of the smooth filter
+    bool         myIsRepeated;    ///< Is the texture in repeat mode?
     mutable bool myPixelsFlipped; ///< To work around the inconsistency in Y orientation
+    Uint64       myCacheId;       ///< Unique number that identifies the texture to the render target's cache
 };
 
 } // namespace sf
@@ -515,7 +560,7 @@ private :
 /// sprite.SetTexture(texture);
 ///
 /// // Draw the textured sprite
-/// window.Draw(sprite); // window is a sf::RenderWindow
+/// window.Draw(sprite);
 /// \endcode
 ///
 /// \code

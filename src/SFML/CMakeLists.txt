@@ -9,13 +9,13 @@ if (WINDOWS)
         set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw")
         if(ARCH_32BITS)
             set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/bin/x86")
-        else()
+        elseif(ARCH_64BITS)
             set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/bin/x64")
         endif()
     elseif(COMPILER_MSVC)
         if(ARCH_32BITS)
             set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-msvc/x86")
-        else()
+        elseif(ARCH_64BITS)
             set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-msvc/x64")
         endif()
     endif()
@@ -41,9 +41,6 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
 # set the output directory for SFML libraries
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
-
-# define the export symbol
-add_definitions(-DSFML_EXPORTS)
 
 # add the modules subdirectories
 add_subdirectory(System)

@@ -31,13 +31,10 @@
 #include <SFML/System/Lock.hpp>
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     // OpenGL resources counter and its mutex
-    unsigned long count = 0;
+    unsigned int count = 0;
     sf::Mutex mutex;
 }
 

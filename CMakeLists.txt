@@ -1,11 +1,17 @@
 
 cmake_minimum_required(VERSION 2.8)
 
+# define a macro that helps defining an option
+macro(sfml_set_option var default type docstring)
+    if(NOT DEFINED ${var})
+        set(${var} ${default})
+    endif()
+    set(${var} ${${var}} CACHE ${type} ${docstring} FORCE)
+endmacro()
+
 # set a default build type if none was provided
 # this has to be done before the project() instruction!
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
-endif()
+sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
 
 # project name
 project(SFML)
@@ -22,24 +28,24 @@ set(VERSION_PATCH 0)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
-set(BUILD_SHARED_LIBS TRUE CACHE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 
 # add an option for building the examples
-set(BUILD_EXAMPLES FALSE CACHE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
+sfml_set_option(BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
 
 # add an option for building the API documentation
-set(BUILD_DOC FALSE CACHE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
+sfml_set_option(BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
 # Mac OS X specific options
 if(MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
-    set(BUILD_FRAMEWORKS FALSE CACHE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
+    sfml_set_option(BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
     
     # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
-    set(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" CACHE STRING "Frameworks installation directory")
+    sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
 
     # add an option to automatically install Xcode 4 templates
-    set(INSTALL_XCODE4_TEMPLATES FALSE CACHE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
+    sfml_set_option(INSTALL_XCODE4_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode 4 templates, FALSE to do nothing about it")
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
@@ -48,13 +54,13 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 # remove SL security warnings with Visual C++
-if(MSVC)
+if(COMPILER_MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
 if(WINDOWS)
-    set(STATIC_STD_LIBS FALSE CACHE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    sfml_set_option(STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
     
     # for VC++, we can apply it globally by modifying the compiler flags
     if(COMPILER_MSVC AND STATIC_STD_LIBS)
@@ -74,28 +80,22 @@ set(CMAKE_SKIP_BUILD_RPATH TRUE)
 # Setup Mac OS X stuff
 if(MACOSX)
     # multi arch support - by default : i386 and x86_64
-    if(NOT CMAKE_OSX_ARCHITECTURES)
-        set(CMAKE_OSX_ARCHITECTURES "i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
-    endif()
+    sfml_set_option(CMAKE_OSX_ARCHITECTURES "i386;x86_64" STRING "Build architectures for OSX")
 
     # multi SDK support - by default we choose the older SDK available starting by 10.5 SDK
     if(NOT OSX_CONFIG_HAS_BEEN_RUN_BEFORE)
         if(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
             # target 10.5 system
-            set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk"
-                CACHE STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value."
-                FORCE)
-            set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" 
-                CACHE STRING "Minimum OS X version to target for deployment (at runtime); ewer APIs weak linked."
-                FORCE)
+            sfml_set_option(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk"
+                            STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value.")
+            sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" 
+                            STRING "Minimum OS X version to target for deployment (at runtime), newer APIs weak linked.")
         elseif(EXISTS /Developer/SDKs/MacOSX10.6.sdk)
             # target 10.6 system
-            set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk"
-                CACHE STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value."
-                FORCE)
-            set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" 
-                CACHE STRING "Minimum OS X version to target for deployment (at runtime); newer APIs weak linked."
-                FORCE)
+            sfml_set_option(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk"
+                            STRING "The product will be built against the headers and libraries located inside the indicated SDK. Set to empty string for default value.")
+            sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "10.6" 
+                            STRING "Minimum OS X version to target for deployment (at runtime), newer APIs weak linked.")
         else()
             # use default SDK.
         endif()
@@ -115,14 +115,34 @@ if(MACOSX)
     if(BUILD_FRAMEWORKS)
         # requirement #1
         if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-            message(WARNING "CMAKE_BUILD_TYPE should be \"Release\" when BUILD_FRAMEWORKS is TRUE")
+            message(FATAL_ERROR "CMAKE_BUILD_TYPE should be \"Release\" when BUILD_FRAMEWORKS is TRUE")
             return()
         endif()
 
         # requirement #2
         if(NOT BUILD_SHARED_LIBS)
-            message(WARNING "BUILD_SHARED_LIBS should be TRUE when BUILD_FRAMEWORKS is TRUE")
+            message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when BUILD_FRAMEWORKS is TRUE")
             return()
+        endif()
+    endif()
+endif()
+
+if(LINUX)
+    if(BUILD_SHARED_LIBS)
+        sfml_set_option(INSTALL_PKGCONFIG_FILES TRUE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+        if(INSTALL_PKGCONFIG_FILES)
+            foreach(sfml_module IN ITEMS all system window graphics audio network)
+                CONFIGURE_FILE(
+                    "tools/pkg-config/sfml-${sfml_module}.pc.in"
+                    "tools/pkg-config/sfml-${sfml_module}.pc"
+                    @ONLY)
+	    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+                    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+            endforeach()
+        endif()
+    else()
+        if(INSTALL_PKGCONFIG_FILES)
+            message(WARNING "No pkg-config files are provided for the static SFML libraries (INSTALL_PKGCONFIG_FILES will be ignored).")
         endif()
     endif()
 endif()
@@ -186,15 +206,14 @@ else()
             COMPONENT devel)
 endif()
 
-#install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${CMAKE_ROOT}/Modules)
-#install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
-# ^ Those wouldn't work, for some reason
+install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
+install(FILES license.txt DESTINATION ${INSTALL_MISC_DIR})
 
 if(WINDOWS)
     if(ARCH_32BITS)
         install(FILES extlibs/bin/x86/libsndfile-1.dll DESTINATION bin)
         install(FILES extlibs/bin/x86/openal32.dll DESTINATION bin)
-    else()
+    elseif(ARCH_64BITS)
         install(FILES extlibs/bin/x64/libsndfile-1.dll DESTINATION bin)
         install(FILES extlibs/bin/x64/openal32.dll DESTINATION bin)
     endif()
@@ -206,6 +225,6 @@ elseif(MACOSX)
     install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
 
     if(INSTALL_XCODE4_TEMPLATES)
-        install(DIRECTORY xcode/templates/SFML DESTINATION $ENV{HOME}/Library/Developer/Xcode/Templates)
+        install(DIRECTORY tools/xcode/templates/SFML DESTINATION /Library/Developer/Xcode/Templates)
     endif()
 endif()

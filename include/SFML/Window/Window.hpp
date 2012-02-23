@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Export.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
@@ -53,7 +54,7 @@ class Event;
 /// \brief Window that serves as a target for OpenGL rendering
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API Window : GlResource, NonCopyable
+class SFML_WINDOW_API Window : GlResource, NonCopyable
 {
 public :
 
@@ -85,7 +86,7 @@ public :
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    Window(VideoMode mode, const std::string& title, unsigned long style = Style::Default, const ContextSettings& settings = ContextSettings());
+    Window(VideoMode mode, const std::string& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -124,7 +125,7 @@ public :
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    void Create(VideoMode mode, const std::string& title, unsigned long style = Style::Default, const ContextSettings& settings = ContextSettings());
+    void Create(VideoMode mode, const std::string& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -145,7 +146,7 @@ public :
     /// After calling this function, the sf::Window instance remains
     /// valid and you can call Create() to recreate the window.
     /// All other functions such as PollEvent() or Display() will
-    /// still work (i.e. you don't have to test IsOpened() every time),
+    /// still work (i.e. you don't have to test IsOpen() every time),
     /// and will have no effect on closed windows.
     ///
     ////////////////////////////////////////////////////////////
@@ -160,7 +161,7 @@ public :
     /// \return True if the window is opened, false if it has been closed
     ///
     ////////////////////////////////////////////////////////////
-    bool IsOpened() const;
+    bool IsOpen() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the width of the rendering region of the window
@@ -381,24 +382,16 @@ public :
     /// If a limit is set, the window will use a small delay after
     /// each call to Display() to ensure that the current frame
     /// lasted long enough to match the framerate limit.
+    /// SFML will try to match the given limit as much as it can,
+    /// but since it internally uses sf::Sleep, whose precision
+    /// depends on the underlying OS, the results may be a little
+    /// unprecise as well (for example, you can get 65 FPS when
+    /// requesting 60).
     ///
     /// \param limit Framerate limit, in frames per seconds (use 0 to disable limit)
     ///
     ////////////////////////////////////////////////////////////
     void SetFramerateLimit(unsigned int limit);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the duration of the last frame
-    ///
-    /// This function returns the time elapsed between the last
-    /// two calls to Display().
-    /// This can be useful for calculating the framerate, or for
-    /// updating the application's objects.
-    ///
-    /// \return Time elapsed in last frame, in milliseconds
-    ///
-    ////////////////////////////////////////////////////////////
-    Uint32 GetFrameTime() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold
@@ -471,11 +464,10 @@ private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* myWindow;         ///< Platform-specific implementation of the window
+    priv::WindowImpl* myImpl;           ///< Platform-specific implementation of the window
     priv::GlContext*  myContext;        ///< Platform-specific implementation of the OpenGL context
     Clock             myClock;          ///< Clock for measuring the elapsed time between frames
-    Uint32            myLastFrameTime;  ///< Time elapsed since last frame
-    unsigned int      myFramerateLimit; ///< Current framerate limit
+    Time              myFrameTimeLimit; ///< Current framerate limit
 };
 
 } // namespace sf
@@ -519,7 +511,7 @@ private :
 /// window.SetFramerateLimit(60);
 ///
 /// // The main loop - ends as soon as the window is closed
-/// while (window.IsOpened())
+/// while (window.IsOpen())
 /// {
 ///    // Event processing
 ///    sf::Event event;

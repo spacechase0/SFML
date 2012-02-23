@@ -39,7 +39,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer() :
 myBuffer  (0),
-myDuration(0)
+myDuration()
 {
     priv::EnsureALInit();
 
@@ -50,17 +50,16 @@ myDuration(0)
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-Resource<SoundBuffer>(),
-myBuffer             (0),
-mySamples            (copy.mySamples),
-myDuration           (copy.myDuration),
-mySounds             () // don't copy the attached sounds
+myBuffer  (0),
+mySamples (copy.mySamples),
+myDuration(copy.myDuration),
+mySounds  () // don't copy the attached sounds
 {
     // Create the buffer
     ALCheck(alGenBuffers(1, &myBuffer));
 
     // Update the internal buffer with the new samples
-    Update(copy.GetChannelsCount(), copy.GetSampleRate());
+    Update(copy.GetChannelCount(), copy.GetSampleRate());
 }
 
 
@@ -111,24 +110,24 @@ bool SoundBuffer::LoadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t samplesCount, unsigned int channelsCount, unsigned int sampleRate)
+bool SoundBuffer::LoadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate)
 {
-    if (samples && samplesCount && channelsCount && sampleRate)
+    if (samples && sampleCount && channelCount && sampleRate)
     {
         // Copy the new audio samples
-        mySamples.assign(samples, samples + samplesCount);
+        mySamples.assign(samples, samples + sampleCount);
 
         // Update the internal buffer with the new samples
-        return Update(channelsCount, sampleRate);
+        return Update(channelCount, sampleRate);
     }
     else
     {
         // Error...
         Err() << "Failed to load sound buffer from samples ("
-              << "array: "      << samples       << ", "
-              << "count: "      << samplesCount  << ", "
-              << "channels: "   << channelsCount << ", "
-              << "samplerate: " << sampleRate    << ")"
+              << "array: "      << samples      << ", "
+              << "count: "      << sampleCount  << ", "
+              << "channels: "   << channelCount << ", "
+              << "samplerate: " << sampleRate   << ")"
               << std::endl;
 
         return false;
@@ -141,7 +140,7 @@ bool SoundBuffer::SaveToFile(const std::string& filename) const
 {
     // Create the sound file in write mode
     priv::SoundFile file;
-    if (file.OpenWrite(filename, GetChannelsCount(), GetSampleRate()))
+    if (file.OpenWrite(filename, GetChannelCount(), GetSampleRate()))
     {
         // Write the samples to the opened file
         file.Write(&mySamples[0], mySamples.size());
@@ -163,7 +162,7 @@ const Int16* SoundBuffer::GetSamples() const
 
 
 ////////////////////////////////////////////////////////////
-std::size_t SoundBuffer::GetSamplesCount() const
+std::size_t SoundBuffer::GetSampleCount() const
 {
     return mySamples.size();
 }
@@ -180,17 +179,17 @@ unsigned int SoundBuffer::GetSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned int SoundBuffer::GetChannelsCount() const
+unsigned int SoundBuffer::GetChannelCount() const
 {
-    ALint channelsCount;
-    ALCheck(alGetBufferi(myBuffer, AL_CHANNELS, &channelsCount));
+    ALint channelCount;
+    ALCheck(alGetBufferi(myBuffer, AL_CHANNELS, &channelCount));
 
-    return channelsCount;
+    return channelCount;
 }
 
 
 ////////////////////////////////////////////////////////////
-Uint32 SoundBuffer::GetDuration() const
+Time SoundBuffer::GetDuration() const
 {
     return myDuration;
 }
@@ -214,16 +213,16 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 bool SoundBuffer::Initialize(priv::SoundFile& file)
 {
     // Retrieve the sound parameters
-    std::size_t  nbSamples     = file.GetSamplesCount();
-    unsigned int channelsCount = file.GetChannelsCount();
-    unsigned int sampleRate    = file.GetSampleRate();
+    std::size_t  sampleCount  = file.GetSampleCount();
+    unsigned int channelCount = file.GetChannelCount();
+    unsigned int sampleRate   = file.GetSampleRate();
 
     // Read the samples from the provided file
-    mySamples.resize(nbSamples);
-    if (file.Read(&mySamples[0], nbSamples) == nbSamples)
+    mySamples.resize(sampleCount);
+    if (file.Read(&mySamples[0], sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
-        return Update(channelsCount, sampleRate);
+        return Update(channelCount, sampleRate);
     }
     else
     {
@@ -233,19 +232,19 @@ bool SoundBuffer::Initialize(priv::SoundFile& file)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
+bool SoundBuffer::Update(unsigned int channelCount, unsigned int sampleRate)
 {
     // Check parameters
-    if (!channelsCount || !sampleRate || mySamples.empty())
+    if (!channelCount || !sampleRate || mySamples.empty())
         return false;
 
     // Find the good format according to the number of channels
-    ALenum format = priv::AudioDevice::GetFormatFromChannelsCount(channelsCount);
+    ALenum format = priv::AudioDevice::GetFormatFromChannelCount(channelCount);
 
     // Check if the format is valid
     if (format == 0)
     {
-        Err() << "Failed to load sound buffer (unsupported number of channels: " << channelsCount << ")" << std::endl;
+        Err() << "Failed to load sound buffer (unsupported number of channels: " << channelCount << ")" << std::endl;
         return false;
     }
 
@@ -254,7 +253,7 @@ bool SoundBuffer::Update(unsigned int channelsCount, unsigned int sampleRate)
     ALCheck(alBufferData(myBuffer, format, &mySamples[0], size, sampleRate));
 
     // Compute the duration
-    myDuration = static_cast<Uint32>(1000 * mySamples.size() / sampleRate / channelsCount);
+    myDuration = Milliseconds(1000 * mySamples.size() / sampleRate / channelCount);
 
     return true;
 }

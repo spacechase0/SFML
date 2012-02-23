@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Export.hpp>
 #include <SFML/System/Thread.hpp>
 #include <vector>
 
@@ -38,7 +39,7 @@ namespace sf
 /// \brief Abstract base class for capturing sound data
 ///
 ////////////////////////////////////////////////////////////
-class SFML_API SoundRecorder
+class SFML_AUDIO_API SoundRecorder
 {
 public :
 
@@ -131,13 +132,13 @@ private :
     /// whatever it wants with it (storing it, playing it, sending
     /// it over the network, etc.).
     ///
-    /// \param samples      Pointer to the new chunk of recorded samples
-    /// \param samplesCount Number of samples pointed by \a samples
+    /// \param samples     Pointer to the new chunk of recorded samples
+    /// \param sampleCount Number of samples pointed by \a samples
     ///
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool OnProcessSamples(const Int16* samples, std::size_t samplesCount) = 0;
+    virtual bool OnProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
@@ -238,7 +239,7 @@ private :
 ///         return true;
 ///     }
 ///
-///     virtual bool OnProcessSamples(const Int16* samples, std::size_t samplesCount)
+///     virtual bool OnProcessSamples(const Int16* samples, std::size_t sampleCount)
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...

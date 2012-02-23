@@ -47,9 +47,6 @@
 #endif
 
 
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
 namespace
 {
     unsigned int               WindowCount      = 0;
@@ -87,7 +84,7 @@ myIsCursorIn      (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, unsigned long style) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const std::string& title, Uint32 style) :
 myHandle          (NULL),
 myCallback        (0),
 myCursor          (NULL),
@@ -290,7 +287,7 @@ void WindowImplWin32::SetIcon(unsigned int width, unsigned int height, const Uin
         iconPixels[i * 4 + 3] = pixels[i * 4 + 3];
     }
 
-    // Create the icon from the pixels array
+    // Create the icon from the pixel array
     myIcon = CreateIcon(GetModuleHandle(NULL), width, height, 1, 32, NULL, &iconPixels[0]);
 
     // Set it as both big and small icon of the window

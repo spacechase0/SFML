@@ -62,6 +62,17 @@ void Packet::Append(const void* data, std::size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
+void Packet::Read(char* data, std::size_t sizeInBytes)
+{
+	if (data && (sizeInBytes > 0) && CheckSize(sizeInBytes))
+	{
+		std::memcpy(data, &myData[myReadPos], sizeInBytes);
+		myReadPos += sizeInBytes;
+	}
+}
+
+
+////////////////////////////////////////////////////////////
 void Packet::Clear()
 {
     myData.clear();
@@ -78,9 +89,34 @@ const char* Packet::GetData() const
 
 
 ////////////////////////////////////////////////////////////
+void Packet::SetData(const char* data, std::size_t sizeInBytes)
+{
+    if (data && (sizeInBytes > 0))
+    {
+    	myData.resize(sizeInBytes);
+    	std::memcpy(&myData[0], data, sizeInBytes);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 std::size_t Packet::GetDataSize() const
 {
     return myData.size();
+}
+
+
+////////////////////////////////////////////////////////////
+void Packet::Seek(std::size_t position)
+{
+	myReadPos = position;
+}
+
+
+////////////////////////////////////////////////////////////
+std::size_t Packet::Tell() const
+{
+	return myReadPos;
 }
 
 
