@@ -92,8 +92,8 @@ enum WizKeyCodes
 	BUTTON_X = (1 << 22),
 	BUTTON_B = (1 << 21),
 	
-	VOLUME_UP   = (1 << 10),
-	VOLUME_DOWN = (1 << 11),
+	VOLUME_DOWN  = (1 << 10),
+	VOLUME_UP    = (1 << 11),
 	
 	MENU   = (1 << 9),
 	SELECT = (1 << 8),
