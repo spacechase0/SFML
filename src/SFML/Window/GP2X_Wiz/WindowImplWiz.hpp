@@ -171,6 +171,10 @@ private :
     ::OS_Display* myDisplay; ///< Display
     int        myScreen;     ///< Screen identifier
     bool       myKeyRepeat;  ///< Is the KeyRepeat feature enabled ?
+    
+    sf::Vector2i prevMousePos; ///< The previous mouse position.
+    bool prevMousePress;       ///< The previous mouse pressed state.
+    bool prevKeys[ sf::Keyboard::KeyCount ]; ///< The previous key states.
 };
 
 } // namespace priv

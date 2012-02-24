@@ -28,6 +28,8 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/GP2X_Wiz/WindowImplWiz.hpp>
 #include <SFML/Window/GP2X_Wiz/WizInputImpl.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/System/Err.hpp>
 
 namespace sf
@@ -37,8 +39,16 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplWiz::WindowImplWiz(WindowHandle handle) :
 myWindow      (0),
-myKeyRepeat   (true)
+myKeyRepeat   (true),
+
+prevMousePos( 0, 0 ),
+prevMousePress( false )
 {
+	for ( std::size_t i = 0; i < sf::Keyboard::KeyCount; ++i )
+	{
+		prevKeys[ i ] = false;
+	}
+	
 	#warning Not implemented
 }
 
@@ -46,8 +56,16 @@ myKeyRepeat   (true)
 ////////////////////////////////////////////////////////////
 WindowImplWiz::WindowImplWiz(VideoMode mode, const std::string& title, unsigned long style) :
 myWindow      (0),
-myKeyRepeat   (true)
+myKeyRepeat   (true),
+
+prevMousePos( 0, 0 ),
+prevMousePress( false )
 {
+	for ( std::size_t i = 0; i < sf::Keyboard::KeyCount; ++i )
+	{
+		prevKeys[ i ] = false;
+	}
+	
 	// Window attributes
 	myWidth = 320;
     myHeight = 240;
@@ -80,9 +98,96 @@ WindowHandle WindowImplWiz::GetSystemHandle() const
 
 
 ////////////////////////////////////////////////////////////
+sf::Event DoKey( sf::priv::WizKeyEquivalents keyAlt, bool* prevKeys )
+{
+	sf::Keyboard::Key key = static_cast< sf::Keyboard::Key >( keyAlt );
+	
+	sf::Event event;
+	event.Type = sf::Event::Count;
+	event.Key.Code = key;
+	
+	bool pressed = sf::Keyboard::IsKeyPressed( key );
+	if ( pressed and !prevKeys[ key ] )
+	{
+		event.Type = sf::Event::KeyPressed;
+	}
+	else if ( !pressed and prevKeys[ key ] )
+	{
+		event.Type = sf::Event::KeyReleased;
+	}
+	
+	prevKeys[ key ] = pressed;
+	return event;
+}
+
+sf::Event DoMouseButton( bool& prevMousePress )
+{
+	sf::Event event;
+	event.Type = sf::Event::Count;
+	event.MouseButton.Button = sf::Mouse::Left;
+	event.MouseButton.X = sf::Mouse::GetPosition().x;
+	event.MouseButton.Y = sf::Mouse::GetPosition().y;
+	
+	bool pressed = sf::Mouse::IsButtonPressed( sf::Mouse::Left );
+	if ( pressed and !prevMousePress )
+	{
+		event.Type = sf::Event::MouseButtonPressed;
+	}
+	else if ( !pressed and prevMousePress )
+	{
+		event.Type = sf::Event::MouseButtonReleased;
+	}
+	
+	prevMousePress = pressed;
+	return event;
+}
+
+sf::Event DoMousePosition( sf::Vector2i& prevMousePos )
+{
+	sf::Event event;
+	event.Type = sf::Event::Count;
+	
+	sf::Vector2i mousePos = sf::Mouse::GetPosition();
+	if ( mousePos != prevMousePos )
+	{
+		event.Type = sf::Event::MouseMoved;
+		event.MouseMove.X = mousePos.x;
+		event.MouseMove.Y = mousePos.y;
+	}
+	
+	prevMousePos = mousePos;
+	return event;
+}
+
 void WindowImplWiz::ProcessEvents()
 {
     inputImpl.Update();
+    
+    sf::Event events[ 16 ];
+	events[ 0  ] = DoKey( LEFT_SHOULDER_E, prevKeys );
+	events[ 1  ] = DoKey( RIGHT_SHOULDER_E, prevKeys );
+	events[ 2  ] = DoKey( UP_E, prevKeys );
+	events[ 3  ] = DoKey( LEFT_E, prevKeys );
+	events[ 4  ] = DoKey( DOWN_E, prevKeys );
+	events[ 5  ] = DoKey( RIGHT_E, prevKeys );
+	events[ 6  ] = DoKey( BUTTON_Y_E, prevKeys );
+	events[ 7  ] = DoKey( BUTTON_A_E, prevKeys );
+	events[ 8  ] = DoKey( BUTTON_X_E, prevKeys );
+	events[ 9  ] = DoKey( BUTTON_B_E, prevKeys );
+	events[ 10 ] = DoKey( VOLUME_UP_E, prevKeys );
+	events[ 11 ] = DoKey( VOLUME_DOWN_E, prevKeys );
+	events[ 12 ] = DoKey( MENU_E, prevKeys );
+	events[ 13 ] = DoKey( SELECT_E, prevKeys );
+	events[ 14 ] = DoMouseButton( prevMousePress );
+	events[ 15 ] = DoMousePosition( prevMousePos );
+	
+	for ( std::size_t i = 0; i < 16; ++i )
+	{
+		if ( events[ i ].Type != sf::Event::Count )
+		{
+			PushEvent( events[ i ] );
+		}
+	}
 }
 
 
