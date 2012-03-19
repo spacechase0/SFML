@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,30 +34,30 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Context::Context()
 {
-    myContext = priv::GlContext::New();
-    SetActive(true);
+    m_context = priv::GlContext::create();
+    setActive(true);
 }
 
 
 ////////////////////////////////////////////////////////////
 Context::~Context()
 {
-    delete myContext;
+    delete m_context;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Context::SetActive(bool active)
+bool Context::setActive(bool active)
 {
-    return myContext->SetActive(active);
+    return m_context->setActive(active);
 }
 
 
 ////////////////////////////////////////////////////////////
 Context::Context(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
-    myContext = priv::GlContext::New(settings, width, height);
-    SetActive(true);
+    m_context = priv::GlContext::create(settings, width, height);
+    setActive(true);
 }
 
 } // namespace sf

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,7 +35,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void ALCheckError(const std::string& file, unsigned int line)
+void alCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
     ALenum errorCode = alGetError();
@@ -84,7 +84,7 @@ void ALCheckError(const std::string& file, unsigned int line)
         }
 
         // Log the error
-        Err() << "An internal OpenAL call failed in "
+        err() << "An internal OpenAL call failed in "
               << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
               << error << ", " << description
               << std::endl;
@@ -95,7 +95,7 @@ void ALCheckError(const std::string& file, unsigned int line)
 ////////////////////////////////////////////////////////////
 /// Make sure that OpenAL is initialized
 ////////////////////////////////////////////////////////////
-void EnsureALInit()
+void ensureALInit()
 {
     // The audio device is instanciated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.

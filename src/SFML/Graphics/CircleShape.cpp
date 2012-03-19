@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,52 +33,52 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 CircleShape::CircleShape(float radius, unsigned int pointCount) :
-myRadius    (radius),
-myPointCount(pointCount)
+m_radius    (radius),
+m_pointCount(pointCount)
 {
-    Update();
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-void CircleShape::SetRadius(float radius)
+void CircleShape::setRadius(float radius)
 {
-    myRadius = radius;
-    Update();
+    m_radius = radius;
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-float CircleShape::GetRadius() const
+float CircleShape::getRadius() const
 {
-    return myRadius;
+    return m_radius;
 }
 
 
 ////////////////////////////////////////////////////////////
-void CircleShape::SetPointCount(unsigned int count)
+void CircleShape::setPointCount(unsigned int count)
 {
-    myPointCount = count;
-    Update();
+    m_pointCount = count;
+    update();
 }
 
 ////////////////////////////////////////////////////////////
-unsigned int CircleShape::GetPointCount() const
+unsigned int CircleShape::getPointCount() const
 {
-    return myPointCount;
+    return m_pointCount;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f CircleShape::GetPoint(unsigned int index) const
+Vector2f CircleShape::getPoint(unsigned int index) const
 {
     static const float pi = 3.141592654f;
 
-    float angle = index * 2 * pi / myPointCount - pi / 2;
-    float x = std::cos(angle) * myRadius;
-    float y = std::sin(angle) * myRadius;
+    float angle = index * 2 * pi / m_pointCount - pi / 2;
+    float x = std::cos(angle) * m_radius;
+    float y = std::sin(angle) * m_radius;
 
-    return Vector2f(myRadius + x, myRadius + y);
+    return Vector2f(m_radius + x, m_radius + y);
 }
 
 } // namespace sf

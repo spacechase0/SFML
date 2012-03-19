@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -70,7 +70,7 @@ public :
     /// \return True if the extension is supported, false if not
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsExtensionSupported(const std::string& extension);
+    static bool isExtensionSupported(const std::string& extension);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OpenAL format that matches the given number of channels
@@ -80,7 +80,7 @@ public :
     /// \return Corresponding format
     ///
     ////////////////////////////////////////////////////////////
-    static int GetFormatFromChannelCount(unsigned int channelCount);
+    static int getFormatFromChannelCount(unsigned int channelCount);
 };
 
 } // namespace priv

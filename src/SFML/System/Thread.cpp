@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,47 +40,47 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Thread::~Thread()
 {
-    Wait();
-    delete myEntryPoint;
+    wait();
+    delete m_entryPoint;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Thread::Launch()
+void Thread::launch()
 {
-    Wait();
-    myImpl = new priv::ThreadImpl(this);
+    wait();
+    m_impl = new priv::ThreadImpl(this);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Thread::Wait()
+void Thread::wait()
 {
-    if (myImpl)
+    if (m_impl)
     {
-        myImpl->Wait();
-        delete myImpl;
-        myImpl = NULL;
+        m_impl->wait();
+        delete m_impl;
+        m_impl = NULL;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Thread::Terminate()
+void Thread::terminate()
 {
-    if (myImpl)
+    if (m_impl)
     {
-        myImpl->Terminate();
-        delete myImpl;
-        myImpl = NULL;
+        m_impl->terminate();
+        delete m_impl;
+        m_impl = NULL;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Thread::Run()
+void Thread::run()
 {
-    myEntryPoint->Run();
+    m_entryPoint->run();
 }
 
 } // namespace sf

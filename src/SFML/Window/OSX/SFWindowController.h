@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -49,7 +49,7 @@ namespace sf {
 /// Used when SFML handle everything and when a NSWindow* is given
 /// as handle to WindowImpl.
 ///
-/// myFullscreenMode is bind to default video mode if we don't need to change screen size.
+/// m_fullscreenMode is bind to default video mode if we don't need to change screen size.
 ///
 ////////////////////////////////////////////////////////////
 
@@ -58,10 +58,10 @@ namespace sf {
 #else
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
 #endif
-    NSWindow*                   myWindow;
-    SFOpenGLView*               myOGLView;
-    sf::priv::WindowImplCocoa*  myRequester;
-    sf::VideoMode*              myFullscreenMode; // Note : C++ ctor/dtor are not called for Obj-C fields.
+    NSWindow*                   m_window;
+    SFOpenGLView*               m_oglView;
+    sf::priv::WindowImplCocoa*  m_requester;
+    sf::VideoMode*              m_fullscreenMode; // Note : C++ ctor/dtor are not called for Obj-C fields.
 }
 
 ////////////////////////////////////////////////////////////

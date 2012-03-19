@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,37 +33,37 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool Mouse::IsButtonPressed(Button button)
+bool Mouse::isButtonPressed(Button button)
 {
-    return priv::InputImpl::IsMouseButtonPressed(button);
+    return priv::InputImpl::isMouseButtonPressed(button);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Mouse::GetPosition()
+Vector2i Mouse::getPosition()
 {
-    return priv::InputImpl::GetMousePosition();
+    return priv::InputImpl::getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Mouse::GetPosition(const Window& relativeTo)
+Vector2i Mouse::getPosition(const Window& relativeTo)
 {
-    return priv::InputImpl::GetMousePosition(relativeTo);
+    return priv::InputImpl::getMousePosition(relativeTo);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mouse::SetPosition(const Vector2i& position)
+void Mouse::setPosition(const Vector2i& position)
 {
-    priv::InputImpl::SetMousePosition(position);
+    priv::InputImpl::setMousePosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mouse::SetPosition(const Vector2i& position, const Window& relativeTo)
+void Mouse::setPosition(const Vector2i& position, const Window& relativeTo)
 {
-    priv::InputImpl::SetMousePosition(position, relativeTo);
+    priv::InputImpl::setMousePosition(position, relativeTo);
 }
 
 } // namespace sf

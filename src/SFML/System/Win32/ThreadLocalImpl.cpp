@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,28 +35,28 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::ThreadLocalImpl()
 {
-    myIndex = TlsAlloc();
+    m_index = TlsAlloc();
 }
 
 
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::~ThreadLocalImpl()
 {
-    TlsFree(myIndex);
+    TlsFree(m_index);
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadLocalImpl::SetValue(void* value)
+void ThreadLocalImpl::setValue(void* value)
 {
-    TlsSetValue(myIndex, value);
+    TlsSetValue(m_index, value);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadLocalImpl::GetValue() const
+void* ThreadLocalImpl::getValue() const
 {
-    return TlsGetValue(myIndex);
+    return TlsGetValue(m_index);
 }
 
 } // namespace priv

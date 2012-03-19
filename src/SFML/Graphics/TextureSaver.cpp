@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,14 +35,14 @@ namespace priv
 ////////////////////////////////////////////////////////////
 TextureSaver::TextureSaver()
 {
-    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &myTextureBinding));
+    glCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &m_textureBinding));
 }
 
 
 ////////////////////////////////////////////////////////////
 TextureSaver::~TextureSaver()
 {
-    GLCheck(glBindTexture(GL_TEXTURE_2D, myTextureBinding));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_textureBinding));
 }
 
 } // namespace priv

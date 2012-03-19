@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -49,12 +49,12 @@ namespace sf {
 /// The requester is a WindowImplCocoa. It's used to send back
 /// event via these functions :
 ///
-/// WindowClosed, WindowResized, WindowLostFocus, WindowGainedFocus
+/// windowClosed, windowResized, windowLostFocus, windowGainedFocus
 ///
-/// MouseDownAt, MouseUpAt, MouseMovedAt, MouseWheelScrolledAt,
-/// MouseMovedIn, MouseMovedOut
+/// mouseDownAt, mouseUpAt, mouseMovedAt, mouseWheelScrolledAt,
+/// mouseMovedIn, mouseMovedOut
 ///
-/// KeyDown, KeyUp, TextEntered
+/// keyDown, keyUp, textEntered
 ///
 /// Note : Joystick are not bound to a view or window 
 /// thus they're not managed by a class implementing this protocol.
@@ -90,10 +90,22 @@ namespace sf {
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y;
 
 ////////////////////////////////////////////////////////////
+/// Get window's position.
+///
+////////////////////////////////////////////////////////////
+-(NSPoint)position;
+
+////////////////////////////////////////////////////////////
 /// Move the window (not the view if we handle not a window) (SFML Coordinates).
 ///
 ////////////////////////////////////////////////////////////
 -(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y;
+
+////////////////////////////////////////////////////////////
+/// Get window's size.
+///
+////////////////////////////////////////////////////////////
+-(NSSize)size;
 
 ////////////////////////////////////////////////////////////
 /// Resize the window/view.

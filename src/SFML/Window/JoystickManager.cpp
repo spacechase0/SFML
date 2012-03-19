@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,7 +33,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-JoystickManager& JoystickManager::GetInstance()
+JoystickManager& JoystickManager::getInstance()
 {
     static JoystickManager instance;
     return instance;
@@ -41,48 +41,48 @@ JoystickManager& JoystickManager::GetInstance()
 
 
 ////////////////////////////////////////////////////////////
-const JoystickCaps& JoystickManager::GetCapabilities(unsigned int joystick) const
+const JoystickCaps& JoystickManager::getCapabilities(unsigned int joystick) const
 {
-    return myJoysticks[joystick].Capabilities;
+    return m_joysticks[joystick].capabilities;
 }
 
 
 ////////////////////////////////////////////////////////////
-const JoystickState& JoystickManager::GetState(unsigned int joystick) const
+const JoystickState& JoystickManager::getState(unsigned int joystick) const
 {
-    return myJoysticks[joystick].State;
+    return m_joysticks[joystick].state;
 }
 
 
 ////////////////////////////////////////////////////////////
-void JoystickManager::Update()
+void JoystickManager::update()
 {
     for (int i = 0; i < Joystick::Count; ++i)
     {
-        Item& item = myJoysticks[i];
+        Item& item = m_joysticks[i];
 
-        if (item.State.Connected)
+        if (item.state.connected)
         {
             // Get the current state of the joystick
-            item.State = item.Joystick.Update();
+            item.state = item.joystick.update();
 
             // Check if it's still connected
-            if (!item.State.Connected)
+            if (!item.state.connected)
             {
-                item.Joystick.Close();
-                item.Capabilities = JoystickCaps();
-                item.State = JoystickState();
+                item.joystick.close();
+                item.capabilities = JoystickCaps();
+                item.state = JoystickState();
             }
         }
         else
         {
             // Check if the joystick was connected since last update
-            if (JoystickImpl::IsConnected(i))
+            if (JoystickImpl::isConnected(i))
             {
-                if (item.Joystick.Open(i))
+                if (item.joystick.open(i))
                 {
-                    item.Capabilities = item.Joystick.GetCapabilities();
-                    item.State = item.Joystick.Update();
+                    item.capabilities = item.joystick.getCapabilities();
+                    item.state = item.joystick.update();
                 }
             }
         }
@@ -101,8 +101,8 @@ JoystickManager::~JoystickManager()
 {
     for (int i = 0; i < Joystick::Count; ++i)
     {
-        if (myJoysticks[i].State.Connected)
-            myJoysticks[i].Joystick.Close();
+        if (m_joysticks[i].state.connected)
+            m_joysticks[i].joystick.close();
     }
 }
 

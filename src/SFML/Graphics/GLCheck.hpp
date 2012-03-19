@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,18 +38,17 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL
-/// API calls
+/// Let's define a macro to quickly check every OpenGL API calls
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
     // In debug mode, perform a test on every OpenGL call
-    #define GLCheck(call) ((call), sf::priv::GLCheckError(__FILE__, __LINE__))
+    #define glCheck(call) ((call), sf::priv::glCheckError(__FILE__, __LINE__))
 
 #else
 
     // Else, we don't add any overhead
-    #define GLCheck(call) (call)
+    #define glCheck(call) (call)
 
 #endif
 
@@ -60,13 +59,13 @@ namespace priv
 /// \param line Line number of the source file where the call is located
 ///
 ////////////////////////////////////////////////////////////
-void GLCheckError(const std::string& file, unsigned int line);
+void glCheckError(const std::string& file, unsigned int line);
 
 ////////////////////////////////////////////////////////////
 /// \brief Make sure that GLEW is initialized
 ///
 ////////////////////////////////////////////////////////////
-void EnsureGlewInit();
+void ensureGlewInit();
 
 } // namespace priv
 

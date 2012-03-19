@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,26 +36,26 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Image::Image() :
-myWidth (0),
-myHeight(0)
+m_width (0),
+m_height(0)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-void Image::Create(unsigned int width, unsigned int height, const Color& color)
+void Image::create(unsigned int width, unsigned int height, const Color& color)
 {
     // Assign the new size
-    myWidth = width;
-    myHeight = height;
+    m_width = width;
+    m_height = height;
 
     // Resize the pixel buffer
-    myPixels.resize(width * height * 4);
+    m_pixels.resize(width * height * 4);
 
     // Fill it with the specified color
-    Uint8* ptr = &myPixels[0];
-    Uint8* end = ptr + myPixels.size();
+    Uint8* ptr = &m_pixels[0];
+    Uint8* end = ptr + m_pixels.size();
     while (ptr < end)
     {
         *ptr++ = color.r;
@@ -67,80 +67,80 @@ void Image::Create(unsigned int width, unsigned int height, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Image::Create(unsigned int width, unsigned int height, const Uint8* pixels)
+void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     if (pixels)
     {
         // Assign the new size
-        myWidth = width;
-        myHeight = height;
+        m_width = width;
+        m_height = height;
 
         // Copy the pixels
         std::size_t size = width * height * 4;
-        myPixels.resize(size);
-        std::memcpy(&myPixels[0], pixels, size); // faster than vector::assign
+        m_pixels.resize(size);
+        std::memcpy(&m_pixels[0], pixels, size); // faster than vector::assign
     }
     else
     {
         // Create an empty image
-        myWidth = 0;
-        myHeight = 0;
-        myPixels.clear();
+        m_width = 0;
+        m_height = 0;
+        m_pixels.clear();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromFile(const std::string& filename)
+bool Image::loadFromFile(const std::string& filename)
 {
-    return priv::ImageLoader::GetInstance().LoadImageFromFile(filename, myPixels, myWidth, myHeight);
+    return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromMemory(const void* data, std::size_t size)
+bool Image::loadFromMemory(const void* data, std::size_t size)
 {
-    return priv::ImageLoader::GetInstance().LoadImageFromMemory(data, size, myPixels, myWidth, myHeight);
+    return priv::ImageLoader::getInstance().loadImageFromMemory(data, size, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::LoadFromStream(InputStream& stream)
+bool Image::loadFromStream(InputStream& stream)
 {
-    return priv::ImageLoader::GetInstance().LoadImageFromStream(stream, myPixels, myWidth, myHeight);
+    return priv::ImageLoader::getInstance().loadImageFromStream(stream, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::SaveToFile(const std::string& filename) const
+bool Image::saveToFile(const std::string& filename) const
 {
-    return priv::ImageLoader::GetInstance().SaveImageToFile(filename, myPixels, myWidth, myHeight);
+    return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_width, m_height);
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Image::GetWidth() const
+unsigned int Image::getWidth() const
 {
-    return myWidth;
+    return m_width;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Image::GetHeight() const
+unsigned int Image::getHeight() const
 {
-    return myHeight;
+    return m_height;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
+void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 {
     // Make sure that the image is not empty
-    if (!myPixels.empty())
+    if (!m_pixels.empty())
     {
         // Replace the alpha of the pixels that match the transparent color
-        Uint8* ptr = &myPixels[0];
-        Uint8* end = ptr + myPixels.size();
+        Uint8* ptr = &m_pixels[0];
+        Uint8* end = ptr + m_pixels.size();
         while (ptr < end)
         {
             if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))
@@ -152,34 +152,34 @@ void Image::CreateMaskFromColor(const Color& color, Uint8 alpha)
 
 
 ////////////////////////////////////////////////////////////
-void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
+void Image::copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
-    if ((source.myWidth == 0) || (source.myHeight == 0) || (myWidth == 0) || (myHeight == 0))
+    if ((source.m_width == 0) || (source.m_height == 0) || (m_width == 0) || (m_height == 0))
         return;
 
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
-    if (srcRect.Width == 0 || (srcRect.Height == 0))
+    if (srcRect.width == 0 || (srcRect.height == 0))
     {
-        srcRect.Left   = 0;
-        srcRect.Top    = 0;
-        srcRect.Width  = source.myWidth;
-        srcRect.Height = source.myHeight;
+        srcRect.left   = 0;
+        srcRect.top    = 0;
+        srcRect.width  = source.m_width;
+        srcRect.height = source.m_height;
     }
     else
     {
-        if (srcRect.Left   < 0) srcRect.Left = 0;
-        if (srcRect.Top    < 0) srcRect.Top  = 0;
-        if (srcRect.Width  > static_cast<int>(source.myWidth))  srcRect.Width  = source.myWidth;
-        if (srcRect.Height > static_cast<int>(source.myHeight)) srcRect.Height = source.myHeight;
+        if (srcRect.left   < 0) srcRect.left = 0;
+        if (srcRect.top    < 0) srcRect.top  = 0;
+        if (srcRect.width  > static_cast<int>(source.m_width))  srcRect.width  = source.m_width;
+        if (srcRect.height > static_cast<int>(source.m_height)) srcRect.height = source.m_height;
     }
 
     // Then find the valid bounds of the destination rectangle
-    int width  = srcRect.Width;
-    int height = srcRect.Height;
-    if (destX + width  > myWidth)  width  = myWidth  - destX;
-    if (destY + height > myHeight) height = myHeight - destY;
+    int width  = srcRect.width;
+    int height = srcRect.height;
+    if (destX + width  > m_width)  width  = m_width  - destX;
+    if (destY + height > m_height) height = m_height - destY;
 
     // Make sure the destination area is valid
     if ((width <= 0) || (height <= 0))
@@ -188,10 +188,10 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
     // Precompute as much as possible
     int          pitch     = width * 4;
     int          rows      = height;
-    int          srcStride = source.myWidth * 4;
-    int          dstStride = myWidth * 4;
-    const Uint8* srcPixels = &source.myPixels[0] + (srcRect.Left + srcRect.Top * source.myWidth) * 4;
-    Uint8*       dstPixels = &myPixels[0] + (destX + destY * myWidth) * 4;
+    int          srcStride = source.m_width * 4;
+    int          dstStride = m_width * 4;
+    const Uint8* srcPixels = &source.m_pixels[0] + (srcRect.left + srcRect.top * source.m_width) * 4;
+    Uint8*       dstPixels = &m_pixels[0] + (destX + destY * m_width) * 4;
 
     // Copy the pixels
     if (applyAlpha)
@@ -231,9 +231,9 @@ void Image::Copy(const Image& source, unsigned int destX, unsigned int destY, co
 
 
 ////////////////////////////////////////////////////////////
-void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
+void Image::setPixel(unsigned int x, unsigned int y, const Color& color)
 {
-    Uint8* pixel = &myPixels[(x + y * myWidth) * 4];
+    Uint8* pixel = &m_pixels[(x + y * m_width) * 4];
     *pixel++ = color.r;
     *pixel++ = color.g;
     *pixel++ = color.b;
@@ -242,39 +242,39 @@ void Image::SetPixel(unsigned int x, unsigned int y, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-Color Image::GetPixel(unsigned int x, unsigned int y) const
+Color Image::getPixel(unsigned int x, unsigned int y) const
 {
-    const Uint8* pixel = &myPixels[(x + y * myWidth) * 4];
+    const Uint8* pixel = &m_pixels[(x + y * m_width) * 4];
     return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Uint8* Image::GetPixelsPtr() const
+const Uint8* Image::getPixelsPtr() const
 {
-    if (!myPixels.empty())
+    if (!m_pixels.empty())
     {
-        return &myPixels[0];
+        return &m_pixels[0];
     }
     else
     {
-        Err() << "Trying to access the pixels of an empty image" << std::endl;
+        err() << "Trying to access the pixels of an empty image" << std::endl;
         return NULL;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Image::FlipHorizontally()
+void Image::flipHorizontally()
 {
-    if (!myPixels.empty())
+    if (!m_pixels.empty())
     {
-        std::vector<Uint8> before = myPixels;
-        for (unsigned int y = 0; y < myHeight; ++y)
+        std::vector<Uint8> before = m_pixels;
+        for (unsigned int y = 0; y < m_height; ++y)
         {
-            const Uint8* source = &before[y * myWidth * 4];
-            Uint8* dest = &myPixels[(y + 1) * myWidth * 4 - 4];
-            for (unsigned int x = 0; x < myWidth; ++x)
+            const Uint8* source = &before[y * m_width * 4];
+            Uint8* dest = &m_pixels[(y + 1) * m_width * 4 - 4];
+            for (unsigned int x = 0; x < m_width; ++x)
             {
                 dest[0] = source[0];
                 dest[1] = source[1];
@@ -290,16 +290,16 @@ void Image::FlipHorizontally()
 
 
 ////////////////////////////////////////////////////////////
-void Image::FlipVertically()
+void Image::flipVertically()
 {
-    if (!myPixels.empty())
+    if (!m_pixels.empty())
     {
-        std::vector<Uint8> before = myPixels;
-        const Uint8* source = &before[myWidth * (myHeight - 1) * 4];
-        Uint8* dest = &myPixels[0];
-        std::size_t rowSize = myWidth * 4;
+        std::vector<Uint8> before = m_pixels;
+        const Uint8* source = &before[m_width * (m_height - 1) * 4];
+        Uint8* dest = &m_pixels[0];
+        std::size_t rowSize = m_width * 4;
 
-        for (unsigned int y = 0; y < myHeight; ++y)
+        for (unsigned int y = 0; y < m_height; ++y)
         {
             std::memcpy(dest, source, rowSize);
             source -= rowSize;

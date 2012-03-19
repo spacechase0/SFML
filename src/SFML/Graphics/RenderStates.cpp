@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,61 +37,61 @@ const RenderStates RenderStates::Default;
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates() :
-BlendMode(BlendAlpha),
-Transform(),
-Texture  (NULL),
-Shader   (NULL)
+blendMode(BlendAlpha),
+transform(),
+texture  (NULL),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const sf::Transform& transform) :
-BlendMode(BlendAlpha),
-Transform(transform),
-Texture  (NULL),
-Shader   (NULL)
+RenderStates::RenderStates(const Transform& theTransform) :
+blendMode(BlendAlpha),
+transform(theTransform),
+texture  (NULL),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(sf::BlendMode blendMode) :
-BlendMode(blendMode),
-Transform(),
-Texture  (NULL),
-Shader   (NULL)
+RenderStates::RenderStates(BlendMode theBlendMode) :
+blendMode(theBlendMode),
+transform(),
+texture  (NULL),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const sf::Texture* texture) :
-BlendMode(BlendAlpha),
-Transform(),
-Texture  (texture),
-Shader   (NULL)
+RenderStates::RenderStates(const Texture* theTexture) :
+blendMode(BlendAlpha),
+transform(),
+texture  (theTexture),
+shader   (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const sf::Shader* shader) :
-BlendMode(BlendAlpha),
-Transform(),
-Texture  (NULL),
-Shader   (shader)
+RenderStates::RenderStates(const Shader* theShader) :
+blendMode(BlendAlpha),
+transform(),
+texture  (NULL),
+shader   (theShader)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(sf::BlendMode blendMode, const sf::Transform& transform,
-                           const sf::Texture* texture, const sf::Shader* shader) :
-BlendMode(blendMode),
-Transform(transform),
-Texture  (texture),
-Shader   (shader)
+RenderStates::RenderStates(BlendMode theBlendMode, const Transform& theTransform,
+                           const Texture* theTexture, const Shader* theShader) :
+blendMode(theBlendMode),
+transform(theTransform),
+texture  (theTexture),
+shader   (theShader)
 {
 }
 

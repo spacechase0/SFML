@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,7 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTexture::RenderTexture() :
-myImpl(NULL)
+m_impl(NULL)
 {
 
 }
@@ -44,105 +44,98 @@ myImpl(NULL)
 ////////////////////////////////////////////////////////////
 RenderTexture::~RenderTexture()
 {
-    delete myImpl;
+    delete m_impl;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::Create(unsigned int width, unsigned int height, bool depthBuffer)
+bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
 {
     // Create the texture
-    if (!myTexture.Create(width, height))
+    if (!m_texture.create(width, height))
     {
-        Err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
+        err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
     }
 
     // We disable smoothing by default for render textures
-    SetSmooth(false);
+    setSmooth(false);
 
     // Create the implementation
-    delete myImpl;
-    if (priv::RenderTextureImplFBO::IsAvailable())
+    delete m_impl;
+    if (priv::RenderTextureImplFBO::isAvailable())
     {
         // Use frame-buffer object (FBO)
-        myImpl = new priv::RenderTextureImplFBO;
+        m_impl = new priv::RenderTextureImplFBO;
     }
     else
     {
         // Use default implementation
-        myImpl = new priv::RenderTextureImplDefault;
+        m_impl = new priv::RenderTextureImplDefault;
     }
 
     // Initialize the render texture
-    if (!myImpl->Create(width, height, myTexture.myTexture, depthBuffer))
+    if (!m_impl->create(width, height, m_texture.m_texture, depthBuffer))
         return false;
 
     // We can now initialize the render target part
-    RenderTarget::Initialize();
+    RenderTarget::initialize();
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTexture::SetSmooth(bool smooth)
+void RenderTexture::setSmooth(bool smooth)
 {
-    myTexture.SetSmooth(smooth);
+    m_texture.setSmooth(smooth);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::IsSmooth() const
+bool RenderTexture::isSmooth() const
 {
-    return myTexture.IsSmooth();
+    return m_texture.isSmooth();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::SetActive(bool active)
+bool RenderTexture::setActive(bool active)
 {
-    return myImpl && myImpl->Activate(active);
+    return m_impl && m_impl->activate(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTexture::Display()
+void RenderTexture::display()
 {
     // Update the target texture
-    if (SetActive(true))
+    if (setActive(true))
     {
-        myImpl->UpdateTexture(myTexture.myTexture);
-        myTexture.myPixelsFlipped = true;
+        m_impl->updateTexture(m_texture.m_texture);
+        m_texture.m_pixelsFlipped = true;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderTexture::GetWidth() const
+Vector2u RenderTexture::getSize() const
 {
-    return myTexture.GetWidth();
+    return Vector2u(m_texture.getWidth(), m_texture.getHeight());
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderTexture::GetHeight() const
+const Texture& RenderTexture::getTexture() const
 {
-    return myTexture.GetHeight();
+    return m_texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Texture& RenderTexture::GetTexture() const
+bool RenderTexture::activate(bool active)
 {
-    return myTexture;
-}
-
-
-////////////////////////////////////////////////////////////
-bool RenderTexture::Activate(bool active)
-{
-    return SetActive(active);
+    return setActive(active);
 }
 
 } // namespace sf

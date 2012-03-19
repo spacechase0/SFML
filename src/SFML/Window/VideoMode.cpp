@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,41 +35,41 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 VideoMode::VideoMode() :
-Width       (0),
-Height      (0),
-BitsPerPixel(0)
+width       (0),
+height      (0),
+bitsPerPixel(0)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode::VideoMode(unsigned int width, unsigned int height, unsigned int bitsPerPixel) :
-Width       (width),
-Height      (height),
-BitsPerPixel(bitsPerPixel)
+VideoMode::VideoMode(unsigned int modeWidth, unsigned int modeHeight, unsigned int modeBitsPerPixel) :
+width       (modeWidth),
+height      (modeHeight),
+bitsPerPixel(modeBitsPerPixel)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoMode::GetDesktopMode()
+VideoMode VideoMode::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return priv::VideoModeImpl::GetDesktopMode();
+    return priv::VideoModeImpl::getDesktopMode();
 }
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<VideoMode>& VideoMode::GetFullscreenModes()
+const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 {
     static std::vector<VideoMode> modes;
 
     // Populate the array on first call
     if (modes.empty())
     {
-        modes = priv::VideoModeImpl::GetFullscreenModes();
+        modes = priv::VideoModeImpl::getFullscreenModes();
         std::sort(modes.begin(), modes.end(), std::greater<VideoMode>());
     }
 
@@ -78,9 +78,9 @@ const std::vector<VideoMode>& VideoMode::GetFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-bool VideoMode::IsValid() const
+bool VideoMode::isValid() const
 {
-    const std::vector<VideoMode>& modes = GetFullscreenModes();
+    const std::vector<VideoMode>& modes = getFullscreenModes();
 
     return std::find(modes.begin(), modes.end(), *this) != modes.end();
 }
@@ -89,9 +89,9 @@ bool VideoMode::IsValid() const
 ////////////////////////////////////////////////////////////
 bool operator ==(const VideoMode& left, const VideoMode& right)
 {
-    return (left.Width        == right.Width)        &&
-           (left.Height       == right.Height)       &&
-           (left.BitsPerPixel == right.BitsPerPixel);
+    return (left.width        == right.width)        &&
+           (left.height       == right.height)       &&
+           (left.bitsPerPixel == right.bitsPerPixel);
 }
 
 
@@ -105,20 +105,20 @@ bool operator !=(const VideoMode& left, const VideoMode& right)
 ////////////////////////////////////////////////////////////
 bool operator <(const VideoMode& left, const VideoMode& right)
 {
-    if (left.BitsPerPixel == right.BitsPerPixel)
+    if (left.bitsPerPixel == right.bitsPerPixel)
     {
-        if (left.Width == right.Width)
+        if (left.width == right.width)
         {
-            return left.Height < right.Height;
+            return left.height < right.height;
         }
         else
         {
-            return left.Width < right.Width;
+            return left.width < right.width;
         }
     }
     else
     {
-        return left.BitsPerPixel < right.BitsPerPixel;
+        return left.bitsPerPixel < right.bitsPerPixel;
     }
 }
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,7 +35,7 @@
 namespace
 {
     // Convert a string to lower case
-    std::string ToLower(std::string str)
+    std::string toLower(std::string str)
     {
         for (std::string::iterator i = str.begin(); i != str.end(); ++i)
             *i = static_cast<char>(std::tolower(*i));
@@ -49,61 +49,61 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Http::Request::Request(const std::string& uri, Method method, const std::string& body)
 {
-    SetMethod(method);
-    SetUri(uri);
-    SetHttpVersion(1, 0);
-    SetBody(body);
+    setMethod(method);
+    setUri(uri);
+    setHttpVersion(1, 0);
+    setBody(body);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::Request::SetField(const std::string& field, const std::string& value)
+void Http::Request::setField(const std::string& field, const std::string& value)
 {
-    myFields[ToLower(field)] = value;
+    m_fields[toLower(field)] = value;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::Request::SetMethod(Http::Request::Method method)
+void Http::Request::setMethod(Http::Request::Method method)
 {
-    myMethod = method;
+    m_method = method;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::Request::SetUri(const std::string& uri)
+void Http::Request::setUri(const std::string& uri)
 {
-    myURI = uri;
+    m_uri = uri;
 
     // Make sure it starts with a '/'
-    if (myURI.empty() || (myURI[0] != '/'))
-        myURI.insert(0, "/");
+    if (m_uri.empty() || (m_uri[0] != '/'))
+        m_uri.insert(0, "/");
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::Request::SetHttpVersion(unsigned int major, unsigned int minor)
+void Http::Request::setHttpVersion(unsigned int major, unsigned int minor)
 {
-    myMajorVersion = major;
-    myMinorVersion = minor;
+    m_majorVersion = major;
+    m_minorVersion = minor;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::Request::SetBody(const std::string& body)
+void Http::Request::setBody(const std::string& body)
 {
-    myBody = body;
+    m_body = body;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::string Http::Request::Prepare() const
+std::string Http::Request::prepare() const
 {
     std::ostringstream out;
 
     // Convert the method to its string representation
     std::string method;
-    switch (myMethod)
+    switch (m_method)
     {
         default :
         case Get :  method = "GET";  break;
@@ -112,11 +112,11 @@ std::string Http::Request::Prepare() const
     }
 
     // Write the first line containing the request type
-    out << method << " " << myURI << " ";
-    out << "HTTP/" << myMajorVersion << "." << myMinorVersion << "\r\n";
+    out << method << " " << m_uri << " ";
+    out << "HTTP/" << m_majorVersion << "." << m_minorVersion << "\r\n";
 
     // Write fields
-    for (FieldTable::const_iterator i = myFields.begin(); i != myFields.end(); ++i)
+    for (FieldTable::const_iterator i = m_fields.begin(); i != m_fields.end(); ++i)
     {
         out << i->first << ": " << i->second << "\r\n";
     }
@@ -125,34 +125,34 @@ std::string Http::Request::Prepare() const
     out << "\r\n";
 
     // Add the body
-    out << myBody;
+    out << m_body;
 
     return out.str();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Http::Request::HasField(const std::string& field) const
+bool Http::Request::hasField(const std::string& field) const
 {
-    return myFields.find(ToLower(field)) != myFields.end();
+    return m_fields.find(toLower(field)) != m_fields.end();
 }
 
 
 ////////////////////////////////////////////////////////////
 Http::Response::Response() :
-myStatus      (ConnectionFailed),
-myMajorVersion(0),
-myMinorVersion(0)
+m_status      (ConnectionFailed),
+m_majorVersion(0),
+m_minorVersion(0)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-const std::string& Http::Response::GetField(const std::string& field) const
+const std::string& Http::Response::getField(const std::string& field) const
 {
-    FieldTable::const_iterator it = myFields.find(ToLower(field));
-    if (it != myFields.end())
+    FieldTable::const_iterator it = m_fields.find(toLower(field));
+    if (it != m_fields.end())
     {
         return it->second;
     }
@@ -165,35 +165,35 @@ const std::string& Http::Response::GetField(const std::string& field) const
 
 
 ////////////////////////////////////////////////////////////
-Http::Response::Status Http::Response::GetStatus() const
+Http::Response::Status Http::Response::getStatus() const
 {
-    return myStatus;
+    return m_status;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Http::Response::GetMajorHttpVersion() const
+unsigned int Http::Response::getMajorHttpVersion() const
 {
-    return myMajorVersion;
+    return m_majorVersion;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Http::Response::GetMinorHttpVersion() const
+unsigned int Http::Response::getMinorHttpVersion() const
 {
-    return myMinorVersion;
+    return m_minorVersion;
 }
 
 
 ////////////////////////////////////////////////////////////
-const std::string& Http::Response::GetBody() const
+const std::string& Http::Response::getBody() const
 {
-    return myBody;
+    return m_body;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::Response::Parse(const std::string& data)
+void Http::Response::parse(const std::string& data)
 {
     std::istringstream in(data);
 
@@ -202,16 +202,16 @@ void Http::Response::Parse(const std::string& data)
     if (in >> version)
     {
         if ((version.size() >= 8) && (version[6] == '.') &&
-            (ToLower(version.substr(0, 5)) == "http/")   &&
+            (toLower(version.substr(0, 5)) == "http/")   &&
              isdigit(version[5]) && isdigit(version[7]))
         {
-            myMajorVersion = version[5] - '0';
-            myMinorVersion = version[7] - '0';
+            m_majorVersion = version[5] - '0';
+            m_minorVersion = version[7] - '0';
         }
         else
         {
             // Invalid HTTP version
-            myStatus = InvalidResponse;
+            m_status = InvalidResponse;
             return;
         }
     }
@@ -220,12 +220,12 @@ void Http::Response::Parse(const std::string& data)
     int status;
     if (in >> status)
     {
-        myStatus = static_cast<Status>(status);
+        m_status = static_cast<Status>(status);
     }
     else
     {
         // Invalid status code
-        myStatus = InvalidResponse;
+        m_status = InvalidResponse;
         return;
     }
 
@@ -248,20 +248,20 @@ void Http::Response::Parse(const std::string& data)
                 value.erase(value.size() - 1);
 
             // Add the field
-            myFields[ToLower(field)] = value;
+            m_fields[toLower(field)] = value;
         }
     }
 
     // Finally extract the body
-    myBody.clear();
-    std::copy(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>(), std::back_inserter(myBody));
+    m_body.clear();
+    std::copy(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>(), std::back_inserter(m_body));
 }
 
 
 ////////////////////////////////////////////////////////////
 Http::Http() :
-myHost(),
-myPort(0)
+m_host(),
+m_port(0)
 {
 
 }
@@ -270,104 +270,104 @@ myPort(0)
 ////////////////////////////////////////////////////////////
 Http::Http(const std::string& host, unsigned short port)
 {
-    SetHost(host, port);
+    setHost(host, port);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Http::SetHost(const std::string& host, unsigned short port)
+void Http::setHost(const std::string& host, unsigned short port)
 {
     // Detect the protocol used
-    std::string protocol = ToLower(host.substr(0, 8));
+    std::string protocol = toLower(host.substr(0, 8));
     if (protocol.substr(0, 7) == "http://")
     {
         // HTTP protocol
-        myHostName = host.substr(7);
-        myPort     = (port != 0 ? port : 80);
+        m_hostName = host.substr(7);
+        m_port     = (port != 0 ? port : 80);
     }
     else if (protocol == "https://")
     {
         // HTTPS protocol
-        myHostName = host.substr(8);
-        myPort     = (port != 0 ? port : 443);
+        m_hostName = host.substr(8);
+        m_port     = (port != 0 ? port : 443);
     }
     else
     {
         // Undefined protocol - use HTTP
-        myHostName = host;
-        myPort     = (port != 0 ? port : 80);
+        m_hostName = host;
+        m_port     = (port != 0 ? port : 80);
     }
 
     // Remove any trailing '/' from the host name
-    if (!myHostName.empty() && (*myHostName.rbegin() == '/'))
-        myHostName.erase(myHostName.size() - 1);
+    if (!m_hostName.empty() && (*m_hostName.rbegin() == '/'))
+        m_hostName.erase(m_hostName.size() - 1);
 
-    myHost = IpAddress(myHostName);
+    m_host = IpAddress(m_hostName);
 }
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::SendRequest(const Http::Request& request, Time timeout)
+Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);
-    if (!toSend.HasField("From"))
+    if (!toSend.hasField("From"))
     {
-        toSend.SetField("From", "user@sfml-dev.org");
+        toSend.setField("From", "user@sfml-dev.org");
     }
-    if (!toSend.HasField("User-Agent"))
+    if (!toSend.hasField("User-Agent"))
     {
-        toSend.SetField("User-Agent", "libsfml-network/2.x");
+        toSend.setField("User-Agent", "libsfml-network/2.x");
     }
-    if (!toSend.HasField("Host"))
+    if (!toSend.hasField("Host"))
     {
-        toSend.SetField("Host", myHostName);
+        toSend.setField("Host", m_hostName);
     }
-    if (!toSend.HasField("Content-Length"))
+    if (!toSend.hasField("Content-Length"))
     {
         std::ostringstream out;
-        out << toSend.myBody.size();
-        toSend.SetField("Content-Length", out.str());
+        out << toSend.m_body.size();
+        toSend.setField("Content-Length", out.str());
     }
-    if ((toSend.myMethod == Request::Post) && !toSend.HasField("Content-Type"))
+    if ((toSend.m_method == Request::Post) && !toSend.hasField("Content-Type"))
     {
-        toSend.SetField("Content-Type", "application/x-www-form-urlencoded");
+        toSend.setField("Content-Type", "application/x-www-form-urlencoded");
     }
-    if ((toSend.myMajorVersion * 10 + toSend.myMinorVersion >= 11) && !toSend.HasField("Connection"))
+    if ((toSend.m_majorVersion * 10 + toSend.m_minorVersion >= 11) && !toSend.hasField("Connection"))
     {
-        toSend.SetField("Connection", "close");
+        toSend.setField("Connection", "close");
     }
 
     // Prepare the response
     Response received;
 
     // Connect the socket to the host
-    if (myConnection.Connect(myHost, myPort, timeout) == Socket::Done)
+    if (m_connection.connect(m_host, m_port, timeout) == Socket::Done)
     {
         // Convert the request to string and send it through the connected socket
-        std::string requestStr = toSend.Prepare();
+        std::string requestStr = toSend.prepare();
 
         if (!requestStr.empty())
         {
             // Send it through the socket
-            if (myConnection.Send(requestStr.c_str(), requestStr.size()) == Socket::Done)
+            if (m_connection.send(requestStr.c_str(), requestStr.size()) == Socket::Done)
             {
                 // Wait for the server's response
                 std::string receivedStr;
                 std::size_t size = 0;
                 char buffer[1024];
-                while (myConnection.Receive(buffer, sizeof(buffer), size) == Socket::Done)
+                while (m_connection.receive(buffer, sizeof(buffer), size) == Socket::Done)
                 {
                     receivedStr.append(buffer, buffer + size);
                 }
 
                 // Build the Response object from the received data
-                received.Parse(receivedStr);
+                received.parse(receivedStr);
             }
         }
 
         // Close the connection
-        myConnection.Disconnect();
+        m_connection.disconnect();
     }
 
     return received;

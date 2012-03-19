@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -39,48 +39,48 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner)
 {
-    myThread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::EntryPoint, owner, 0, &myThreadId));
+    m_thread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::entryPoint, owner, 0, &m_threadId));
 
-    if (!myThread)
-        Err() << "Failed to create thread" << std::endl;
+    if (!m_thread)
+        err() << "Failed to create thread" << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////////
 ThreadImpl::~ThreadImpl()
 {
-    if (myThread)
-        CloseHandle(myThread);
+    if (m_thread)
+        CloseHandle(m_thread);
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Wait()
+void ThreadImpl::wait()
 {
-    if (myThread)
+    if (m_thread)
     {
-        assert(myThreadId != GetCurrentThreadId()); // A thread cannot wait for itself!
-        WaitForSingleObject(myThread, INFINITE);
+        assert(m_threadId != GetCurrentThreadId()); // A thread cannot wait for itself!
+        WaitForSingleObject(m_thread, INFINITE);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Terminate()
+void ThreadImpl::terminate()
 {
-    if (myThread)
-        TerminateThread(myThread, 0);
+    if (m_thread)
+        TerminateThread(m_thread, 0);
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int __stdcall ThreadImpl::EntryPoint(void* userData)
+unsigned int __stdcall ThreadImpl::entryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
     Thread* owner = static_cast<Thread*>(userData);
 
     // Forward to the owner
-    owner->Run();
+    owner->run();
 
     // Optional, but it is cleaner
     _endthreadex(0);

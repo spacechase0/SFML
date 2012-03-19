@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -60,7 +60,7 @@ public :
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -70,7 +70,7 @@ public :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active) = 0;
+    virtual bool activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -78,7 +78,7 @@ public :
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UpdateTexture(unsigned int textureId) = 0;
+    virtual void updateTexture(unsigned int textureId) = 0;
 };
 
 } // namespace priv

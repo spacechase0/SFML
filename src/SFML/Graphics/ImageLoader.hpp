@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -53,7 +53,7 @@ public :
     /// \return Reference to the ImageLoader instance
     ///
     ////////////////////////////////////////////////////////////
-    static ImageLoader& GetInstance();
+    static ImageLoader& getInstance();
 
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a file on disk
@@ -66,7 +66,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
+    bool loadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a file in memory
@@ -80,7 +80,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromMemory(const void* data, std::size_t size, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
+    bool loadImageFromMemory(const void* data, std::size_t size, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a custom stream
@@ -93,7 +93,7 @@ public :
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool LoadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
+    bool loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height);
 
     ////////////////////////////////////////////////////////////
     /// \bref Save an array of pixels as an image file
@@ -106,7 +106,7 @@ public :
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool SaveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
+    bool saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 
 private :
 
@@ -133,7 +133,7 @@ private :
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool WriteJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
+    bool writeJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 };
 
 } // namespace priv

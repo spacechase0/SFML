@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -33,7 +33,7 @@
     std::string utf8;
     utf8.reserve(string.size() + 1);
     
-    sf::Utf8::FromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
+    sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
     
     NSString *str = [NSString stringWithCString:utf8.c_str() 
                                        encoding:NSUTF8StringEncoding];

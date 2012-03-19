@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,15 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/ThreadLocal.hpp>
 
-
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/System/Win32/ThreadLocalImpl.hpp>
-
 #else
-
     #include <SFML/System/Unix/ThreadLocalImpl.hpp>
-
 #endif
 
 
@@ -44,29 +39,29 @@ namespace sf
 ////////////////////////////////////////////////////////////
 ThreadLocal::ThreadLocal(void* value)
 {
-    myImpl = new priv::ThreadLocalImpl;
-    SetValue(value);
+    m_impl = new priv::ThreadLocalImpl;
+    setValue(value);
 }
 
 
 ////////////////////////////////////////////////////////////
 ThreadLocal::~ThreadLocal()
 {
-    delete myImpl;
+    delete m_impl;
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadLocal::SetValue(void* value)
+void ThreadLocal::setValue(void* value)
 {
-    myImpl->SetValue(value);
+    m_impl->setValue(value);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadLocal::GetValue() const
+void* ThreadLocal::getValue() const
 {
-    return myImpl->GetValue();
+    return m_impl->getValue();
 }
 
 } // namespace sf

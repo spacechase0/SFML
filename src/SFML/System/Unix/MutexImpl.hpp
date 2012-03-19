@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -59,20 +59,20 @@ public :
     /// \brief Lock the mutex
     ///
     ////////////////////////////////////////////////////////////
-    void Lock();
+    void lock();
 
     ////////////////////////////////////////////////////////////
     /// \brief Unlock the mutex
     ///
     ////////////////////////////////////////////////////////////
-    void Unlock();
+    void unlock();
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_mutex_t myMutex; ///< pthread handle of the mutex
+    pthread_mutex_t m_mutex; ///< pthread handle of the mutex
 };
 
 } // namespace priv

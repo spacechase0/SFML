@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,28 +35,28 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::ThreadLocalImpl()
 {
-    pthread_key_create(&myKey, NULL);
+    pthread_key_create(&m_key, NULL);
 }
 
 
 ////////////////////////////////////////////////////////////
 ThreadLocalImpl::~ThreadLocalImpl()
 {
-    pthread_key_delete(myKey);
+    pthread_key_delete(m_key);
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadLocalImpl::SetValue(void* value)
+void ThreadLocalImpl::setValue(void* value)
 {
-    pthread_setspecific(myKey, value);
+    pthread_setspecific(m_key, value);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadLocalImpl::GetValue() const
+void* ThreadLocalImpl::getValue() const
 {
-    return pthread_getspecific(myKey);
+    return pthread_getspecific(m_key);
 }
 
 } // namespace priv

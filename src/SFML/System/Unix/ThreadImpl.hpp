@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -57,13 +57,13 @@ public :
     /// \brief Wait until the thread finishes
     ///
     ////////////////////////////////////////////////////////////
-    void Wait();
+    void wait();
 
     ////////////////////////////////////////////////////////////
     /// \brief Terminate the thread
     ///
     ////////////////////////////////////////////////////////////
-    void Terminate();
+    void terminate();
 
 private :
 
@@ -75,13 +75,13 @@ private :
     /// \return Os specific error code
     ///
     ////////////////////////////////////////////////////////////
-    static void* EntryPoint(void* userData);
+    static void* entryPoint(void* userData);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    pthread_t myThread;   ///< pthread thread instance
-    bool      myIsActive; ///< Thread state (active or inactive)
+    pthread_t m_thread;   ///< pthread thread instance
+    bool      m_isActive; ///< Thread state (active or inactive)
 };
 
 } // namespace priv

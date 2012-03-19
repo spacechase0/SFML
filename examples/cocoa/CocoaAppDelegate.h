@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -38,13 +38,13 @@ struct SFMLmainWindow;
 
 @interface CocoaAppDelegate : NSObject <NSApplicationDelegate> {
 @private
-    NSWindow        *_window;
-    NSView          *_sfmlView;
-    NSTextField     *_textField;
-    SFMLmainWindow  *_mainWindow;
-    NSTimer         *_renderTimer;
-    BOOL             _visible;
-    BOOL             _initialized;
+    NSWindow        *m_window;
+    NSView          *m_sfmlView;
+    NSTextField     *m_textField;
+    SFMLmainWindow  *m_mainWindow;
+    NSTimer         *m_renderTimer;
+    BOOL             m_visible;
+    BOOL             m_initialized;
 }
 
 @property (retain) IBOutlet NSWindow    *window;

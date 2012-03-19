@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,78 +32,78 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-void Listener::SetGlobalVolume(float volume)
+void Listener::setGlobalVolume(float volume)
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
-    ALCheck(alListenerf(AL_GAIN, volume * 0.01f));
+    alCheck(alListenerf(AL_GAIN, volume * 0.01f));
 }
 
 
 ////////////////////////////////////////////////////////////
-float Listener::GetGlobalVolume()
+float Listener::getGlobalVolume()
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
     float volume = 0.f;
-    ALCheck(alGetListenerf(AL_GAIN, &volume));
+    alCheck(alGetListenerf(AL_GAIN, &volume));
 
     return volume * 100;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Listener::SetPosition(float x, float y, float z)
+void Listener::setPosition(float x, float y, float z)
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
-    ALCheck(alListener3f(AL_POSITION, x, y, z));
+    alCheck(alListener3f(AL_POSITION, x, y, z));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Listener::SetPosition(const Vector3f& position)
+void Listener::setPosition(const Vector3f& position)
 {
-    SetPosition(position.x, position.y, position.z);
+    setPosition(position.x, position.y, position.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f Listener::GetPosition()
+Vector3f Listener::getPosition()
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
     Vector3f position;
-    ALCheck(alGetListener3f(AL_POSITION, &position.x, &position.y, &position.z));
+    alCheck(alGetListener3f(AL_POSITION, &position.x, &position.y, &position.z));
 
     return position;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Listener::SetDirection(float x, float y, float z)
+void Listener::setDirection(float x, float y, float z)
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
     float orientation[] = {x, y, z, 0.f, 1.f, 0.f};
-    ALCheck(alListenerfv(AL_ORIENTATION, orientation));
+    alCheck(alListenerfv(AL_ORIENTATION, orientation));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Listener::SetDirection(const Vector3f& direction)
+void Listener::setDirection(const Vector3f& direction)
 {
-    SetDirection(direction.x, direction.y, direction.z);
+    setDirection(direction.x, direction.y, direction.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f Listener::GetDirection()
+Vector3f Listener::getDirection()
 {
-    priv::EnsureALInit();
+    priv::ensureALInit();
 
     float orientation[6];
-    ALCheck(alGetListenerfv(AL_ORIENTATION, orientation));
+    alCheck(alGetListenerfv(AL_ORIENTATION, orientation));
 
     return Vector3f(orientation[0], orientation[1], orientation[2]);
 }

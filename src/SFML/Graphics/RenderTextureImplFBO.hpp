@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -64,7 +64,7 @@ public :
     /// \return True if FBO render textures are supported
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsAvailable();
+    static bool isAvailable();
 
 private :
 
@@ -79,7 +79,7 @@ private :
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -89,7 +89,7 @@ private :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool Activate(bool active);
+    virtual bool activate(bool active);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -97,14 +97,14 @@ private :
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void UpdateTexture(unsigned textureId);
+    virtual void updateTexture(unsigned textureId);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     myContext;     ///< Needs a separate OpenGL context for not messing up the other ones
-    unsigned int myFrameBuffer; ///< OpenGL frame buffer object
-    unsigned int myDepthBuffer; ///< Optional depth buffer attached to the frame buffer
+    Context*     m_context;     ///< Needs a separate OpenGL context for not messing up the other ones
+    unsigned int m_frameBuffer; ///< OpenGL frame buffer object
+    unsigned int m_depthBuffer; ///< Optional depth buffer attached to the frame buffer
 };
 
 } // namespace priv

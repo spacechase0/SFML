@@ -20,37 +20,37 @@ public :
     {
     }
 
-    bool OnLoad()
+    bool onLoad()
     {
         // Load the texture and initialize the sprite
-        if (!myTexture.LoadFromFile("resources/background.jpg"))
+        if (!m_texture.loadFromFile("resources/background.jpg"))
             return false;
-        mySprite.SetTexture(myTexture);
+        m_sprite.setTexture(m_texture);
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
             return false;
-        myShader.SetParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.setParameter("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
-    void OnUpdate(float, float x, float y)
+    void onUpdate(float, float x, float y)
     {
-        myShader.SetParameter("pixel_threshold", (x + y) / 30);
+        m_shader.setParameter("pixel_threshold", (x + y) / 30);
     }
 
-    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(mySprite, states);
+        states.shader = &m_shader;
+        target.draw(m_sprite, states);
     }
 
 private:
 
-    sf::Texture myTexture;
-    sf::Sprite mySprite;
-    sf::Shader myShader;
+    sf::Texture m_texture;
+    sf::Sprite m_sprite;
+    sf::Shader m_shader;
 };
 
 
@@ -66,10 +66,10 @@ public :
     {
     }
 
-    bool OnLoad()
+    bool onLoad()
     {
         // Create the text
-        myText.SetString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
+        m_text.setString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
                          "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
                          "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
                          "Donec fringilla scelerisque mauris et viverra.\n"
@@ -87,34 +87,33 @@ public :
                          "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
                          "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
                          "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
-        myText.SetCharacterSize(22);
-        myText.SetPosition(30, 20);
+        m_text.setCharacterSize(22);
+        m_text.setPosition(30, 20);
 
         // Load the shader
-        //if (!myShader.LoadFromFile("resources/wave.vert", sf::Shader::Vertex))
-        if (!myShader.LoadFromFile("resources/wave.vert", "resources/blur.frag"))
+        if (!m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
             return false;
 
         return true;
     }
 
-    void OnUpdate(float time, float x, float y)
+    void onUpdate(float time, float x, float y)
     {
-        myShader.SetParameter("wave_phase", time);
-        myShader.SetParameter("wave_amplitude", x * 40, y * 40);
-        myShader.SetParameter("blur_radius", (x + y) * 0.008f);
+        m_shader.setParameter("wave_phase", time);
+        m_shader.setParameter("wave_amplitude", x * 40, y * 40);
+        m_shader.setParameter("blur_radius", (x + y) * 0.008f);
     }
 
-    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(myText, states);
+        states.shader = &m_shader;
+        target.draw(m_text, states);
     }
 
 private:
 
-    sf::Text myText;
-    sf::Shader myShader;
+    sf::Text m_text;
+    sf::Shader m_shader;
 };
 
 
@@ -130,10 +129,10 @@ public :
     {
     }
 
-    bool OnLoad()
+    bool onLoad()
     {
         // Create the points
-        myPoints.SetPrimitiveType(sf::Points);
+        m_points.setPrimitiveType(sf::Points);
         for (int i = 0; i < 40000; ++i)
         {
             float x = static_cast<float>(std::rand() % 800);
@@ -141,35 +140,35 @@ public :
             sf::Uint8 r = std::rand() % 255;
             sf::Uint8 g = std::rand() % 255;
             sf::Uint8 b = std::rand() % 255;
-            myPoints.Append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
+            m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/storm.vert", "resources/blink.frag"))
+        if (!m_shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
             return false;
 
         return true;
     }
 
-    void OnUpdate(float time, float x, float y)
+    void onUpdate(float time, float x, float y)
     {
         float radius = 200 + std::cos(time) * 150;
-        myShader.SetParameter("storm_position", x * 800, y * 600);
-        myShader.SetParameter("storm_inner_radius", radius / 3);
-        myShader.SetParameter("storm_total_radius", radius);
-        myShader.SetParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+        m_shader.setParameter("storm_position", x * 800, y * 600);
+        m_shader.setParameter("storm_inner_radius", radius / 3);
+        m_shader.setParameter("storm_total_radius", radius);
+        m_shader.setParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
-    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(myPoints, states);
+        states.shader = &m_shader;
+        target.draw(m_points, states);
     }
 
 private:
 
-    sf::VertexArray myPoints;
-    sf::Shader myShader;
+    sf::VertexArray m_points;
+    sf::Shader m_shader;
 };
 
 
@@ -185,74 +184,75 @@ public :
     {
     }
 
-    bool OnLoad()
+    bool onLoad()
     {
         // Create the off-screen surface
-        if (!mySurface.Create(800, 600))
+        if (!m_surface.create(800, 600))
             return false;
-        mySurface.SetSmooth(true);
+        m_surface.setSmooth(true);
 
         // Load the textures
-        if (!myBackgroundTexture.LoadFromFile("resources/sfml.png"))
+        if (!m_backgroundTexture.loadFromFile("resources/sfml.png"))
             return false;
-        myBackgroundTexture.SetSmooth(true);
-        if (!myEntityTexture.LoadFromFile("resources/devices.png"))
+        m_backgroundTexture.setSmooth(true);
+        if (!m_entityTexture.loadFromFile("resources/devices.png"))
             return false;
-        myEntityTexture.SetSmooth(true);
+        m_entityTexture.setSmooth(true);
 
         // Initialize the background sprite
-        myBackgroundSprite.SetTexture(myBackgroundTexture);
-        myBackgroundSprite.SetPosition(135, 100);
+        m_backgroundSprite.setTexture(m_backgroundTexture);
+        m_backgroundSprite.setPosition(135, 100);
 
         // Load the moving entities
         for (int i = 0; i < 6; ++i)
         {
-            sf::Sprite entity(myEntityTexture, sf::IntRect(96 * i, 0, 96, 96));
-            myEntities.push_back(entity);
+            sf::Sprite entity(m_entityTexture, sf::IntRect(96 * i, 0, 96, 96));
+            m_entities.push_back(entity);
         }
 
         // Load the shader
-        if (!myShader.LoadFromFile("resources/edge.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
             return false;
-        myShader.SetParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.setParameter("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
-    void OnUpdate(float time, float x, float y)
+    void onUpdate(float time, float x, float y)
     {
-        myShader.SetParameter("edge_threshold", 1 - (x + y) / 2);
+        m_shader.setParameter("edge_threshold", 1 - (x + y) / 2);
 
         // Update the position of the moving entities
-        for (std::size_t i = 0; i < myEntities.size(); ++i)
+        for (std::size_t i = 0; i < m_entities.size(); ++i)
         {
-            float x = std::cos(0.25f * (time * i + (myEntities.size() - i))) * 300 + 350;
-            float y = std::sin(0.25f * (time * (myEntities.size() - i) + i)) * 200 + 250;
-            myEntities[i].SetPosition(x, y);
+            sf::Vector2f position;
+            position.x = std::cos(0.25f * (time * i + (m_entities.size() - i))) * 300 + 350;
+            position.y = std::sin(0.25f * (time * (m_entities.size() - i) + i)) * 200 + 250;
+            m_entities[i].setPosition(position);
         }
 
         // Render the updated scene to the off-screen surface
-        mySurface.Clear(sf::Color::White);
-        mySurface.Draw(myBackgroundSprite);
-        for (std::size_t i = 0; i < myEntities.size(); ++i)
-            mySurface.Draw(myEntities[i]);
-        mySurface.Display();
+        m_surface.clear(sf::Color::White);
+        m_surface.draw(m_backgroundSprite);
+        for (std::size_t i = 0; i < m_entities.size(); ++i)
+            m_surface.draw(m_entities[i]);
+        m_surface.display();
     }
 
-    void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.Shader = &myShader;
-        target.Draw(sf::Sprite(mySurface.GetTexture()), states);
+        states.shader = &m_shader;
+        target.draw(sf::Sprite(m_surface.getTexture()), states);
     }
 
 private:
 
-    sf::RenderTexture mySurface;
-    sf::Texture myBackgroundTexture;
-    sf::Texture myEntityTexture;
-    sf::Sprite myBackgroundSprite;
-    std::vector<sf::Sprite> myEntities;
-    sf::Shader myShader;
+    sf::RenderTexture m_surface;
+    sf::Texture m_backgroundTexture;
+    sf::Texture m_entityTexture;
+    sf::Sprite m_backgroundSprite;
+    std::vector<sf::Sprite> m_entities;
+    sf::Shader m_shader;
 };
 
 
@@ -266,7 +266,7 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader");
-    window.EnableVerticalSync(true);
+    window.setVerticalSyncEnabled(true);
 
     // Create the effects
     std::vector<Effect*> effects;
@@ -278,50 +278,50 @@ int main()
 
     // Initialize them
     for (std::size_t i = 0; i < effects.size(); ++i)
-        effects[i]->Load();
+        effects[i]->load();
 
     // Create the messages background
     sf::Texture textBackgroundTexture;
-    if (!textBackgroundTexture.LoadFromFile("resources/text-background.png"))
+    if (!textBackgroundTexture.loadFromFile("resources/text-background.png"))
         return EXIT_FAILURE;
     sf::Sprite textBackground(textBackgroundTexture);
-    textBackground.SetPosition(0, 520);
-    textBackground.SetColor(sf::Color(255, 255, 255, 200));
+    textBackground.setPosition(0, 520);
+    textBackground.setColor(sf::Color(255, 255, 255, 200));
 
     // Load the messages font
     sf::Font font;
-    if (!font.LoadFromFile("resources/sansation.ttf"))
+    if (!font.loadFromFile("resources/sansation.ttf"))
         return EXIT_FAILURE;
 
     // Create the description text
-    sf::Text description("Current effect: " + effects[current]->GetName(), font, 20);
-    description.SetPosition(10, 530);
-    description.SetColor(sf::Color(80, 80, 80));
+    sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
+    description.setPosition(10, 530);
+    description.setColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
     sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
-    instructions.SetPosition(280, 555);
-    instructions.SetColor(sf::Color(80, 80, 80));
+    instructions.setPosition(280, 555);
+    instructions.setColor(sf::Color(80, 80, 80));
 
     // Start the game loop
     sf::Clock clock;
-    while (window.IsOpen())
+    while (window.isOpen())
     {
         // Process events
         sf::Event event;
-        while (window.PollEvent(event))
+        while (window.pollEvent(event))
         {
             // Close window: exit
-            if (event.Type == sf::Event::Closed)
-                window.Close();
+            if (event.type == sf::Event::Closed)
+                window.close();
 
-            if (event.Type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::KeyPressed)
             {
-                switch (event.Key.Code)
+                switch (event.key.code)
                 {
                     // Escape key: exit
                     case sf::Keyboard::Escape:
-                        window.Close();
+                        window.close();
                         break;
 
                     // Left arrow key: previous shader
@@ -330,7 +330,7 @@ int main()
                             current = effects.size() - 1;
                         else
                             current--;
-                        description.SetString("Current effect: " + effects[current]->GetName());
+                        description.setString("Current effect: " + effects[current]->getName());
                         break;
 
                     // Right arrow key: next shader
@@ -339,7 +339,7 @@ int main()
                             current = 0;
                         else
                             current++;
-                        description.SetString("Current effect: " + effects[current]->GetName());
+                        description.setString("Current effect: " + effects[current]->getName());
                         break;
 
                     default:
@@ -349,23 +349,23 @@ int main()
         }
 
         // Update the current example
-        float x = static_cast<float>(sf::Mouse::GetPosition(window).x) / window.GetWidth();
-        float y = static_cast<float>(sf::Mouse::GetPosition(window).y) / window.GetHeight();
-        effects[current]->Update(clock.GetElapsedTime().AsSeconds(), x, y);
+        float x = static_cast<float>(sf::Mouse::getPosition(window).x) / window.getSize().x;
+        float y = static_cast<float>(sf::Mouse::getPosition(window).y) / window.getSize().y;
+        effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
 
         // Clear the window
-        window.Clear(sf::Color(255, 128, 0));
+        window.clear(sf::Color(255, 128, 0));
 
         // Draw the current example
-        window.Draw(*effects[current]);
+        window.draw(*effects[current]);
 
         // Draw the text
-        window.Draw(textBackground);
-        window.Draw(instructions);
-        window.Draw(description);
+        window.draw(textBackground);
+        window.draw(instructions);
+        window.draw(description);
 
         // Finally, display the rendered frame on screen
-        window.Display();
+        window.display();
     }
 
     // delete the effects

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -40,8 +40,8 @@ namespace sf {
 /// Handle event and send them back to the requester.
 ///
 /// In order to send correct mouse coordonate to the requester when
-/// the window is in fullscreen we use myRealSize to represent the
-/// back buffer size (see SFWindowController). If 'myRealSize' is
+/// the window is in fullscreen we use m_realSize to represent the
+/// back buffer size (see SFWindowController). If 'm_realSize' is
 /// bound to its default value we don't recompute the mouse position
 /// and assume it's correct.
 ///
@@ -50,20 +50,20 @@ namespace sf {
 ///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView {
-    sf::priv::WindowImplCocoa*    myRequester;
-    BOOL                          myUseKeyRepeat;
-    NSTrackingRectTag             myTrackingTag;
-    BOOL                          myMouseIsIn;
-    NSSize                        myRealSize;
+    sf::priv::WindowImplCocoa*    m_requester;
+    BOOL                          m_useKeyRepeat;
+    NSTrackingRectTag             m_trackingTag;
+    BOOL                          m_mouseIsIn;
+    NSSize                        m_realSize;
     
     /// 'modifiers' state
-    BOOL myRightShiftWasDown;
-    BOOL myLeftShiftWasDown;
-    BOOL myRightCommandWasDown;
-    BOOL myLeftCommandWasDown;
-    BOOL myRightAlternateWasDown;
-    BOOL myLeftAlternateWasDown;
-    BOOL myControlWasDown;
+    BOOL m_rightShiftWasDown;
+    BOOL m_leftShiftWasDown;
+    BOOL m_rightCommandWasDown;
+    BOOL m_leftCommandWasDown;
+    BOOL m_rightAlternateWasDown;
+    BOOL m_leftAlternateWasDown;
+    BOOL m_controlWasDown;
 }
 
 ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,141 +34,141 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Sprite::Sprite() :
-myTexture    (NULL),
-myTextureRect(0, 0, 0, 0)
+m_texture    (NULL),
+m_textureRect(0, 0, 0, 0)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture) :
-myTexture    (NULL),
-myTextureRect(0, 0, 0, 0)
+m_texture    (NULL),
+m_textureRect(0, 0, 0, 0)
 {
-    SetTexture(texture);
+    setTexture(texture);
 }
 
 
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
-myTexture    (NULL),
-myTextureRect(0, 0, 0, 0)
+m_texture    (NULL),
+m_textureRect(0, 0, 0, 0)
 {
-    SetTexture(texture);
-    SetTextureRect(rectangle);
+    setTexture(texture);
+    setTextureRect(rectangle);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::SetTexture(const Texture& texture, bool resetRect)
+void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
     // Recompute the texture area if requested, or if there was no valid texture before
-    if (resetRect || !myTexture)
-        SetTextureRect(IntRect(0, 0, texture.GetWidth(), texture.GetHeight()));
+    if (resetRect || !m_texture)
+        setTextureRect(IntRect(0, 0, texture.getWidth(), texture.getHeight()));
 
     // Assign the new texture
-    myTexture = &texture;
+    m_texture = &texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::SetTextureRect(const IntRect& rectangle)
+void Sprite::setTextureRect(const IntRect& rectangle)
 {
-    if (rectangle != myTextureRect)
+    if (rectangle != m_textureRect)
     {
-        myTextureRect = rectangle;
-        UpdatePositions();
-        UpdateTexCoords();
+        m_textureRect = rectangle;
+        updatePositions();
+        updateTexCoords();
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::SetColor(const Color& color)
+void Sprite::setColor(const Color& color)
 {
     // Update the vertices' color
-    myVertices[0].Color = color;
-    myVertices[1].Color = color;
-    myVertices[2].Color = color;
-    myVertices[3].Color = color;
+    m_vertices[0].color = color;
+    m_vertices[1].color = color;
+    m_vertices[2].color = color;
+    m_vertices[3].color = color;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Texture* Sprite::GetTexture() const
+const Texture* Sprite::getTexture() const
 {
-    return myTexture;
+    return m_texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-const IntRect& Sprite::GetTextureRect() const
+const IntRect& Sprite::getTextureRect() const
 {
-    return myTextureRect;
+    return m_textureRect;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Color& Sprite::GetColor() const
+const Color& Sprite::getColor() const
 {
-    return myVertices[0].Color;
+    return m_vertices[0].color;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Sprite::GetLocalBounds() const
+FloatRect Sprite::getLocalBounds() const
 {
-    float width = static_cast<float>(myTextureRect.Width);
-    float height = static_cast<float>(myTextureRect.Height);
+    float width = static_cast<float>(m_textureRect.width);
+    float height = static_cast<float>(m_textureRect.height);
 
     return FloatRect(0.f, 0.f, width, height);
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect Sprite::GetGlobalBounds() const
+FloatRect Sprite::getGlobalBounds() const
 {
-    return GetTransform().TransformRect(GetLocalBounds());
+    return getTransform().transformRect(getLocalBounds());
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::Draw(RenderTarget& target, RenderStates states) const
+void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
-    if (myTexture)
+    if (m_texture)
     {
-        states.Transform *= GetTransform();
-        states.Texture = myTexture;
-        target.Draw(myVertices, 4, Quads, states);
+        states.transform *= getTransform();
+        states.texture = m_texture;
+        target.draw(m_vertices, 4, Quads, states);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::UpdatePositions()
+void Sprite::updatePositions()
 {
-    float width  = static_cast<float>(myTextureRect.Width);
-    float height = static_cast<float>(myTextureRect.Height);
+    float width  = static_cast<float>(m_textureRect.width);
+    float height = static_cast<float>(m_textureRect.height);
 
-    myVertices[0].Position = Vector2f(0, 0);
-    myVertices[1].Position = Vector2f(0, height);
-    myVertices[2].Position = Vector2f(width, height);
-    myVertices[3].Position = Vector2f(width, 0);
+    m_vertices[0].position = Vector2f(0, 0);
+    m_vertices[1].position = Vector2f(0, height);
+    m_vertices[2].position = Vector2f(width, height);
+    m_vertices[3].position = Vector2f(width, 0);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::UpdateTexCoords()
+void Sprite::updateTexCoords()
 {
-    float left   = static_cast<float>(myTextureRect.Left);
-    float right  = left + myTextureRect.Width;
-    float top    = static_cast<float>(myTextureRect.Top);
-    float bottom = top + myTextureRect.Height;
+    float left   = static_cast<float>(m_textureRect.left);
+    float right  = left + m_textureRect.width;
+    float top    = static_cast<float>(m_textureRect.top);
+    float bottom = top + m_textureRect.height;
 
-    myVertices[0].TexCoords = Vector2f(left, top);
-    myVertices[1].TexCoords = Vector2f(left, bottom);
-    myVertices[2].TexCoords = Vector2f(right, bottom);
-    myVertices[3].TexCoords = Vector2f(right, top);
+    m_vertices[0].texCoords = Vector2f(left, top);
+    m_vertices[1].texCoords = Vector2f(left, bottom);
+    m_vertices[2].texCoords = Vector2f(right, bottom);
+    m_vertices[3].texCoords = Vector2f(right, top);
 }
 
 } // namespace sf

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -52,7 +52,7 @@ public :
     /// \return True if the key is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsKeyPressed(Keyboard::Key key);
+    static bool isKeyPressed(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a mouse button is pressed
@@ -62,7 +62,7 @@ public :
     /// \return True if the button is pressed, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsMouseButtonPressed(Mouse::Button button);
+    static bool isMouseButtonPressed(Mouse::Button button);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of the mouse in desktop coordinates
@@ -73,7 +73,7 @@ public :
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i GetMousePosition();
+    static Vector2i getMousePosition();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of the mouse in window coordinates
@@ -87,7 +87,7 @@ public :
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i GetMousePosition(const Window& relativeTo);
+    static Vector2i getMousePosition(const Window& relativeTo);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current position of the mouse in desktop coordinates
@@ -99,7 +99,7 @@ public :
     /// \param position New position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static void SetMousePosition(const Vector2i& position);
+    static void setMousePosition(const Vector2i& position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current position of the mouse in window coordinates
@@ -112,7 +112,7 @@ public :
     /// \param relativeTo Reference window
     ///
     ////////////////////////////////////////////////////////////
-    static void SetMousePosition(const Vector2i& position, const Window& relativeTo);
+    static void setMousePosition(const Vector2i& position, const Window& relativeTo);
 };
 
 } // namespace priv

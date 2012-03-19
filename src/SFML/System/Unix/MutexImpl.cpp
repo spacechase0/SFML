@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,28 +40,28 @@ MutexImpl::MutexImpl()
     pthread_mutexattr_init(&attributes);
     pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE);
 
-    pthread_mutex_init(&myMutex, &attributes);
+    pthread_mutex_init(&m_mutex, &attributes);
 }
 
 
 ////////////////////////////////////////////////////////////
 MutexImpl::~MutexImpl()
 {
-    pthread_mutex_destroy(&myMutex);
+    pthread_mutex_destroy(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Lock()
+void MutexImpl::lock()
 {
-    pthread_mutex_lock(&myMutex);
+    pthread_mutex_lock(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Unlock()
+void MutexImpl::unlock()
 {
-    pthread_mutex_unlock(&myMutex);
+    pthread_mutex_unlock(&m_mutex);
 }
 
 } // namespace priv
