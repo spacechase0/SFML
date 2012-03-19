@@ -195,8 +195,13 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
         }
 
         // Find the OpenGL primitive type
+        #if defined(SFML_SYSTEM_GP2X_WIZ)
+        static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
+		#else
         static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                                        GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
+		#endif
         GLenum mode = modes[type];
 
         // Draw the primitives
@@ -321,9 +326,11 @@ void RenderTarget::ApplyBlendMode(BlendMode mode)
         // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
         default :
         case BlendAlpha :
+			#if !defined(SFML_SYSTEM_GP2X_WIZ)
             if (GLEW_EXT_blend_func_separate)
                 GLCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
             else
+            #endif
                 GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
             break;
 
@@ -371,10 +378,12 @@ void RenderTarget::ApplyTexture(const Texture* texture)
 ////////////////////////////////////////////////////////////
 void RenderTarget::ApplyShader(const Shader* shader)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (shader)
         shader->Bind();
     else
         GLCheck(glUseProgramObjectARB(0));
+	#endif
 }
 
 } // namespace sf

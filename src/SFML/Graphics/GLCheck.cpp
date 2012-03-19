@@ -88,13 +88,15 @@ void GLCheckError(const std::string& file, unsigned int line)
                 description = "there is not enough memory left to execute the command";
                 break;
             }
-
+			
+			#if !defined(SFML_SYSTEM_GP2X_WIZ)
             case GL_INVALID_FRAMEBUFFER_OPERATION_EXT :
             {
                 error = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
                 description = "the object bound to FRAMEBUFFER_BINDING_EXT is not \"framebuffer complete\"";
                 break;
             }
+            #endif
         }
 
         // Log the error
@@ -109,6 +111,7 @@ void GLCheckError(const std::string& file, unsigned int line)
 ////////////////////////////////////////////////////////////
 void EnsureGlewInit()
 {
+	#if !defined( SFML_SYSTEM_GP2X_WIZ )
     static bool initialized = false;
     if (!initialized)
     {
@@ -122,6 +125,7 @@ void EnsureGlewInit()
             Err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
         }
     }
+    #endif
 }
 
 } // namespace priv

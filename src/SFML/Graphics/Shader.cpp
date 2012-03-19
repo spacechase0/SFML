@@ -437,11 +437,15 @@ bool Shader::IsAvailable()
 
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
-
+	
+	#if defined( SFML_SYSTEM_GP2X_WIZ )
+	return false;
+	#else
     return GLEW_ARB_shading_language_100 &&
            GLEW_ARB_shader_objects       &&
            GLEW_ARB_vertex_shader        &&
            GLEW_ARB_fragment_shader;
+	#endif
 }
 
 

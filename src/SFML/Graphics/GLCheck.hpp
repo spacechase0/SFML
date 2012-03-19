@@ -29,8 +29,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <GL/glew.h>
 #include <string>
+
+#if defined( SFML_SYSTEM_GP2X_WIZ )
+	#include <GL/egl.h>
+#else
+	#include <GL/glew.h>
+#endif
 
 
 namespace sf

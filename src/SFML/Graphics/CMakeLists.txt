@@ -28,8 +28,6 @@ set(SRC
     ${INCROOT}/RenderTexture.hpp
     ${SRCROOT}/RenderTextureImpl.cpp
     ${SRCROOT}/RenderTextureImpl.hpp
-    ${SRCROOT}/RenderTextureImplFBO.cpp
-    ${SRCROOT}/RenderTextureImplFBO.hpp
     ${SRCROOT}/RenderTextureImplDefault.cpp
     ${SRCROOT}/RenderTextureImplDefault.hpp
     ${SRCROOT}/RenderTarget.cpp
@@ -68,6 +66,15 @@ set(SRC
     ${SRCROOT}/stb_image/stb_image_write.h
 )
 
+# The Wiz doesn't support framebuffers. At all :P
+if(NOT GP2X_WIZ)
+	set(SRC
+		$(SRC)
+		${SRCROOT}/RenderTextureImplFBO.cpp
+		${SRCROOT}/RenderTextureImplFBO.hpp
+	)
+endif()
+
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
 if (WINDOWS OR MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype")
@@ -75,9 +82,15 @@ if (WINDOWS OR MACOSX)
 endif()
 
 # find external libraries
-find_package(OpenGL REQUIRED)
+if(GP2X_WIZ)
+	set(OPENGL_gl_LIBRARY nanoGL opengles_lite)
+else()
+	find_package(OpenGL REQUIRED)
+	find_package(GLEW REQUIRED)
+	include_directories(${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_PATH})
+endif()
+
 find_package(Freetype REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(JPEG REQUIRED)
 if(LINUX)
     find_package(X11 REQUIRED)
@@ -87,11 +100,16 @@ if(MACOSX)
 endif()
 
 # add include paths of external libraries
-include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
 
 # build the list of libraries to link
 # GL and X11 are only needed for shared build, as they are already linked by sfml-window
-set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
+if(GP2X_WIZ)
+	set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
+endif()
+if(NOT GP2X_WIZ)
+	set(GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} $(GLEW_LIBRARY) ${JPEG_LIBRARY})
+endif()
 if(BUILD_SHARED_LIBS)
     set(GRAPHICS_EXT_LIBS ${GRAPHICS_EXT_LIBS} ${OPENGL_gl_LIBRARY})
     if(LINUX)

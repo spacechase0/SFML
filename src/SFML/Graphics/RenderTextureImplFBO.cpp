@@ -75,8 +75,12 @@ bool RenderTextureImplFBO::IsAvailable()
 
     // Make sure that GLEW is initialized
     priv::EnsureGlewInit();
-
+	
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	return false;
+	#else
     return GLEW_EXT_framebuffer_object != 0;
+    #endif
 }
 
 
