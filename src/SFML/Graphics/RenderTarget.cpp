@@ -42,6 +42,7 @@ m_defaultView(),
 m_view       (),
 m_cache      ()
 {
+    m_cache.glStatesSet = false;
 }
 
 
@@ -99,20 +100,20 @@ IntRect RenderTarget::getViewport(const View& view) const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::convertCoords(unsigned int x, unsigned int y) const
+Vector2f RenderTarget::convertCoords(const Vector2i& point) const
 {
-    return convertCoords(x, y, getView());
+    return convertCoords(point, getView());
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::convertCoords(unsigned int x, unsigned int y, const View& view) const
+Vector2f RenderTarget::convertCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
     Vector2f coords;
     IntRect viewport = getViewport(view);
-    coords.x = -1.f + 2.f * (static_cast<int>(x) - viewport.left) / viewport.width;
-    coords.y = 1.f  - 2.f * (static_cast<int>(y) - viewport.top)  / viewport.height;
+    coords.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
+    coords.y = 1.f  - 2.f * (point.y - viewport.top)  / viewport.height;
 
     // Then transform by the inverse of the view matrix
     return view.getInverseTransform().transformPoint(coords);
@@ -136,6 +137,10 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
 
     if (activate(true))
     {
+        // First set the persistent OpenGL states if it's the very first call
+        if (!m_cache.glStatesSet)
+            resetGLStates();
+
         // Check if the vertex count is low enough so that we can pre-transform them
         bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
         if (useVertexCache)
@@ -217,6 +222,7 @@ void RenderTarget::pushGLStates()
 {
     if (activate(true))
     {
+        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
         glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPushMatrix());
@@ -235,6 +241,7 @@ void RenderTarget::popGLStates()
 {
     if (activate(true))
     {
+        glCheck(glPopClientAttrib());
         glCheck(glPopAttrib());
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -264,6 +271,7 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        m_cache.glStatesSet = true;
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
@@ -286,8 +294,8 @@ void RenderTarget::initialize()
     m_defaultView.reset(FloatRect(0, 0, static_cast<float>(getSize().x), static_cast<float>(getSize().y)));
     m_view = m_defaultView;
 
-    // Initialize the default OpenGL render-states
-    resetGLStates();
+    // Set GL states only on first draw, so that we don't pollute user's states
+    m_cache.glStatesSet = false;
 }
 
 
