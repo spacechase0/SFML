@@ -227,8 +227,10 @@ void RenderTarget::pushGLStates()
 {
     if (activate(true))
     {
-        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
-        glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+		#if !defined(SFML_SYSTEM_GP2X_WIZ)
+			glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
+			glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+		#endif
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPushMatrix());
         glCheck(glMatrixMode(GL_PROJECTION));
@@ -246,8 +248,10 @@ void RenderTarget::popGLStates()
 {
     if (activate(true))
     {
-        glCheck(glPopClientAttrib());
-        glCheck(glPopAttrib());
+		#if !defined(SFML_SYSTEM_GP2X_WIZ)
+			glCheck(glPopClientAttrib());
+			glCheck(glPopAttrib());
+		#endif
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
         glCheck(glMatrixMode(GL_MODELVIEW));
@@ -389,12 +393,9 @@ void RenderTarget::applyShader(const Shader* shader)
     if (shader)
         shader->bind();
     else
-<<<<<<< HEAD
         GLCheck(glUseProgramObjectARB(0));
-	#endif
-=======
         glCheck(glUseProgramObjectARB(0));
->>>>>>> newmaster
+	#endif
 }
 
 } // namespace sf

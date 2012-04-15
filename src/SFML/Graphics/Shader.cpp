@@ -38,12 +38,14 @@
 namespace
 {
     // Retrieve the maximum number of texture units available
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     GLint getMaxTextureUnits()
     {
         GLint maxUnits;
-        glCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+			glCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
         return maxUnits;
     }
+	#endif
 
     // Read the contents of a file into an array of char
     bool getFileContents(const std::string& filename, std::vector<char>& buffer)
@@ -95,10 +97,12 @@ m_currentTexture(-1)
 Shader::~Shader()
 {
     ensureGlContext();
-
-    // Destroy effect program
-    if (m_shaderProgram)
-        glCheck(glDeleteObjectARB(m_shaderProgram));
+	
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
+		// Destroy effect program
+		if (m_shaderProgram)
+			glCheck(glDeleteObjectARB(m_shaderProgram));
+	#endif
 }
 
 
@@ -210,6 +214,7 @@ bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragme
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -228,12 +233,14 @@ void Shader::setParameter(const std::string& name, float x)
         // Disable program
         glCheck(glUseProgramObjectARB(program));
     }
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x, float y)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -252,12 +259,14 @@ void Shader::setParameter(const std::string& name, float x, float y)
         // Disable program
         glCheck(glUseProgramObjectARB(program));
     }
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x, float y, float z)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -276,12 +285,14 @@ void Shader::setParameter(const std::string& name, float x, float y, float z)
         // Disable program
         glCheck(glUseProgramObjectARB(program));
     }
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -300,6 +311,7 @@ void Shader::setParameter(const std::string& name, float x, float y, float z, fl
         // Disable program
         glCheck(glUseProgramObjectARB(program));
     }
+    #endif
 }
 
 
@@ -327,6 +339,7 @@ void Shader::setParameter(const std::string& name, const Color& color)
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, const sf::Transform& transform)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -345,12 +358,14 @@ void Shader::setParameter(const std::string& name, const sf::Transform& transfor
         // Disable program
         glCheck(glUseProgramObjectARB(program));
     }
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, const Texture& texture)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -383,12 +398,14 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
             it->second = &texture;
         }
     }
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, CurrentTextureType)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -398,12 +415,14 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
         if (m_currentTexture == -1)
             err() << "Texture \"" << name << "\" not found in shader" << std::endl;
     }
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::bind() const
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (m_shaderProgram)
     {
         ensureGlContext();
@@ -418,6 +437,7 @@ void Shader::bind() const
         if (m_currentTexture != -1)
             glCheck(glUniform1iARB(m_currentTexture, 0));
     }
+    #endif
 }
 
 
@@ -426,7 +446,9 @@ void Shader::unbind() const
 {
     ensureGlContext();
 
-    glCheck(glUseProgramObjectARB(0));
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
+		glCheck(glUseProgramObjectARB(0));
+    #endif
 }
 
 
@@ -462,7 +484,8 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
               << "(you should test Shader::IsAvailable() before trying to use the Shader class)" << std::endl;
         return false;
     }
-
+	
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     // Destroy the shader if it was already created
     if (m_shaderProgram)
         glCheck(glDeleteObjectARB(m_shaderProgram));
@@ -544,12 +567,14 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     }
 
     return true;
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shader::bindTextures() const
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     TextureTable::const_iterator it = m_textures.begin();
     for (std::size_t i = 0; i < m_textures.size(); ++i)
     {
@@ -562,6 +587,7 @@ void Shader::bindTextures() const
 
     // Make sure that the texture unit which is left active is the number 0
     glCheck(glActiveTextureARB(GL_TEXTURE0_ARB));
+    #endif
 }
 
 } // namespace sf
