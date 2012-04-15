@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,10 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_TEXTURESAVER_HPP
+#define SFML_TEXTURESAVER_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/TextureSaver.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 
 
 namespace sf
@@ -33,18 +36,40 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-TextureSaver::TextureSaver()
-{
-    GLCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &myTextureBinding));
-}
-
-
+/// \brief Automatic wrapper for saving and restoring the current texture binding
+///
 ////////////////////////////////////////////////////////////
-TextureSaver::~TextureSaver()
+class TextureSaver
 {
-    GLCheck(glBindTexture(GL_TEXTURE_2D, myTextureBinding));
-}
+public :
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// The current texture binding is saved.
+    ///
+    ////////////////////////////////////////////////////////////
+    TextureSaver();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    /// The previous texture binding is restored.
+    ///
+    ////////////////////////////////////////////////////////////
+    ~TextureSaver();
+
+private :
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    GLint m_textureBinding; ///< Texture binding to restore
+};
 
 } // namespace priv
 
 } // namespace sf
+
+
+#endif // SFML_TEXTURESAVER_HPP

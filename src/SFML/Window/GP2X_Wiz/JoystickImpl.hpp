@@ -48,7 +48,7 @@ public :
     /// \return True if the joystick is connected, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsConnected(unsigned int index);
+    static bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the joystick
@@ -58,13 +58,13 @@ public :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool Open(unsigned int index);
+    bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the joystick
     ///
     ////////////////////////////////////////////////////////////
-    void Close();
+    void close();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the joystick capabilities
@@ -72,7 +72,7 @@ public :
     /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    JoystickCaps GetCapabilities() const;
+    JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
@@ -80,7 +80,7 @@ public :
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState Update();
+    JoystickState update();
 
 private :
 

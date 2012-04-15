@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void SleepImpl(Time time)
+void sleepImpl(Time time)
 {
     // usleep is not reliable enough (it might block the
     // whole process instead of just the current thread)
@@ -44,7 +44,7 @@ void SleepImpl(Time time)
 
     // this implementation is inspired from Qt
 
-    Uint64 usecs = time.AsMicroseconds();
+    Uint64 usecs = time.asMicroseconds();
 
     // get the current time
     timeval tv;

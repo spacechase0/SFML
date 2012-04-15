@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,28 +35,28 @@ namespace priv
 ////////////////////////////////////////////////////////////
 MutexImpl::MutexImpl()
 {
-    InitializeCriticalSection(&myMutex);
+    InitializeCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
 MutexImpl::~MutexImpl()
 {
-    DeleteCriticalSection(&myMutex);
+    DeleteCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Lock()
+void MutexImpl::lock()
 {
-    EnterCriticalSection(&myMutex);
+    EnterCriticalSection(&m_mutex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void MutexImpl::Unlock()
+void MutexImpl::unlock()
 {
-    LeaveCriticalSection(&myMutex);
+    LeaveCriticalSection(&m_mutex);
 }
 
 } // namespace priv

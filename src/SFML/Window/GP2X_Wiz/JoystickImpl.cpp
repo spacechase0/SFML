@@ -36,35 +36,35 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::IsConnected(unsigned int index)
+bool JoystickImpl::isConnected(unsigned int index)
 {
     return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::Open(unsigned int index)
+bool JoystickImpl::open(unsigned int index)
 {
     return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-void JoystickImpl::Close()
+void JoystickImpl::close()
 {
 	return;
 }
 
 
 ////////////////////////////////////////////////////////////
-JoystickCaps JoystickImpl::GetCapabilities() const
+JoystickCaps JoystickImpl::getCapabilities() const
 {
     return JoystickCaps();
 }
 
 
 ////////////////////////////////////////////////////////////
-JoystickState JoystickImpl::JoystickImpl::Update()
+JoystickState JoystickImpl::JoystickImpl::update()
 {
     return JoystickState();
 }

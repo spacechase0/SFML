@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,15 +49,15 @@ struct SocketSelector::SocketSelectorImpl
 
 ////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector() :
-myImpl(new SocketSelectorImpl)
+m_impl(new SocketSelectorImpl)
 {
-    Clear();
+    clear();
 }
 
 
 ////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector(const SocketSelector& copy) :
-myImpl(new SocketSelectorImpl(*copy.myImpl))
+m_impl(new SocketSelectorImpl(*copy.m_impl))
 {
 
 }
@@ -66,61 +66,61 @@ myImpl(new SocketSelectorImpl(*copy.myImpl))
 ////////////////////////////////////////////////////////////
 SocketSelector::~SocketSelector()
 {
-    delete myImpl;
+    delete m_impl;
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketSelector::Add(Socket& socket)
+void SocketSelector::add(Socket& socket)
 {
-    FD_SET(socket.GetHandle(), &myImpl->AllSockets);
+    FD_SET(socket.getHandle(), &m_impl->AllSockets);
 
-    int size = static_cast<int>(socket.GetHandle());
-    if (size > myImpl->MaxSocket)
-        myImpl->MaxSocket = size;
+    int size = static_cast<int>(socket.getHandle());
+    if (size > m_impl->MaxSocket)
+        m_impl->MaxSocket = size;
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketSelector::Remove(Socket& socket)
+void SocketSelector::remove(Socket& socket)
 {
-    FD_CLR(socket.GetHandle(), &myImpl->AllSockets);
-    FD_CLR(socket.GetHandle(), &myImpl->SocketsReady);
+    FD_CLR(socket.getHandle(), &m_impl->AllSockets);
+    FD_CLR(socket.getHandle(), &m_impl->SocketsReady);
 }
 
 
 ////////////////////////////////////////////////////////////
-void SocketSelector::Clear()
+void SocketSelector::clear()
 {
-    FD_ZERO(&myImpl->AllSockets);
-    FD_ZERO(&myImpl->SocketsReady);
+    FD_ZERO(&m_impl->AllSockets);
+    FD_ZERO(&m_impl->SocketsReady);
 
-    myImpl->MaxSocket = 0;
+    m_impl->MaxSocket = 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SocketSelector::Wait(Time timeout)
+bool SocketSelector::wait(Time timeout)
 {
     // Setup the timeout
     timeval time;
-    time.tv_sec  = static_cast<long>(timeout.AsMicroseconds() / 1000000);
-    time.tv_usec = static_cast<long>(timeout.AsMicroseconds() % 1000000);
+    time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
+    time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
 
     // Initialize the set that will contain the sockets that are ready
-    myImpl->SocketsReady = myImpl->AllSockets;
+    m_impl->SocketsReady = m_impl->AllSockets;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
-    int count = select(myImpl->MaxSocket + 1, &myImpl->SocketsReady, NULL, NULL, timeout != Time::Zero ? &time : NULL);
+    int count = select(m_impl->MaxSocket + 1, &m_impl->SocketsReady, NULL, NULL, timeout != Time::Zero ? &time : NULL);
 
     return count > 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SocketSelector::IsReady(Socket& socket) const
+bool SocketSelector::isReady(Socket& socket) const
 {
-    return FD_ISSET(socket.GetHandle(), &myImpl->SocketsReady) != 0;
+    return FD_ISSET(socket.getHandle(), &m_impl->SocketsReady) != 0;
 }
 
 
@@ -129,7 +129,7 @@ SocketSelector& SocketSelector::operator =(const SocketSelector& right)
 {
     SocketSelector temp(right);
 
-    std::swap(myImpl, temp.myImpl);
+    std::swap(m_impl, temp.m_impl);
 
     return *this;
 }

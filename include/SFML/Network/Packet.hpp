@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -71,10 +71,10 @@ public :
     /// \param data        Pointer to the sequence of bytes to append
     /// \param sizeInBytes Number of bytes to append
     ///
-    /// \see Clear, Read
+    /// \see clear, read
     ///
     ////////////////////////////////////////////////////////////
-    void Append(const void* data, std::size_t sizeInBytes);
+    void append(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the packet
@@ -84,20 +84,20 @@ public :
     ///
     /// \return Pointer to the data
     ///
-    /// \see Clear, Append
+    /// \see clear, append
     ///
     ////////////////////////////////////////////////////////////
-    void Read(char* data, std::size_t sizeInBytes);
+    void read(char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the packet
     ///
     /// After calling Clear, the packet is empty.
     ///
-    /// \see Append, Read
+    /// \see append, read
     ///
     ////////////////////////////////////////////////////////////
-    void Clear();
+    void clear();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the data contained in the packet
@@ -109,10 +109,10 @@ public :
     ///
     /// \return Pointer to the data
     ///
-    /// \see GetDataSize, SetData
+    /// \see getDataSize, setData
     ///
     ////////////////////////////////////////////////////////////
-    const char* GetData() const;
+    const void* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the data contained in the packet
@@ -120,23 +120,23 @@ public :
     /// \param data        Pointer to the sequence of bytes to write
     /// \param sizeInBytes Number of bytes to write
     ///
-    /// \see GetData, GetDataSize
+    /// \see getData, getDataSize
     ///
     ////////////////////////////////////////////////////////////
-    void SetData(const char* data, std::size_t sizeInBytes);
+    void setData(const char* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the data contained in the packet
     ///
     /// This function returns the number of bytes pointed to by
-    /// what GetData returns.
+    /// what getData returns.
     ///
     /// \return Data size, in bytes
     ///
-    /// \see GetData, SetData
+    /// \see getData, setData
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t GetDataSize() const;
+    std::size_t getDataSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -146,7 +146,7 @@ public :
     /// \return The position actually seeked to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    void Seek(std::size_t position);
+    void seek(std::size_t position);
     
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position
@@ -154,7 +154,7 @@ public :
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t Tell() const;
+    std::size_t tell() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the reading position has reached the
@@ -168,7 +168,7 @@ public :
     /// \see operator bool
     ///
     ////////////////////////////////////////////////////////////
-    bool EndOfPacket() const;
+    bool endOfPacket() const;
 
 public:
 
@@ -207,7 +207,7 @@ public:
     ///
     /// \return True if last data extraction from packet was successful
     ///
-    /// \see EndOfPacket
+    /// \see endOfPacket
     ///
     ////////////////////////////////////////////////////////////
     operator BoolType() const;
@@ -250,10 +250,51 @@ public:
     Packet& operator <<(const std::wstring& data);
     Packet& operator <<(const String&       data);
 
-private :
+protected:
 
     friend class TcpSocket;
     friend class UdpSocket;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Called before the packet is sent over the network
+    ///
+    /// This function can be defined by derived classes to
+    /// transform the data before it is sent; this can be
+    /// used for compression, encryption, etc.
+    /// The function must return a pointer to the modified data,
+    /// as well as the number of bytes pointed.
+    /// The default implementation provides the packet's data
+    /// without transforming it.
+    ///
+    /// \param size Variable to fill with the size of data to send
+    ///
+    /// \return Pointer to the array of bytes to send
+    ///
+    /// \see onReceive
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual const void* onSend(std::size_t& size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Called after the packet is received over the network
+    ///
+    /// This function can be defined by derived classes to
+    /// transform the data after it is received; this can be
+    /// used for uncompression, decryption, etc.
+    /// The function receives a pointer to the received data,
+    /// and must fill the packet with the transformed bytes.
+    /// The default implementation fills the packet directly
+    /// without transforming the data.
+    ///
+    /// \param data Pointer to the received bytes
+    /// \param size Number of bytes
+    ///
+    /// \see onSend
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void onReceive(const void* data, std::size_t size);
+
+private :
 
     ////////////////////////////////////////////////////////////
     /// Disallow comparisons between packets
@@ -272,51 +313,14 @@ private :
     /// \return True if \a size bytes can be read from the packet
     ///
     ////////////////////////////////////////////////////////////
-    bool CheckSize(std::size_t size);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Called before the packet is sent over the network
-    ///
-    /// This function can be defined by derived classes to
-    /// transform the data before it is sent; this can be
-    /// used for compression, encryption, etc.
-    /// The function must return a pointer to the modified data,
-    /// as well as the number of bytes pointed.
-    /// The default implementation provides the packet's data
-    /// without transforming it.
-    ///
-    /// \param size Variable to fill with the size of data to send
-    ///
-    /// \return Pointer to the array of bytes to send
-    ///
-    /// \see OnReceive
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual const char* OnSend(std::size_t& size);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Called after the packet is received over the network
-    ///
-    /// This function can be defined by derived classes to
-    /// transform the data after it is received; this can be
-    /// used for uncompression, decryption, etc.
-    /// The function receives a pointer to the received data,
-    /// and must fill the packet with the transformed bytes.
-    /// The default implementation fills the packet directly
-    /// without transforming the data.
-    ///
-    /// \param data Pointer to the received bytes
-    /// \param size Number of bytes
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void OnReceive(const char* data, std::size_t size);
+    bool checkSize(std::size_t size);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> myData;    ///< Data stored in the packet
-    std::size_t       myReadPos; ///< Current reading position in the packet
-    bool              myIsValid; ///< Reading state of the packet
+    std::vector<char> m_data;    ///< Data stored in the packet
+    std::size_t       m_readPos; ///< Current reading position in the packet
+    bool              m_isValid; ///< Reading state of the packet
 };
 
 } // namespace sf
@@ -358,13 +362,13 @@ private :
 /// packet << x << s << d;
 ///
 /// // Send it over the network (socket is a valid sf::TcpSocket)
-/// socket.Send(packet);
+/// socket.send(packet);
 ///
 /// -----------------------------------------------------------------
 ///
 /// // Receive the packet at the other end
 /// sf::Packet packet;
-/// socket.Receive(packet);
+/// socket.receive(packet);
 ///
 /// // Extract the variables contained in the packet
 /// sf::Uint32 x;
@@ -411,26 +415,26 @@ private :
 /// and after it is received. This is typically used to
 /// handle automatic compression or encryption of the data.
 /// This is achieved by inheriting from sf::Packet, and overriding
-/// the OnSend and OnReceive functions.
+/// the onSend and onReceive functions.
 ///
 /// Here is an example:
 /// \code
 /// class ZipPacket : public sf::Packet
 /// {
-///     virtual const char* OnSend(std::size_t& size)
+///     virtual const void* onSend(std::size_t& size)
 ///     {
-///         const char* srcData = GetData();
-///         std::size_t srcSize = GetDataSize();
+///         const void* srcData = getData();
+///         std::size_t srcSize = getDataSize();
 ///
 ///         return MySuperZipFunction(srcData, srcSize, &size);
 ///     }
 ///
-///     virtual void OnReceive(const char* data, std::size_t size)
+///     virtual void onReceive(const void* data, std::size_t size)
 ///     {
 ///         std::size_t dstSize;
-///         const char* dstData = MySuperUnzipFunction(data, size, &dstSize);
+///         const void* dstData = MySuperUnzipFunction(data, size, &dstSize);
 ///
-///         Append(dstData, dstSize);
+///         append(dstData, dstSize);
 ///     }
 /// };
 ///

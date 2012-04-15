@@ -43,14 +43,14 @@ WizInputImpl::WizInputImpl()
 	buttonFd = open("/dev/mem", O_RDWR);
 	if (buttonFd < 0)
 	{
-		sf::Err() << "Failed to open /dev/mem." << std::endl;
+		err() << "Failed to open /dev/mem." << std::endl;
 		return;
 	}
 	
 	reg32 = (volatile sf::Uint32*)(mmap(0, 0x10000, PROT_READ | PROT_WRITE, MAP_SHARED, buttonFd, 0xC0000000));
 	if (reg32 == (volatile sf::Uint32*)(0xFFFFFFFF))
 	{
-		sf::Err() << "Failed to get registers." << std::endl;
+		err() << "Failed to get registers." << std::endl;
 		close(buttonFd);
 		buttonFd = -1;
 		return;
@@ -62,7 +62,7 @@ WizInputImpl::WizInputImpl()
 	mouseFd = open("/dev/input/event0", O_RDONLY | O_NDELAY);
 	if (mouseFd < 0)
 	{
-		sf::Err() << "Failed to open /dev/input/event0." << std::endl;
+		err() << "Failed to open /dev/input/event0." << std::endl;
 		return;
 	}
 }
@@ -79,7 +79,7 @@ WizInputImpl::~WizInputImpl()
 	}
 }
 
-void WizInputImpl::Update()
+void WizInputImpl::update()
 {
 	int r = 0;
 	struct input_event event;

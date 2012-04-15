@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,8 +37,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Music::Music() :
-myFile    (new priv::SoundFile),
-myDuration()
+m_file    (new priv::SoundFile),
+m_duration()
 {
 
 }
@@ -48,104 +48,104 @@ myDuration()
 Music::~Music()
 {
     // We must stop before destroying the file :)
-    Stop();
+    stop();
 
-    delete myFile;
+    delete m_file;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Music::OpenFromFile(const std::string& filename)
+bool Music::openFromFile(const std::string& filename)
 {
     // First stop the music if it was already running
-    Stop();
+    stop();
 
     // Open the underlying sound file
-    if (!myFile->OpenRead(filename))
+    if (!m_file->openRead(filename))
         return false;
 
     // Perform common initializations
-    Initialize();
+    initialize();
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Music::OpenFromMemory(const void* data, std::size_t sizeInBytes)
+bool Music::openFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // First stop the music if it was already running
-    Stop();
+    stop();
 
     // Open the underlying sound file
-    if (!myFile->OpenRead(data, sizeInBytes))
+    if (!m_file->openRead(data, sizeInBytes))
         return false;
 
     // Perform common initializations
-    Initialize();
+    initialize();
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Music::OpenFromStream(InputStream& stream)
+bool Music::openFromStream(InputStream& stream)
 {
     // First stop the music if it was already running
-    Stop();
+    stop();
 
     // Open the underlying sound file
-    if (!myFile->OpenRead(stream))
+    if (!m_file->openRead(stream))
         return false;
 
     // Perform common initializations
-    Initialize();
+    initialize();
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Music::GetDuration() const
+Time Music::getDuration() const
 {
-    return myDuration;
+    return m_duration;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Music::OnGetData(SoundStream::Chunk& data)
+bool Music::onGetData(SoundStream::Chunk& data)
 {
-    Lock lock(myMutex);
+    Lock lock(m_mutex);
 
     // Fill the chunk parameters
-    data.Samples     = &mySamples[0];
-    data.SampleCount = myFile->Read(&mySamples[0], mySamples.size());
+    data.samples     = &m_samples[0];
+    data.sampleCount = m_file->read(&m_samples[0], m_samples.size());
 
     // Check if we have reached the end of the audio file
-    return data.SampleCount == mySamples.size();
+    return data.sampleCount == m_samples.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Music::OnSeek(Time timeOffset)
+void Music::onSeek(Time timeOffset)
 {
-    Lock lock(myMutex);
+    Lock lock(m_mutex);
 
-    myFile->Seek(timeOffset);
+    m_file->seek(timeOffset);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Music::Initialize()
+void Music::initialize()
 {
     // Compute the music duration
-    myDuration = Seconds(static_cast<float>(myFile->GetSampleCount()) / myFile->GetSampleRate() / myFile->GetChannelCount());
+    m_duration = seconds(static_cast<float>(m_file->getSampleCount()) / m_file->getSampleRate() / m_file->getChannelCount());
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    mySamples.resize(myFile->GetSampleRate() * myFile->GetChannelCount());
+    m_samples.resize(m_file->getSampleRate() * m_file->getChannelCount());
 
     // Initialize the stream
-    SoundStream::Initialize(myFile->GetChannelCount(), myFile->GetSampleRate());
+    SoundStream::initialize(m_file->getChannelCount(), m_file->getSampleRate());
 }
 
 } // namespace sf

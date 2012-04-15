@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,15 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Mutex.hpp>
 
-
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/System/Win32/MutexImpl.hpp>
-
 #else
-
     #include <SFML/System/Unix/MutexImpl.hpp>
-
 #endif
 
 
@@ -44,28 +39,28 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Mutex::Mutex()
 {
-    myMutexImpl = new priv::MutexImpl;
+    m_mutexImpl = new priv::MutexImpl;
 }
 
 
 ////////////////////////////////////////////////////////////
 Mutex::~Mutex()
 {
-    delete myMutexImpl;
+    delete m_mutexImpl;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mutex::Lock()
+void Mutex::lock()
 {
-    myMutexImpl->Lock();
+    m_mutexImpl->lock();
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mutex::Unlock()
+void Mutex::unlock()
 {
-    myMutexImpl->Unlock();
+    m_mutexImpl->unlock();
 }
 
 } // namespace sf

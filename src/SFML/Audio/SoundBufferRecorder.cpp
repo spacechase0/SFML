@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,36 +33,36 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::OnStart()
+bool SoundBufferRecorder::onStart()
 {
-    mySamples.clear();
-    myBuffer = SoundBuffer();
+    m_samples.clear();
+    m_buffer = SoundBuffer();
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::OnProcessSamples(const Int16* samples, std::size_t sampleCount)
+bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sampleCount)
 {
-    std::copy(samples, samples + sampleCount, std::back_inserter(mySamples));
+    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void SoundBufferRecorder::OnStop()
+void SoundBufferRecorder::onStop()
 {
-    if (!mySamples.empty())
-        myBuffer.LoadFromSamples(&mySamples[0], mySamples.size(), 1, GetSampleRate());
+    if (!m_samples.empty())
+        m_buffer.loadFromSamples(&m_samples[0], m_samples.size(), 1, getSampleRate());
 }
 
 
 ////////////////////////////////////////////////////////////
-const SoundBuffer& SoundBufferRecorder::GetBuffer() const
+const SoundBuffer& SoundBufferRecorder::getBuffer() const
 {
-    return myBuffer;
+    return m_buffer;
 }
 
 } // namespace sf

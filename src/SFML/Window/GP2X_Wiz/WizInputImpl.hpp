@@ -42,7 +42,7 @@ struct WizInputImpl
 	WizInputImpl();
 	~WizInputImpl();
 	
-	void Update();
+	void update();
 
 	int buttonFd;
 	volatile sf::Uint32* reg32;
@@ -99,7 +99,7 @@ enum WizKeyCodes
 	SELECT = (1 << 8),
 };
 
-inline sf::Uint32 GetButtons()
+inline sf::Uint32 getButtons()
 {
 	// C, then B.
 	// What is A?

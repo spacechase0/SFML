@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,9 +38,9 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplDefault::RenderTextureImplDefault() :
-myContext(0),
-myWidth  (0),
-myHeight (0)
+m_context(0),
+m_width  (0),
+m_height (0)
 {
 
 }
@@ -50,40 +50,40 @@ myHeight (0)
 RenderTextureImplDefault::~RenderTextureImplDefault()
 {
     // Destroy the context
-    delete myContext;
+    delete m_context;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
 {
     // Store the dimensions
-    myWidth = width;
-    myHeight = height;
+    m_width = width;
+    m_height = height;
 
     // Create the in-memory OpenGL context
-    myContext = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
+    m_context = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
 
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::Activate(bool active)
+bool RenderTextureImplDefault::activate(bool active)
 {
-    return myContext->SetActive(active);
+    return m_context->setActive(active);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTextureImplDefault::UpdateTexture(unsigned int textureId)
+void RenderTextureImplDefault::updateTexture(unsigned int textureId)
 {
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
 
     // Copy the rendered pixels to the texture
-    GLCheck(glBindTexture(GL_TEXTURE_2D, textureId));
-    GLCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, myWidth, myHeight));
+    glCheck(glBindTexture(GL_TEXTURE_2D, textureId));
+    glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_width, m_height));
 }
 
 } // namespace priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -42,7 +42,7 @@ extern "C"
 namespace
 {
     // Convert a string to lower case
-    std::string ToLower(std::string str)
+    std::string toLower(std::string str)
     {
         for (std::string::iterator i = str.begin(); i != str.end(); ++i)
             *i = static_cast<char>(std::tolower(*i));
@@ -50,20 +50,20 @@ namespace
     }
 
     // stb_image callbacks that operate on a sf::InputStream
-    int Read(void* user, char* data, int size)
+    int read(void* user, char* data, int size)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
-        return static_cast<int>(stream->Read(data, size));
+        return static_cast<int>(stream->read(data, size));
     }
-    void Skip(void* user, unsigned int size)
+    void skip(void* user, unsigned int size)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
-        stream->Seek(stream->Tell() + size);
+        stream->seek(stream->tell() + size);
     }
-    int Eof(void* user)
+    int eof(void* user)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
-        return stream->Tell() >= stream->GetSize();
+        return stream->tell() >= stream->getSize();
     }
 }
 
@@ -73,7 +73,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-ImageLoader& ImageLoader::GetInstance()
+ImageLoader& ImageLoader::getInstance()
 {
     static ImageLoader Instance;
 
@@ -96,20 +96,20 @@ ImageLoader::~ImageLoader()
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, Vector2u& size)
 {
     // Clear the array (just in case)
     pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    int imgWidth, imgHeight, imgChannels;
-    unsigned char* ptr = stbi_load(filename.c_str(), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
+    int width, height, channels;
+    unsigned char* ptr = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
-    if (ptr && imgWidth && imgHeight)
+    if (ptr && width && height)
     {
         // Assign the image properties
-        width  = imgWidth;
-        height = imgHeight;
+        size.x = width;
+        size.y = height;
 
         // Copy the loaded pixels to the pixel buffer
         pixels.resize(width * height * 4);
@@ -123,7 +123,7 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uin
     else
     {
         // Error, failed to load the image
-        Err() << "Failed to load image \"" << filename << "\". Reason : " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image \"" << filename << "\". Reason : " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -131,24 +131,24 @@ bool ImageLoader::LoadImageFromFile(const std::string& filename, std::vector<Uin
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<Uint8>& pixels, Vector2u& size)
 {
     // Check input parameters
-    if (data && size)
+    if (data && dataSize)
     {
         // Clear the array (just in case)
         pixels.clear();
 
         // Load the image and get a pointer to the pixels in memory
-        int imgWidth, imgHeight, imgChannels;
+        int width, height, channels;
         const unsigned char* buffer = static_cast<const unsigned char*>(data);
-        unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(size), &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
+        unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(dataSize), &width, &height, &channels, STBI_rgb_alpha);
 
-        if (ptr && imgWidth && imgHeight)
+        if (ptr && width && height)
         {
             // Assign the image properties
-            width  = imgWidth;
-            height = imgHeight;
+            size.x = width;
+            size.y = height;
 
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(width * height * 4);
@@ -162,40 +162,40 @@ bool ImageLoader::LoadImageFromMemory(const void* data, std::size_t size, std::v
         else
         {
             // Error, failed to load the image
-            Err() << "Failed to load image from memory. Reason : " << stbi_failure_reason() << std::endl;
+            err() << "Failed to load image from memory. Reason : " << stbi_failure_reason() << std::endl;
 
             return false;
         }
     }
     else
     {
-        Err() << "Failed to load image from memory, no data provided" << std::endl;
+        err() << "Failed to load image from memory, no data provided" << std::endl;
         return false;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::LoadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, unsigned int& width, unsigned int& height)
+bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, Vector2u& size)
 {
     // Clear the array (just in case)
     pixels.clear();
 
     // Setup the stb_image callbacks
     stbi_io_callbacks callbacks;
-    callbacks.read = &Read;
-    callbacks.skip = &Skip;
-    callbacks.eof  = &Eof;
+    callbacks.read = &read;
+    callbacks.skip = &skip;
+    callbacks.eof  = &eof;
 
     // Load the image and get a pointer to the pixels in memory
-    int imgWidth, imgHeight, imgChannels;
-    unsigned char* ptr = stbi_load_from_callbacks(&callbacks, &stream, &imgWidth, &imgHeight, &imgChannels, STBI_rgb_alpha);
+    int width, height, channels;
+    unsigned char* ptr = stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha);
 
-    if (ptr && imgWidth && imgHeight)
+    if (ptr && width && height)
     {
         // Assign the image properties
-        width  = imgWidth;
-        height = imgHeight;
+        size.x = width;
+        size.y = height;
 
         // Copy the loaded pixels to the pixel buffer
         pixels.resize(width * height * 4);
@@ -209,7 +209,7 @@ bool ImageLoader::LoadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     else
     {
         // Error, failed to load the image
-        Err() << "Failed to load image from stream. Reason : " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image from stream. Reason : " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -217,10 +217,10 @@ bool ImageLoader::LoadImageFromStream(InputStream& stream, std::vector<Uint8>& p
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
+bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, const Vector2u& size)
 {
     // Make sure the image is not empty
-    if (!pixels.empty() && width && height)
+    if (!pixels.empty() && (size.x > 0) && (size.y > 0))
     {
         // Deduce the image type from its extension
         if (filename.size() > 3)
@@ -228,40 +228,40 @@ bool ImageLoader::SaveImageToFile(const std::string& filename, const std::vector
             // Extract the extension
             std::string extension = filename.substr(filename.size() - 3);
 
-            if (ToLower(extension) == "bmp")
+            if (toLower(extension) == "bmp")
             {
                 // BMP format
-                if (stbi_write_bmp(filename.c_str(), width, height, 4, &pixels[0]))
+                if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
                     return true;
             }
-            else if (ToLower(extension) == "tga")
+            else if (toLower(extension) == "tga")
             {
                 // TGA format
-                if (stbi_write_tga(filename.c_str(), width, height, 4, &pixels[0]))
+                if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
                     return true;
             }
-            else if(ToLower(extension) == "png")
+            else if(toLower(extension) == "png")
             {
                 // PNG format
-                if (stbi_write_png(filename.c_str(), width, height, 4, &pixels[0], 0))
+                if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
                     return true;
             }
-            else if (ToLower(extension) == "jpg")
+            else if (toLower(extension) == "jpg")
             {
                 // JPG format
-                if (WriteJpg(filename, pixels, width, height))
+                if (writeJpg(filename, pixels, size.x, size.y))
                     return true;
             }
         }
     }
 
-    Err() << "Failed to save image \"" << filename << "\"" << std::endl;
+    err() << "Failed to save image \"" << filename << "\"" << std::endl;
     return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::WriteJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
+bool ImageLoader::writeJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
 {
     // Open the file to write in
     FILE* file = fopen(filename.c_str(), "wb");

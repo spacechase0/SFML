@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,42 +34,42 @@ namespace sf
 ////////////////////////////////////////////////////////////
 RectangleShape::RectangleShape(const Vector2f& size)
 {
-    SetSize(size);
+    setSize(size);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RectangleShape::SetSize(const Vector2f& size)
+void RectangleShape::setSize(const Vector2f& size)
 {
-    mySize = size;
-    Update();
+    m_size = size;
+    update();
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& RectangleShape::GetSize() const
+const Vector2f& RectangleShape::getSize() const
 {
-    return mySize;
+    return m_size;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RectangleShape::GetPointCount() const
+unsigned int RectangleShape::getPointCount() const
 {
     return 4;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RectangleShape::GetPoint(unsigned int index) const
+Vector2f RectangleShape::getPoint(unsigned int index) const
 {
     switch (index)
     {
         default:
         case 0: return Vector2f(0, 0);
-        case 1: return Vector2f(mySize.x, 0);
-        case 2: return Vector2f(mySize.x, mySize.y);
-        case 3: return Vector2f(0, mySize.y);
+        case 1: return Vector2f(m_size.x, 0);
+        case 2: return Vector2f(m_size.x, m_size.y);
+        case 3: return Vector2f(0, m_size.y);
     }
 }
 

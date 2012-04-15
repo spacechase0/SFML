@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,10 +38,11 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTarget::RenderTarget() :
-myDefaultView(),
-myView       (),
-myCache      ()
+m_defaultView(),
+m_view       (),
+m_cache      ()
 {
+    m_cache.glStatesSet = false;
 }
 
 
@@ -52,90 +53,94 @@ RenderTarget::~RenderTarget()
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::Clear(const Color& color)
+void RenderTarget::clear(const Color& color)
 {
-    if (Activate(true))
+    if (activate(true))
     {
-        GLCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
-        GLCheck(glClear(GL_COLOR_BUFFER_BIT));
+        glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
+        glCheck(glClear(GL_COLOR_BUFFER_BIT));
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::SetView(const View& view)
+void RenderTarget::setView(const View& view)
 {
-    myView = view;
-    myCache.ViewChanged = true;
+    m_view = view;
+    m_cache.viewChanged = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-const View& RenderTarget::GetView() const
+const View& RenderTarget::getView() const
 {
-    return myView;
+    return m_view;
 }
 
 
 ////////////////////////////////////////////////////////////
-const View& RenderTarget::GetDefaultView() const
+const View& RenderTarget::getDefaultView() const
 {
-    return myDefaultView;
+    return m_defaultView;
 }
 
 
 ////////////////////////////////////////////////////////////
-IntRect RenderTarget::GetViewport(const View& view) const
+IntRect RenderTarget::getViewport(const View& view) const
 {
-    float width  = static_cast<float>(GetWidth());
-    float height = static_cast<float>(GetHeight());
-    const FloatRect& viewport = view.GetViewport();
+    float width  = static_cast<float>(getSize().x);
+    float height = static_cast<float>(getSize().y);
+    const FloatRect& viewport = view.getViewport();
 
-    return IntRect(static_cast<int>(0.5f + width  * viewport.Left),
-                   static_cast<int>(0.5f + height * viewport.Top),
-                   static_cast<int>(width  * viewport.Width),
-                   static_cast<int>(height * viewport.Height));
+    return IntRect(static_cast<int>(0.5f + width  * viewport.left),
+                   static_cast<int>(0.5f + height * viewport.top),
+                   static_cast<int>(width  * viewport.width),
+                   static_cast<int>(height * viewport.height));
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y) const
+Vector2f RenderTarget::convertCoords(const Vector2i& point) const
 {
-    return ConvertCoords(x, y, GetView());
+    return convertCoords(point, getView());
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::ConvertCoords(unsigned int x, unsigned int y, const View& view) const
+Vector2f RenderTarget::convertCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
     Vector2f coords;
-    IntRect viewport = GetViewport(view);
-    coords.x = -1.f + 2.f * (static_cast<int>(x) - viewport.Left) / viewport.Width;
-    coords.y = 1.f  - 2.f * (static_cast<int>(y) - viewport.Top)  / viewport.Height;
+    IntRect viewport = getViewport(view);
+    coords.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
+    coords.y = 1.f  - 2.f * (point.y - viewport.top)  / viewport.height;
 
     // Then transform by the inverse of the view matrix
-    return view.GetInverseTransform().TransformPoint(coords);
+    return view.getInverseTransform().transformPoint(coords);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::Draw(const Drawable& drawable, const RenderStates& states)
+void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
 {
-    drawable.Draw(*this, states);
+    drawable.draw(*this, states);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
+void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
                         PrimitiveType type, const RenderStates& states)
 {
     // Nothing to draw?
     if (!vertices || (vertexCount == 0))
         return;
 
-    if (Activate(true))
+    if (activate(true))
     {
+        // First set the persistent OpenGL states if it's the very first call
+        if (!m_cache.glStatesSet)
+            resetGLStates();
+
         // Check if the vertex count is low enough so that we can pre-transform them
         bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
         if (useVertexCache)
@@ -143,44 +148,44 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
             // Pre-transform the vertices and store them into the vertex cache
             for (unsigned int i = 0; i < vertexCount; ++i)
             {
-                Vertex& vertex = myCache.VertexCache[i];
-                vertex.Position = states.Transform * vertices[i].Position;
-                vertex.Color = vertices[i].Color;
-                vertex.TexCoords = vertices[i].TexCoords;
+                Vertex& vertex = m_cache.vertexCache[i];
+                vertex.position = states.transform * vertices[i].position;
+                vertex.color = vertices[i].color;
+                vertex.texCoords = vertices[i].texCoords;
             }
 
             // Since vertices are transformed, we must use an identity transform to render them
-            if (!myCache.UseVertexCache)
-                ApplyTransform(Transform::Identity);
+            if (!m_cache.useVertexCache)
+                applyTransform(Transform::Identity);
         }
         else
         {
-            ApplyTransform(states.Transform);
+            applyTransform(states.transform);
         }
 
         // Apply the view
-        if (myCache.ViewChanged)
-            ApplyCurrentView();
+        if (m_cache.viewChanged)
+            applyCurrentView();
 
         // Apply the blend mode
-        if (states.BlendMode != myCache.LastBlendMode)
-            ApplyBlendMode(states.BlendMode);
+        if (states.blendMode != m_cache.lastBlendMode)
+            applyBlendMode(states.blendMode);
 
         // Apply the texture
-        Uint64 textureId = states.Texture ? states.Texture->myCacheId : 0;
-        if (textureId != myCache.LastTextureId)
-            ApplyTexture(states.Texture);
+        Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
+        if (textureId != m_cache.lastTextureId)
+            applyTexture(states.texture);
 
         // Apply the shader
-        if (states.Shader)
-            ApplyShader(states.Shader);
+        if (states.shader)
+            applyShader(states.shader);
 
         // If we pre-transform the vertices, we must use our internal vertex cache
         if (useVertexCache)
         {
             // ... and if we already used it previously, we don't need to set the pointers again
-            if (!myCache.UseVertexCache)
-                vertices = myCache.VertexCache;
+            if (!m_cache.useVertexCache)
+                vertices = m_cache.vertexCache;
             else
                 vertices = NULL;
         }
@@ -189,9 +194,9 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
         if (vertices)
         {
             const char* data = reinterpret_cast<const char*>(vertices);
-            GLCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
-            GLCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
-            GLCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
+            glCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
+            glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
+            glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
         }
 
         // Find the OpenGL primitive type
@@ -205,119 +210,121 @@ void RenderTarget::Draw(const Vertex* vertices, unsigned int vertexCount,
         GLenum mode = modes[type];
 
         // Draw the primitives
-        GLCheck(glDrawArrays(mode, 0, vertexCount));
+        glCheck(glDrawArrays(mode, 0, vertexCount));
 
         // Unbind the shader, if any
-        if (states.Shader)
-            ApplyShader(NULL);
+        if (states.shader)
+            applyShader(NULL);
 
         // Update the cache
-        myCache.UseVertexCache = useVertexCache;
+        m_cache.useVertexCache = useVertexCache;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::PushGLStates()
+void RenderTarget::pushGLStates()
 {
-    if (Activate(true))
+    if (activate(true))
     {
-        GLCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
-        GLCheck(glMatrixMode(GL_MODELVIEW));
-        GLCheck(glPushMatrix());
-        GLCheck(glMatrixMode(GL_PROJECTION));
-        GLCheck(glPushMatrix());
-        GLCheck(glMatrixMode(GL_TEXTURE));
-        GLCheck(glPushMatrix());
+        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
+        glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+        glCheck(glMatrixMode(GL_MODELVIEW));
+        glCheck(glPushMatrix());
+        glCheck(glMatrixMode(GL_PROJECTION));
+        glCheck(glPushMatrix());
+        glCheck(glMatrixMode(GL_TEXTURE));
+        glCheck(glPushMatrix());
     }
 
-    ResetGLStates();
+    resetGLStates();
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::PopGLStates()
+void RenderTarget::popGLStates()
 {
-    if (Activate(true))
+    if (activate(true))
     {
-        GLCheck(glPopAttrib());
-        GLCheck(glMatrixMode(GL_PROJECTION));
-        GLCheck(glPopMatrix());
-        GLCheck(glMatrixMode(GL_MODELVIEW));
-        GLCheck(glPopMatrix());
-        GLCheck(glMatrixMode(GL_TEXTURE));
-        GLCheck(glPopMatrix());
+        glCheck(glPopClientAttrib());
+        glCheck(glPopAttrib());
+        glCheck(glMatrixMode(GL_PROJECTION));
+        glCheck(glPopMatrix());
+        glCheck(glMatrixMode(GL_MODELVIEW));
+        glCheck(glPopMatrix());
+        glCheck(glMatrixMode(GL_TEXTURE));
+        glCheck(glPopMatrix());
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::ResetGLStates()
+void RenderTarget::resetGLStates()
 {
-    if (Activate(true))
+    if (activate(true))
     {
         // Make sure that GLEW is initialized
-        priv::EnsureGlewInit();
+        priv::ensureGlewInit();
 
         // Define the default OpenGL states
-        GLCheck(glDisable(GL_LIGHTING));
-        GLCheck(glDisable(GL_DEPTH_TEST));
-        GLCheck(glEnable(GL_TEXTURE_2D));
-        GLCheck(glEnable(GL_ALPHA_TEST));
-        GLCheck(glEnable(GL_BLEND));
-        GLCheck(glAlphaFunc(GL_GREATER, 0));
-        GLCheck(glMatrixMode(GL_MODELVIEW));
-        GLCheck(glEnableClientState(GL_VERTEX_ARRAY));
-        GLCheck(glEnableClientState(GL_COLOR_ARRAY));
-        GLCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        glCheck(glDisable(GL_LIGHTING));
+        glCheck(glDisable(GL_DEPTH_TEST));
+        glCheck(glDisable(GL_ALPHA_TEST));
+        glCheck(glEnable(GL_TEXTURE_2D));
+        glCheck(glEnable(GL_BLEND));
+        glCheck(glMatrixMode(GL_MODELVIEW));
+        glCheck(glEnableClientState(GL_VERTEX_ARRAY));
+        glCheck(glEnableClientState(GL_COLOR_ARRAY));
+        glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        m_cache.glStatesSet = true;
 
         // Apply the default SFML states
-        ApplyBlendMode(BlendAlpha);
-        ApplyTransform(Transform::Identity);
-        ApplyTexture(NULL);
-        if (Shader::IsAvailable())
-            ApplyShader(NULL);
-        myCache.UseVertexCache = false;
+        applyBlendMode(BlendAlpha);
+        applyTransform(Transform::Identity);
+        applyTexture(NULL);
+        if (Shader::isAvailable())
+            applyShader(NULL);
+        m_cache.useVertexCache = false;
 
         // Set the default view
-        SetView(GetView());
+        setView(getView());
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::Initialize()
+void RenderTarget::initialize()
 {
     // Setup the default and current views
-    myDefaultView.Reset(FloatRect(0, 0, static_cast<float>(GetWidth()), static_cast<float>(GetHeight())));
-    myView = myDefaultView;
+    m_defaultView.reset(FloatRect(0, 0, static_cast<float>(getSize().x), static_cast<float>(getSize().y)));
+    m_view = m_defaultView;
 
-    // Initialize the default OpenGL render-states
-    ResetGLStates();
+    // Set GL states only on first draw, so that we don't pollute user's states
+    m_cache.glStatesSet = false;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::ApplyCurrentView()
+void RenderTarget::applyCurrentView()
 {
     // Set the viewport
-    IntRect viewport = GetViewport(myView);
-    int top = GetHeight() - (viewport.Top + viewport.Height);
-    GLCheck(glViewport(viewport.Left, top, viewport.Width, viewport.Height));
+    IntRect viewport = getViewport(m_view);
+    int top = getSize().y - (viewport.top + viewport.height);
+    glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
 
     // Set the projection matrix
-    GLCheck(glMatrixMode(GL_PROJECTION));
-    GLCheck(glLoadMatrixf(myView.GetTransform().GetMatrix()));
+    glCheck(glMatrixMode(GL_PROJECTION));
+    glCheck(glLoadMatrixf(m_view.getTransform().getMatrix()));
 
     // Go back to model-view mode
-    GLCheck(glMatrixMode(GL_MODELVIEW));
+    glCheck(glMatrixMode(GL_MODELVIEW));
 
-    myCache.ViewChanged = false;
+    m_cache.viewChanged = false;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::ApplyBlendMode(BlendMode mode)
+void RenderTarget::applyBlendMode(BlendMode mode)
 {
     switch (mode)
     {
@@ -328,62 +335,66 @@ void RenderTarget::ApplyBlendMode(BlendMode mode)
         case BlendAlpha :
 			#if !defined(SFML_SYSTEM_GP2X_WIZ)
             if (GLEW_EXT_blend_func_separate)
-                GLCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+                glCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
             else
             #endif
-                GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+                glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
             break;
 
         // Additive blending
         case BlendAdd :
-            GLCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+            glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
             break;
 
         // Multiplicative blending
         case BlendMultiply :
-            GLCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
+            glCheck(glBlendFunc(GL_DST_COLOR, GL_ZERO));
             break;
 
         // No blending
         case BlendNone :
-            GLCheck(glBlendFunc(GL_ONE, GL_ZERO));
+            glCheck(glBlendFunc(GL_ONE, GL_ZERO));
             break;
     }
 
-    myCache.LastBlendMode = mode;
+    m_cache.lastBlendMode = mode;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::ApplyTransform(const Transform& transform)
+void RenderTarget::applyTransform(const Transform& transform)
 {
     // No need to call glMatrixMode(GL_MODELVIEW), it is always the
     // current mode (for optimization purpose, since it's the most used)
-    GLCheck(glLoadMatrixf(transform.GetMatrix()));
+    glCheck(glLoadMatrixf(transform.getMatrix()));
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::ApplyTexture(const Texture* texture)
+void RenderTarget::applyTexture(const Texture* texture)
 {
     if (texture)
-        texture->Bind(Texture::Pixels);
+        texture->bind(Texture::Pixels);
     else
-        GLCheck(glBindTexture(GL_TEXTURE_2D, 0));
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 
-    myCache.LastTextureId = texture ? texture->myCacheId : 0;
+    m_cache.lastTextureId = texture ? texture->m_cacheId : 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::ApplyShader(const Shader* shader)
+void RenderTarget::applyShader(const Shader* shader)
 {
 	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (shader)
-        shader->Bind();
+        shader->bind();
     else
+<<<<<<< HEAD
         GLCheck(glUseProgramObjectARB(0));
 	#endif
+=======
+        glCheck(glUseProgramObjectARB(0));
+>>>>>>> newmaster
 }
 
 } // namespace sf

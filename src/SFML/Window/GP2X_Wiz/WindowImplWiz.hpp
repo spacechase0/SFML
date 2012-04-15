@@ -78,7 +78,7 @@ public :
     /// \return Pointer to the OS_Diplay of the window
     ///
     ////////////////////////////////////////////////////////////
-    ::OS_Display* GetDisplay() const;
+    ::OS_Display* getDisplay() const;
 
 private :
 
@@ -88,13 +88,13 @@ private :
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetSystemHandle() const;
+    virtual WindowHandle getSystemHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents();
+    virtual void processEvents();
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -102,25 +102,39 @@ private :
     /// \param show True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool show);
+    virtual void setMouseCursorVisible(bool show);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the window
+    ///
+    /// \return Position of the window, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2i getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
-    /// \param x Left position
-    /// \param y Top position
+    /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int x, int y);
+    virtual void setPosition(const Vector2i& position);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the client size of the window
+    ///
+    /// \return Size of the window, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width  New width
-    /// \param height New height
+    /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int width, unsigned int height);
+    virtual void setSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -128,7 +142,7 @@ private :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetTitle(const std::string& title);
+    virtual void setTitle(const std::string& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -136,7 +150,7 @@ private :
     /// \param show True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Show(bool show);
+    virtual void setVisible(bool show);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -144,7 +158,7 @@ private :
     /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool enabled);
+    virtual void setKeyRepeatEnabled(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -154,7 +168,7 @@ private :
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    virtual void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Switch to fullscreen mode
@@ -162,15 +176,15 @@ private :
     /// \param Mode video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void SwitchToFullscreen(const VideoMode& mode);
+    void switchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::OS_Window   myWindow;  ///< Window
-    ::OS_Display* myDisplay; ///< Display
-    int        myScreen;     ///< Screen identifier
-    bool       myKeyRepeat;  ///< Is the KeyRepeat feature enabled ?
+    ::OS_Window   m_window;  ///< Window
+    ::OS_Display* m_display; ///< Display
+    int           m_screen;     ///< Screen identifier
+    bool          m_keyRepeat;  ///< Is the KeyRepeat feature enabled ?
     
     sf::Vector2i prevMousePos; ///< The previous mouse position.
     bool prevMousePress;       ///< The previous mouse pressed state.

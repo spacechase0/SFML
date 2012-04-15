@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -59,7 +59,7 @@ public :
     /// \return sockaddr_in ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in CreateAddress(Uint32 address, unsigned short port);
+    static sockaddr_in createAddress(Uint32 address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket
@@ -67,7 +67,7 @@ public :
     /// \return Special value of the invalid socket
     ///
     ////////////////////////////////////////////////////////////
-    static SocketHandle InvalidSocket();
+    static SocketHandle invalidSocket();
 
     ////////////////////////////////////////////////////////////
     /// \brief Close and destroy a socket
@@ -75,7 +75,7 @@ public :
     /// \param sock Handle of the socket to close
     ///
     ////////////////////////////////////////////////////////////
-    static void Close(SocketHandle sock);
+    static void close(SocketHandle sock);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set a socket as blocking or non-blocking
@@ -84,7 +84,7 @@ public :
     /// \param block New blocking state of the socket
     ///
     ////////////////////////////////////////////////////////////
-    static void SetBlocking(SocketHandle sock, bool block);
+    static void setBlocking(SocketHandle sock, bool block);
 
     ////////////////////////////////////////////////////////////
     /// Get the last socket error status
@@ -92,7 +92,7 @@ public :
     /// \return Status corresponding to the last socket error
     ///
     ////////////////////////////////////////////////////////////
-    static Socket::Status GetErrorStatus();
+    static Socket::Status getErrorStatus();
 };
 
 } // namespace priv

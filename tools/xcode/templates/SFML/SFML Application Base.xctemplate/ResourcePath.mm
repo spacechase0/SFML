@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2011 Marco Antognini (antognini.marco@gmail.com), 
+// Copyright (C) 2007-2012 Marco Antognini (antognini.marco@gmail.com), 
 //                         Laurent Gomila (laurent.gom@gmail.com), 
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
-std::string ResourcePath(void)
+std::string resourcePath(void)
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     

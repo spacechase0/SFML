@@ -38,8 +38,8 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplWiz::WindowImplWiz(WindowHandle handle) :
-myWindow      (0),
-myKeyRepeat   (true),
+m_window      (0),
+m_keyRepeat   (true),
 
 prevMousePos( 0, 0 ),
 prevMousePress( false )
@@ -55,8 +55,8 @@ prevMousePress( false )
 
 ////////////////////////////////////////////////////////////
 WindowImplWiz::WindowImplWiz(VideoMode mode, const std::string& title, unsigned long style) :
-myWindow      (0),
-myKeyRepeat   (true),
+m_window      (0),
+m_keyRepeat   (true),
 
 prevMousePos( 0, 0 ),
 prevMousePress( false )
@@ -65,16 +65,12 @@ prevMousePress( false )
 	{
 		prevKeys[ i ] = false;
 	}
-	
-	// Window attributes
-	myWidth = 320;
-    myHeight = 240;
 
 	// Create window
-	myWindow = OS_CreateWindow();
-    if (!myWindow)
+	m_window = OS_CreateWindow();
+    if (!m_window)
     {
-        Err() << "Failed to create window." << std::endl;
+        err() << "Failed to create window." << std::endl;
         return;
     }
 }
@@ -85,156 +81,170 @@ WindowImplWiz::~WindowImplWiz()
 {
 }
 
-::OS_Display* WindowImplWiz::GetDisplay() const
+::OS_Display* WindowImplWiz::getDisplay() const
 {
-	return myDisplay;
+	return m_display;
 }
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplWiz::GetSystemHandle() const
+WindowHandle WindowImplWiz::getSystemHandle() const
 {
-    return myWindow;
+    return m_window;
 }
 
 
 ////////////////////////////////////////////////////////////
-sf::Event DoKey( sf::priv::WizKeyEquivalents keyAlt, bool* prevKeys )
+sf::Event doKey( sf::priv::WizKeyEquivalents keyAlt, bool* prevKeys )
 {
 	sf::Keyboard::Key key = static_cast< sf::Keyboard::Key >( keyAlt );
 	
 	sf::Event event;
-	event.Type = sf::Event::Count;
-	event.Key.Code = key;
+	event.type = sf::Event::Count;
+	event.key.code = key;
 	
-	bool pressed = sf::Keyboard::IsKeyPressed( key );
+	bool pressed = sf::Keyboard::isKeyPressed( key );
 	if ( pressed and !prevKeys[ key ] )
 	{
-		event.Type = sf::Event::KeyPressed;
+		event.type = sf::Event::KeyPressed;
 	}
 	else if ( !pressed and prevKeys[ key ] )
 	{
-		event.Type = sf::Event::KeyReleased;
+		event.type = sf::Event::KeyReleased;
 	}
 	
 	prevKeys[ key ] = pressed;
 	return event;
 }
 
-sf::Event DoMouseButton( bool& prevMousePress )
+sf::Event doMouseButton( bool& prevMousePress )
 {
 	sf::Event event;
-	event.Type = sf::Event::Count;
-	event.MouseButton.Button = sf::Mouse::Left;
-	event.MouseButton.X = sf::Mouse::GetPosition().x;
-	event.MouseButton.Y = sf::Mouse::GetPosition().y;
+	event.type = sf::Event::Count;
+	event.mouseButton.button = sf::Mouse::Left;
+	event.mouseButton.x = sf::Mouse::getPosition().x;
+	event.mouseButton.y = sf::Mouse::getPosition().y;
 	
-	bool pressed = sf::Mouse::IsButtonPressed( sf::Mouse::Left );
+	bool pressed = sf::Mouse::isButtonPressed( sf::Mouse::Left );
 	if ( pressed and !prevMousePress )
 	{
-		event.Type = sf::Event::MouseButtonPressed;
+		event.type = sf::Event::MouseButtonPressed;
 	}
 	else if ( !pressed and prevMousePress )
 	{
-		event.Type = sf::Event::MouseButtonReleased;
+		event.type = sf::Event::MouseButtonReleased;
 	}
 	
 	prevMousePress = pressed;
 	return event;
 }
 
-sf::Event DoMousePosition( sf::Vector2i& prevMousePos )
+sf::Event doMousePosition( sf::Vector2i& prevMousePos )
 {
 	sf::Event event;
-	event.Type = sf::Event::Count;
+	event.type = sf::Event::Count;
 	
-	sf::Vector2i mousePos = sf::Mouse::GetPosition();
+	sf::Vector2i mousePos = sf::Mouse::getPosition();
 	if ( mousePos != prevMousePos )
 	{
-		event.Type = sf::Event::MouseMoved;
-		event.MouseMove.X = mousePos.x;
-		event.MouseMove.Y = mousePos.y;
+		event.type = sf::Event::MouseMoved;
+		event.mouseMove.x = mousePos.x;
+		event.mouseMove.y = mousePos.y;
 	}
 	
 	prevMousePos = mousePos;
 	return event;
 }
 
-void WindowImplWiz::ProcessEvents()
+void WindowImplWiz::processEvents()
 {
-    inputImpl.Update();
+    inputImpl.update();
     
     sf::Event events[ 16 ];
-	events[ 0  ] = DoKey( LEFT_SHOULDER_E, prevKeys );
-	events[ 1  ] = DoKey( RIGHT_SHOULDER_E, prevKeys );
-	events[ 2  ] = DoKey( UP_E, prevKeys );
-	events[ 3  ] = DoKey( LEFT_E, prevKeys );
-	events[ 4  ] = DoKey( DOWN_E, prevKeys );
-	events[ 5  ] = DoKey( RIGHT_E, prevKeys );
-	events[ 6  ] = DoKey( BUTTON_Y_E, prevKeys );
-	events[ 7  ] = DoKey( BUTTON_A_E, prevKeys );
-	events[ 8  ] = DoKey( BUTTON_X_E, prevKeys );
-	events[ 9  ] = DoKey( BUTTON_B_E, prevKeys );
-	events[ 10 ] = DoKey( VOLUME_UP_E, prevKeys );
-	events[ 11 ] = DoKey( VOLUME_DOWN_E, prevKeys );
-	events[ 12 ] = DoKey( MENU_E, prevKeys );
-	events[ 13 ] = DoKey( SELECT_E, prevKeys );
-	events[ 14 ] = DoMouseButton( prevMousePress );
-	events[ 15 ] = DoMousePosition( prevMousePos );
+	events[ 0  ] = doKey( LEFT_SHOULDER_E, prevKeys );
+	events[ 1  ] = doKey( RIGHT_SHOULDER_E, prevKeys );
+	events[ 2  ] = doKey( UP_E, prevKeys );
+	events[ 3  ] = doKey( LEFT_E, prevKeys );
+	events[ 4  ] = doKey( DOWN_E, prevKeys );
+	events[ 5  ] = doKey( RIGHT_E, prevKeys );
+	events[ 6  ] = doKey( BUTTON_Y_E, prevKeys );
+	events[ 7  ] = doKey( BUTTON_A_E, prevKeys );
+	events[ 8  ] = doKey( BUTTON_X_E, prevKeys );
+	events[ 9  ] = doKey( BUTTON_B_E, prevKeys );
+	events[ 10 ] = doKey( VOLUME_UP_E, prevKeys );
+	events[ 11 ] = doKey( VOLUME_DOWN_E, prevKeys );
+	events[ 12 ] = doKey( MENU_E, prevKeys );
+	events[ 13 ] = doKey( SELECT_E, prevKeys );
+	events[ 14 ] = doMouseButton( prevMousePress );
+	events[ 15 ] = doMousePosition( prevMousePos );
 	
 	for ( std::size_t i = 0; i < 16; ++i )
 	{
-		if ( events[ i ].Type != sf::Event::Count )
+		if ( events[ i ].type != sf::Event::Count )
 		{
-			PushEvent( events[ i ] );
+			pushEvent( events[ i ] );
 		}
 	}
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::ShowMouseCursor(bool show)
+void WindowImplWiz::setMouseCursorVisible(bool show)
 {
 	// No cursor
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::SetPosition(int x, int y)
+sf::Vector2i WindowImplWiz::getPosition() const
+{
+	return sf::Vector2i( 0, 0 );
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWiz::setPosition(const Vector2i& position)
 {
     // Can't be moved
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::SetSize(unsigned int width, unsigned int height)
+sf::Vector2u WindowImplWiz::getSize() const
+{
+	return sf::Vector2u( 320, 240 );
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWiz::setSize(const sf::Vector2u& size)
 {
 	// Same size all the time
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::SetTitle(const std::string& title)
+void WindowImplWiz::setTitle(const std::string& title)
 {
 	// Doesn't have a title
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::Show(bool show)
+void WindowImplWiz::setVisible(bool show)
 {
     // Only one window can exist, so this doesn't matter
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::EnableKeyRepeat(bool enabled)
+void WindowImplWiz::setKeyRepeatEnabled(bool enabled)
 {
-    myKeyRepeat = enabled;
+    m_keyRepeat = enabled;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWiz::SetIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplWiz::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // No icons
 }

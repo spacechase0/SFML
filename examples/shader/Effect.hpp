@@ -19,56 +19,56 @@ public :
     {
     }
 
-    const std::string& GetName() const
+    const std::string& getName() const
     {
-        return myName;
+        return m_name;
     }
 
-    void Load()
+    void load()
     {
-        myIsLoaded = sf::Shader::IsAvailable() && OnLoad();
+        m_isLoaded = sf::Shader::isAvailable() && onLoad();
     }
 
-    void Update(float time, float x, float y)
+    void update(float time, float x, float y)
     {
-        if (myIsLoaded)
-            OnUpdate(time, x, y);
+        if (m_isLoaded)
+            onUpdate(time, x, y);
     }
 
-    void Draw(sf::RenderTarget& target, sf::RenderStates states) const
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        if (myIsLoaded)
+        if (m_isLoaded)
         {
-            OnDraw(target, states);
+            onDraw(target, states);
         }
         else
         {
             sf::Text error("Shader not\nsupported");
-            error.SetPosition(320.f, 200.f);
-            error.SetCharacterSize(36);
-            target.Draw(error, states);
+            error.setPosition(320.f, 200.f);
+            error.setCharacterSize(36);
+            target.draw(error, states);
         }
     }
 
 protected :
 
     Effect(const std::string& name) :
-    myName(name),
-    myIsLoaded(false)
+    m_name(name),
+    m_isLoaded(false)
     {
     }
 
 private :
 
     // Virtual functions to be implemented in derived effects
-    virtual bool OnLoad() = 0;
-    virtual void OnUpdate(float time, float x, float y) = 0;
-    virtual void OnDraw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
+    virtual bool onLoad() = 0;
+    virtual void onUpdate(float time, float x, float y) = 0;
+    virtual void onDraw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
 
 private :
 
-    std::string myName;
-    bool myIsLoaded;
+    std::string m_name;
+    bool m_isLoaded;
 };
 
 #endif // EFFECT_HPP

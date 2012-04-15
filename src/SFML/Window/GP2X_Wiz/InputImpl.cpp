@@ -34,48 +34,48 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsKeyPressed(Keyboard::Key key)
+bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    sf::Uint32 buttons = GetButtons();
+    sf::Uint32 buttons = getButtons();
     
     // Get the right key
-    #define DoKey(a) case a ## _E:  return buttons & a;
+    #define doKey(a) case a ## _E:  return buttons & a;
     switch ( key )
     {
-    	DoKey( LEFT_SHOULDER );
-    	DoKey( RIGHT_SHOULDER );
+    	doKey( LEFT_SHOULDER );
+    	doKey( RIGHT_SHOULDER );
     	
-    	DoKey( UP );
-    	DoKey( LEFT );
-    	DoKey( DOWN );
-    	DoKey( RIGHT );
+    	doKey( UP );
+    	doKey( LEFT );
+    	doKey( DOWN );
+    	doKey( RIGHT );
     	
-    	DoKey( BUTTON_Y );
-    	DoKey( BUTTON_A );
-    	DoKey( BUTTON_X );
-    	DoKey( BUTTON_B );
+    	doKey( BUTTON_Y );
+    	doKey( BUTTON_A );
+    	doKey( BUTTON_X );
+    	doKey( BUTTON_B );
     	
-    	DoKey( VOLUME_UP );
-    	DoKey( VOLUME_DOWN );
+    	doKey( VOLUME_UP );
+    	doKey( VOLUME_DOWN );
     	
-    	DoKey( MENU );
-    	DoKey( SELECT );
+    	doKey( MENU );
+    	doKey( SELECT );
     }
-    #undef DoKey
+    #undef doKey
     
     return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::IsMouseButtonPressed(Mouse::Button button)
+bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     return inputImpl.mousePressed;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition()
+Vector2i InputImpl::getMousePosition()
 {
 	// For some reason x=0 is on the right side
     sf::Vector2i pos = inputImpl.mousePos;
@@ -87,21 +87,21 @@ Vector2i InputImpl::GetMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::GetMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 {
-	return GetMousePosition();
+	return getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(const Vector2i& position)
 {
 	// Impossible
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::SetMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
 {
 	// Impossible
 }

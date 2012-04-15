@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,24 +38,24 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Clock::Clock() :
-myStartTime(priv::ClockImpl::GetCurrentTime())
+m_startTime(priv::ClockImpl::getCurrentTime())
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Clock::GetElapsedTime() const
+Time Clock::getElapsedTime() const
 {
-    return priv::ClockImpl::GetCurrentTime() - myStartTime;
+    return priv::ClockImpl::getCurrentTime() - m_startTime;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Clock::Restart()
+Time Clock::restart()
 {
-    Time now = priv::ClockImpl::GetCurrentTime();
-    Time elapsed = now - myStartTime;
-    myStartTime = now;
+    Time now = priv::ClockImpl::getCurrentTime();
+    Time elapsed = now - m_startTime;
+    m_startTime = now;
 
     return elapsed;
 }

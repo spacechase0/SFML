@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -56,7 +56,7 @@ public :
     /// \return True if the joystick is connected, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool IsConnected(unsigned int index);
+    static bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the joystick
@@ -66,13 +66,13 @@ public :
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool Open(unsigned int index);
+    bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the joystick
     ///
     ////////////////////////////////////////////////////////////
-    void Close();
+    void close();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the joystick capabilities
@@ -80,7 +80,7 @@ public :
     /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    JoystickCaps GetCapabilities() const;
+    JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
@@ -88,15 +88,15 @@ public :
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState Update();
+    JoystickState update();
 
 private :
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int myIndex; ///< Index of the joystick
-    JOYCAPS      myCaps;  ///< Joystick capabilities
+    unsigned int m_index; ///< Index of the joystick
+    JOYCAPS      m_caps;  ///< Joystick capabilities
 };
 
 } // namespace priv

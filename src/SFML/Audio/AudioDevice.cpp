@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -59,12 +59,12 @@ AudioDevice::AudioDevice()
         }
         else
         {
-            Err() << "Failed to create the audio context" << std::endl;
+            err() << "Failed to create the audio context" << std::endl;
         }
     }
     else
     {
-        Err() << "Failed to open the audio device" << std::endl;
+        err() << "Failed to open the audio device" << std::endl;
     }
 }
 
@@ -84,9 +84,9 @@ AudioDevice::~AudioDevice()
 
 
 ////////////////////////////////////////////////////////////
-bool AudioDevice::IsExtensionSupported(const std::string& extension)
+bool AudioDevice::isExtensionSupported(const std::string& extension)
 {
-    EnsureALInit();
+    ensureALInit();
 
     if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
         return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
@@ -96,9 +96,9 @@ bool AudioDevice::IsExtensionSupported(const std::string& extension)
 
 
 ////////////////////////////////////////////////////////////
-int AudioDevice::GetFormatFromChannelCount(unsigned int channelCount)
+int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 {
-    EnsureALInit();
+    ensureALInit();
 
     // Find the good format according to the number of channels
     switch (channelCount)

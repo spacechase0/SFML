@@ -34,17 +34,17 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::GetFullscreenModes()
+std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
-    modes.push_back( GetDesktopMode() );
+    modes.push_back( getDesktopMode() );
     
     return modes;
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::GetDesktopMode()
+VideoMode VideoModeImpl::getDesktopMode()
 {
 	return sf::VideoMode( 320, 240, 24 );
 }

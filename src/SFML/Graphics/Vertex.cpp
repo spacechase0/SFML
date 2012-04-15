@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,45 +32,45 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Vertex::Vertex() :
-Position (0, 0),
-Color    (255, 255, 255),
-TexCoords(0, 0)
+position (0, 0),
+color    (255, 255, 255),
+texCoords(0, 0)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-Vertex::Vertex(const Vector2f& position) :
-Position (position),
-Color    (255, 255, 255),
-TexCoords(0, 0)
+Vertex::Vertex(const Vector2f& thePosition) :
+position (thePosition),
+color    (255, 255, 255),
+texCoords(0, 0)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-Vertex::Vertex(const Vector2f& position, const sf::Color& color) :
-Position (position),
-Color    (color),
-TexCoords(0, 0)
+Vertex::Vertex(const Vector2f& thePosition, const Color& theColor) :
+position (thePosition),
+color    (theColor),
+texCoords(0, 0)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-Vertex::Vertex(const Vector2f& position, const Vector2f& texCoords) :
-Position (position),
-Color    (255, 255, 255),
-TexCoords(texCoords)
+Vertex::Vertex(const Vector2f& thePosition, const Vector2f& theTexCoords) :
+position (thePosition),
+color    (255, 255, 255),
+texCoords(theTexCoords)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-Vertex::Vertex(const Vector2f& position, const sf::Color& color, const Vector2f& texCoords) :
-Position (position),
-Color    (color),
-TexCoords(texCoords)
+Vertex::Vertex(const Vector2f& thePosition, const Color& theColor, const Vector2f& theTexCoords) :
+position (thePosition),
+color    (theColor),
+texCoords(theTexCoords)
 {
 }
 

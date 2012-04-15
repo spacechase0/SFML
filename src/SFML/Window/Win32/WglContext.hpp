@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -82,19 +82,18 @@ public :
     ~WglContext();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate the context as the current target
-    ///        for rendering
+    /// \brief Activate the context as the current target for rendering
     ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent();
+    virtual bool makeCurrent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display();
+    virtual void display();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -107,7 +106,7 @@ public :
     /// \param enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableVerticalSync(bool enabled);
+    virtual void setVerticalSyncEnabled(bool enabled);
 
 private :
 
@@ -119,15 +118,15 @@ private :
     /// \param settings      Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
+    void createContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND  myWindow;        ///< Window to which the context is attached
-    HDC   myDeviceContext; ///< Device context associated to the context
-    HGLRC myContext;       ///< OpenGL context
-    bool  myOwnsWindow;    ///< Do we own the target window?
+    HWND  m_window;        ///< Window to which the context is attached
+    HDC   m_deviceContext; ///< Device context associated to the context
+    HGLRC m_context;       ///< OpenGL context
+    bool  m_ownsWindow;    ///< Do we own the target window?
 };
 
 } // namespace priv

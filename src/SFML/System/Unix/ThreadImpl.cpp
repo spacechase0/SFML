@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,36 +37,36 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner) :
-myIsActive(true)
+m_isActive(true)
 {
-    myIsActive = pthread_create(&myThread, NULL, &ThreadImpl::EntryPoint, owner) == 0;
+    m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
 
-    if (!myIsActive)
+    if (!m_isActive)
         std::cerr << "Failed to create thread" << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Wait()
+void ThreadImpl::wait()
 {
-    if (myIsActive)
+    if (m_isActive)
     {
-        assert(pthread_equal(pthread_self(), myThread) == 0); // A thread cannot wait for itself!
-        pthread_join(myThread, NULL);
+        assert(pthread_equal(pthread_self(), m_thread) == 0); // A thread cannot wait for itself!
+        pthread_join(m_thread, NULL);
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void ThreadImpl::Terminate()
+void ThreadImpl::terminate()
 {
-    if (myIsActive)
-        pthread_cancel(myThread);
+    if (m_isActive)
+        pthread_cancel(m_thread);
 }
 
 
 ////////////////////////////////////////////////////////////
-void* ThreadImpl::EntryPoint(void* userData)
+void* ThreadImpl::entryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
     Thread* owner = static_cast<Thread*>(userData);
@@ -75,7 +75,7 @@ void* ThreadImpl::EntryPoint(void* userData)
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     // Forward to the owner
-    owner->Run();
+    owner->run();
 
     return NULL;
 }

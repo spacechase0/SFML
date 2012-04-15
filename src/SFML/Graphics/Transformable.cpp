@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,14 +33,14 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Transformable::Transformable() :
-myOrigin                    (0, 0),
-myPosition                  (0, 0),
-myRotation                  (0),
-myScale                     (1, 1),
-myTransform                 (),
-myTransformNeedUpdate       (true),
-myInverseTransform          (),
-myInverseTransformNeedUpdate(true)
+m_origin                    (0, 0),
+m_position                  (0, 0),
+m_rotation                  (0),
+m_scale                     (1, 1),
+m_transform                 (),
+m_transformNeedUpdate       (true),
+m_inverseTransform          (),
+m_inverseTransformNeedUpdate(true)
 {
 }
 
@@ -52,165 +52,165 @@ Transformable::~Transformable()
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetPosition(float x, float y)
+void Transformable::setPosition(float x, float y)
 {
-    myPosition.x = x;
-    myPosition.y = y;
-    myTransformNeedUpdate = true;
-    myInverseTransformNeedUpdate = true;
+    m_position.x = x;
+    m_position.y = y;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetPosition(const Vector2f& position)
+void Transformable::setPosition(const Vector2f& position)
 {
-    SetPosition(position.x, position.y);
+    setPosition(position.x, position.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetRotation(float angle)
+void Transformable::setRotation(float angle)
 {
-    myRotation = angle;
-    myTransformNeedUpdate = true;
-    myInverseTransformNeedUpdate = true;
+    m_rotation = angle;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetScale(float factorX, float factorY)
+void Transformable::setScale(float factorX, float factorY)
 {
-    myScale.x = factorX;
-    myScale.y = factorY;
-    myTransformNeedUpdate = true;
-    myInverseTransformNeedUpdate = true;
+    m_scale.x = factorX;
+    m_scale.y = factorY;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetScale(const Vector2f& factors)
+void Transformable::setScale(const Vector2f& factors)
 {
-    SetScale(factors.x, factors.y);
+    setScale(factors.x, factors.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetOrigin(float x, float y)
+void Transformable::setOrigin(float x, float y)
 {
-    myOrigin.x = x;
-    myOrigin.y = y;
-    myTransformNeedUpdate = true;
-    myInverseTransformNeedUpdate = true;
+    m_origin.x = x;
+    m_origin.y = y;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::SetOrigin(const Vector2f& origin)
+void Transformable::setOrigin(const Vector2f& origin)
 {
-    SetOrigin(origin.x, origin.y);
+    setOrigin(origin.x, origin.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& Transformable::GetPosition() const
+const Vector2f& Transformable::getPosition() const
 {
-    return myPosition;
+    return m_position;
 }
 
 
 ////////////////////////////////////////////////////////////
-float Transformable::GetRotation() const
+float Transformable::getRotation() const
 {
-    return myRotation;
+    return m_rotation;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& Transformable::GetScale() const
+const Vector2f& Transformable::getScale() const
 {
-    return myScale;
+    return m_scale;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& Transformable::GetOrigin() const
+const Vector2f& Transformable::getOrigin() const
 {
-    return myOrigin;
+    return m_origin;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::Move(float offsetX, float offsetY)
+void Transformable::move(float offsetX, float offsetY)
 {
-    SetPosition(myPosition.x + offsetX, myPosition.y + offsetY);
+    setPosition(m_position.x + offsetX, m_position.y + offsetY);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::Move(const Vector2f& offset)
+void Transformable::move(const Vector2f& offset)
 {
-    SetPosition(myPosition.x + offset.x, myPosition.y + offset.y);
+    setPosition(m_position.x + offset.x, m_position.y + offset.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::Rotate(float angle)
+void Transformable::rotate(float angle)
 {
-    SetRotation(myRotation + angle);
+    setRotation(m_rotation + angle);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::Scale(float factorX, float factorY)
+void Transformable::scale(float factorX, float factorY)
 {
-    SetScale(myScale.x * factorX, myScale.y * factorY);
+    setScale(m_scale.x * factorX, m_scale.y * factorY);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::Scale(const Vector2f& factor)
+void Transformable::scale(const Vector2f& factor)
 {
-    SetScale(myScale.x * factor.x, myScale.y * factor.y);
+    setScale(m_scale.x * factor.x, m_scale.y * factor.y);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Transform& Transformable::GetTransform() const
+const Transform& Transformable::getTransform() const
 {
     // Recompute the combined transform if needed
-    if (myTransformNeedUpdate)
+    if (m_transformNeedUpdate)
     {
-        float angle  = -myRotation * 3.141592654f / 180.f;
+        float angle  = -m_rotation * 3.141592654f / 180.f;
         float cosine = static_cast<float>(std::cos(angle));
         float sine   = static_cast<float>(std::sin(angle));
-        float sxc    = myScale.x * cosine;
-        float syc    = myScale.y * cosine;
-        float sxs    = myScale.x * sine;
-        float sys    = myScale.y * sine;
-        float tx     = -myOrigin.x * sxc - myOrigin.y * sys + myPosition.x;
-        float ty     =  myOrigin.x * sxs - myOrigin.y * syc + myPosition.y;
+        float sxc    = m_scale.x * cosine;
+        float syc    = m_scale.y * cosine;
+        float sxs    = m_scale.x * sine;
+        float sys    = m_scale.y * sine;
+        float tx     = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
+        float ty     =  m_origin.x * sxs - m_origin.y * syc + m_position.y;
 
-        myTransform = Transform( sxc, sys, tx,
+        m_transform = Transform( sxc, sys, tx,
                                 -sxs, syc, ty,
                                  0.f, 0.f, 1.f);
-        myTransformNeedUpdate = false;
+        m_transformNeedUpdate = false;
     }
 
-    return myTransform;
+    return m_transform;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Transform& Transformable::GetInverseTransform() const
+const Transform& Transformable::getInverseTransform() const
 {
     // Recompute the inverse transform if needed
-    if (myInverseTransformNeedUpdate)
+    if (m_inverseTransformNeedUpdate)
     {
-        myInverseTransform = GetTransform().GetInverse();
-        myInverseTransformNeedUpdate = false;
+        m_inverseTransform = getTransform().getInverse();
+        m_inverseTransformNeedUpdate = false;
     }
 
-    return myInverseTransform;
+    return m_inverseTransform;
 }
 
 } // namespace sf

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -70,47 +70,45 @@ public :
     ////////////////////////////////////////////////////////////
     ~WindowImplWin32();
 
-private :
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
     ///
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle GetSystemHandle() const;
+    virtual WindowHandle getSystemHandle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Process incoming events from the operating system
+    /// \brief Get the position of the window
+    ///
+    /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ProcessEvents();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the mouse cursor
-    ///
-    /// \param show True to show, false to hide
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void ShowMouseCursor(bool show);
+    virtual Vector2i getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
-    /// \param x Left position
-    /// \param y Top position
+    /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetPosition(int x, int y);
+    virtual void setPosition(const Vector2i& position);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the client size of the window
+    ///
+    /// \return Size of the window, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
     ///
-    /// \param width  New width
-    /// \param height New height
+    /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetSize(unsigned int width, unsigned int height);
+    virtual void setSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -118,23 +116,7 @@ private :
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetTitle(const std::string& title);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the window
-    ///
-    /// \param show True to show, false to hide
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void Show(bool show);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable automatic key-repeat
-    ///
-    /// \param enabled True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void EnableKeyRepeat(bool enabled);
+    virtual void setTitle(const std::string& title);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -144,13 +126,47 @@ private :
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void SetIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    virtual void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the window
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursorVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable automatic key-repeat
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setKeyRepeatEnabled(bool enabled);
+
+protected:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Process incoming events from the operating system
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void processEvents();
+
+private :
 
     ////////////////////////////////////////////////////////////
     /// Register the window class
     ///
     ////////////////////////////////////////////////////////////
-    void RegisterWindowClass();
+    void registerWindowClass();
 
     ////////////////////////////////////////////////////////////
     /// \brief Switch to fullscreen mode
@@ -158,13 +174,13 @@ private :
     /// \param mode Video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void SwitchToFullscreen(const VideoMode& mode);
+    void switchToFullscreen(const VideoMode& mode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the graphical resources attached to the window
     ///
     ////////////////////////////////////////////////////////////
-    void Cleanup();
+    void cleanup();
 
     ////////////////////////////////////////////////////////////
     /// \brief Process a Win32 event
@@ -174,7 +190,7 @@ private :
     /// \param lParam  Second parameter of the event
     ///
     ////////////////////////////////////////////////////////////
-    void ProcessEvent(UINT message, WPARAM wParam, LPARAM lParam);
+    void processEvent(UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a Win32 virtual key code to a SFML key code
@@ -185,7 +201,7 @@ private :
     /// \return SFML key code corresponding to the key
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key VirtualKeyCodeToSF(WPARAM key, LPARAM flags);
+    static Keyboard::Key virtualKeyCodeToSF(WPARAM key, LPARAM flags);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if the current version of the OS supports
@@ -196,7 +212,7 @@ private :
     /// \return True if the OS supports unicode
     ///
     ////////////////////////////////////////////////////////////
-    static bool HasUnicodeSupport();
+    static bool hasUnicodeSupport();
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called whenever one of our windows receives a message
@@ -209,17 +225,17 @@ private :
     /// \return True to discard the event after it has been processed
     ///
     ////////////////////////////////////////////////////////////
-    static LRESULT CALLBACK GlobalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK globalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND     myHandle;           ///< Win32 handle of the window
-    LONG_PTR myCallback;         ///< Stores the original event callback function of the control
-    HCURSOR  myCursor;           ///< The system cursor to display into the window
-    HICON    myIcon;             ///< Custom icon assigned to the window
-    bool     myKeyRepeatEnabled; ///< Automatic key-repeat state for keydown events
-    bool     myIsCursorIn;       ///< Is the mouse cursor in the window's area ?
+    HWND     m_handle;           ///< Win32 handle of the window
+    LONG_PTR m_callback;         ///< Stores the original event callback function of the control
+    HCURSOR  m_cursor;           ///< The system cursor to display into the window
+    HICON    m_icon;             ///< Custom icon assigned to the window
+    bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
+    bool     m_isCursorIn;       ///< Is the mouse cursor in the window's area ?
 };
 
 } // namespace priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,89 +33,89 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 VertexArray::VertexArray() :
-myVertices     (),
-myPrimitiveType(Points)
+m_vertices     (),
+m_primitiveType(Points)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 VertexArray::VertexArray(PrimitiveType type, unsigned int vertexCount) :
-myVertices     (vertexCount),
-myPrimitiveType(type)
+m_vertices     (vertexCount),
+m_primitiveType(type)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int VertexArray::GetVertexCount() const
+unsigned int VertexArray::getVertexCount() const
 {
-    return static_cast<unsigned int>(myVertices.size());
+    return static_cast<unsigned int>(m_vertices.size());
 }
 
 
 ////////////////////////////////////////////////////////////
 Vertex& VertexArray::operator [](unsigned int index)
 {
-    return myVertices[index];
+    return m_vertices[index];
 }
 
 
 ////////////////////////////////////////////////////////////
 const Vertex& VertexArray::operator [](unsigned int index) const
 {
-    return myVertices[index];
+    return m_vertices[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Clear()
+void VertexArray::clear()
 {
-    myVertices.clear();
+    m_vertices.clear();
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Resize(unsigned int vertexCount)
+void VertexArray::resize(unsigned int vertexCount)
 {
-    myVertices.resize(vertexCount);
+    m_vertices.resize(vertexCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Append(const Vertex& vertex)
+void VertexArray::append(const Vertex& vertex)
 {
-    myVertices.push_back(vertex);
+    m_vertices.push_back(vertex);
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::SetPrimitiveType(PrimitiveType type)
+void VertexArray::setPrimitiveType(PrimitiveType type)
 {
-    myPrimitiveType = type;
+    m_primitiveType = type;
 }
 
 
 ////////////////////////////////////////////////////////////
-PrimitiveType VertexArray::GetPrimitiveType() const
+PrimitiveType VertexArray::getPrimitiveType() const
 {
-    return myPrimitiveType;
+    return m_primitiveType;
 }
 
 
 ////////////////////////////////////////////////////////////
-FloatRect VertexArray::GetBounds() const
+FloatRect VertexArray::getBounds() const
 {
-    if (!myVertices.empty())
+    if (!m_vertices.empty())
     {
-        float left   = myVertices[0].Position.x;
-        float top    = myVertices[0].Position.y;
-        float right  = myVertices[0].Position.x;
-        float bottom = myVertices[0].Position.y;
+        float left   = m_vertices[0].position.x;
+        float top    = m_vertices[0].position.y;
+        float right  = m_vertices[0].position.x;
+        float bottom = m_vertices[0].position.y;
 
-        for (std::size_t i = 0; i < myVertices.size(); ++i)
+        for (std::size_t i = 0; i < m_vertices.size(); ++i)
         {
-            Vector2f position = myVertices[i].Position;
+            Vector2f position = m_vertices[i].position;
 
             // Update left and right
             if (position.x < left)
@@ -141,10 +141,10 @@ FloatRect VertexArray::GetBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::Draw(RenderTarget& target, RenderStates states) const
+void VertexArray::draw(RenderTarget& target, RenderStates states) const
 {
-    if (!myVertices.empty())
-        target.Draw(&myVertices[0], static_cast<unsigned int>(myVertices.size()), myPrimitiveType, states);
+    if (!m_vertices.empty())
+        target.draw(&m_vertices[0], static_cast<unsigned int>(m_vertices.size()), m_primitiveType, states);
 }
 
 } // namespace sf

@@ -88,13 +88,13 @@ public :
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool MakeCurrent();
+    virtual bool makeCurrent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Display();
+    virtual void display();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -107,7 +107,7 @@ public :
     /// \param enabled : True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void EnableVerticalSync(bool enabled);
+    virtual void setVerticalSyncEnabled(bool enabled);
 
 private :
 
@@ -118,18 +118,18 @@ private :
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void CreateContext(WizGlContext* shared, const ContextSettings& settings);
+    void createContext(WizGlContext* shared, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::OS_Display myDisplay; ///< The display. (?)
-    ::OS_Window  myWindow;  ///< The window. (?)
-	::EGLDisplay myGlDisplay; ///< The OpenGL(ES?) display.
-	::EGLConfig  myGlConfig;  ///< The OpenGL(ES?) config.
-	::EGLContext myGlContext; ///< The OpenGL(ES?) context.
-	::EGLSurface myGlSurface; ///< The OpenGL(ES?) surface.
-    bool         myOwnsWindow; ///< Do we own the window associated to the context?
+    ::OS_Display m_display; ///< The display. (?)
+    ::OS_Window  m_window;  ///< The window. (?)
+	::EGLDisplay m_glDisplay; ///< The OpenGL(ES?) display.
+	::EGLConfig  m_glConfig;  ///< The OpenGL(ES?) config.
+	::EGLContext m_glContext; ///< The OpenGL(ES?) context.
+	::EGLSurface m_glSurface; ///< The OpenGL(ES?) surface.
+    bool         m_ownsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv

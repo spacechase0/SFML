@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2009 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2012 Laurent Gomila (laurent.gom@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,7 +34,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void GLCheckError(const std::string& file, unsigned int line)
+void glCheckError(const std::string& file, unsigned int line)
 {
     // Get the last error
     GLenum errorCode = glGetError();
@@ -100,7 +100,7 @@ void GLCheckError(const std::string& file, unsigned int line)
         }
 
         // Log the error
-        Err() << "An internal OpenGL call failed in "
+        err() << "An internal OpenGL call failed in "
               << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
               << error << ", " << description
               << std::endl;
@@ -109,7 +109,7 @@ void GLCheckError(const std::string& file, unsigned int line)
 
 
 ////////////////////////////////////////////////////////////
-void EnsureGlewInit()
+void ensureGlewInit()
 {
 	#if !defined( SFML_SYSTEM_GP2X_WIZ )
     static bool initialized = false;
@@ -122,7 +122,7 @@ void EnsureGlewInit()
         }
         else
         {
-            Err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
+            err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
         }
     }
     #endif

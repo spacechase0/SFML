@@ -55,52 +55,52 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WizGlContext::WizGlContext(WizGlContext* shared) :
-myDisplay   (0),
-myWindow    (0),
-myGlDisplay (0),
-myGlConfig  (0),
-myGlContext (0),
-myGlSurface (0),
-myOwnsWindow(true)
+m_display   (0),
+m_window    (0),
+m_glDisplay (0),
+m_glConfig  (0),
+m_glContext (0),
+m_glSurface (0),
+m_ownsWindow(true)
 {
-    CreateContext(shared, ContextSettings());
+    createContext(shared, ContextSettings());
 }
 
 
 ////////////////////////////////////////////////////////////
 WizGlContext::WizGlContext(WizGlContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
-myDisplay   (0),
-myWindow    (0),
-myGlDisplay (0),
-myGlConfig  (0),
-myGlContext (0),
-myGlSurface (0),
-myOwnsWindow(true)
+m_display   (0),
+m_window    (0),
+m_glDisplay (0),
+m_glConfig  (0),
+m_glContext (0),
+m_glSurface (0),
+m_ownsWindow(true)
 {
     // Use the same display as the owner window (important!)
-    myDisplay = static_cast<const WindowImplWiz*>(owner)->GetDisplay();
+    m_display = static_cast<const WindowImplWiz*>(owner)->getDisplay();
 
     // Get the owner window and its device context
-    myWindow = static_cast< ::OS_Window>(owner->GetSystemHandle());
+    m_window = static_cast< ::OS_Window>(owner->getSystemHandle());
 
     // Create the context
-    if (myWindow)
-        CreateContext(shared, settings);
+    if (m_window)
+        createContext(shared, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
 WizGlContext::WizGlContext(WizGlContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-myDisplay   (0),
-myWindow    (0),
-myGlDisplay (0),
-myGlConfig  (0),
-myGlContext (0),
-myGlSurface (0),
-myOwnsWindow(true)
+m_display   (0),
+m_window    (0),
+m_glDisplay (0),
+m_glConfig  (0),
+m_glContext (0),
+m_glSurface (0),
+m_ownsWindow(true)
 {
     // Create the context
-    CreateContext(shared, settings);
+    createContext(shared, settings);
 }
 
 
@@ -108,44 +108,44 @@ myOwnsWindow(true)
 WizGlContext::~WizGlContext()
 {
     // Destroy the context
-    if (myGlContext)
+    if (m_glContext)
     {
-        if (eglGetCurrentContext() == myGlContext)
-			eglMakeCurrent( myGlDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
-		eglDestroySurface( myGlDisplay, myGlSurface ); 
-		eglDestroyContext( myGlDisplay, myGlContext );
-		eglTerminate( myGlDisplay );
+        if (eglGetCurrentContext() == m_glContext)
+			eglMakeCurrent( m_glDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
+		eglDestroySurface( m_glDisplay, m_glSurface ); 
+		eglDestroyContext( m_glDisplay, m_glContext );
+		eglTerminate( m_glDisplay );
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-bool WizGlContext::MakeCurrent()
+bool WizGlContext::makeCurrent()
 {
-    return myGlContext && eglMakeCurrent(myGlDisplay, myGlSurface, myGlSurface, myGlContext);
+    return m_glContext && eglMakeCurrent(m_glDisplay, m_glSurface, m_glSurface, m_glContext);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WizGlContext::Display()
+void WizGlContext::display()
 {
-    if (myWindow)
-        eglSwapBuffers(myGlDisplay, myGlSurface);
+    if (m_window)
+        eglSwapBuffers(m_glDisplay, m_glSurface);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WizGlContext::EnableVerticalSync(bool enabled)
+void WizGlContext::setVerticalSyncEnabled(bool enabled)
 {
-    #warning WizGlContext::EnableVerticalSync not implemented.
+    #warning WizGlContext::setVerticalSyncEnabled not implemented.
 }
 
 
 ////////////////////////////////////////////////////////////
-void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& settings)
+void WizGlContext::createContext(WizGlContext* shared, const ContextSettings& settings)
 {
 	// Save the creation settings
-    mySettings = settings;
+    m_settings = settings;
 
     // Get the attributes of the target window
     EGLint attrib_list_fsaa[] =
@@ -167,10 +167,10 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
 	};
 	
 	// Create the display.
-    myGlDisplay = eglGetDisplay(static_cast< NativeDisplayType >(0));
-    if (myGlDisplay == EGL_NO_DISPLAY)
+    m_glDisplay = eglGetDisplay(static_cast< NativeDisplayType >(0));
+    if (m_glDisplay == EGL_NO_DISPLAY)
     {
-    	Err() << "Failed to create display: " << glGetError() << std::endl;
+    	err() << "Failed to create display: " << glGetError() << std::endl;
     	return;
     }
     
@@ -179,32 +179,32 @@ void WizGlContext::CreateContext(WizGlContext* shared, const ContextSettings& se
     EGLint minorVersion;
     
     // Intiailize EGL
-    if (!eglInitialize(myGlDisplay, &majorVersion, &minorVersion))
+    if (!eglInitialize(m_glDisplay, &majorVersion, &minorVersion))
     {
-    	Err() << "Failed to init EGL: " << glGetError() << std::endl;
+    	err() << "Failed to init EGL: " << glGetError() << std::endl;
     	return;
     }
     
     // Choose config
-    if(!eglChooseConfig(myGlDisplay, attrib_list, &myGlConfig, 1, &numConfigs))
+    if(!eglChooseConfig(m_glDisplay, attrib_list, &m_glConfig, 1, &numConfigs))
     {
-    	Err() << "Failed to choose config: " << glGetError() << std::endl;
+    	err() << "Failed to choose config: " << glGetError() << std::endl;
     	return;
     }
     
     // Create context
-    myGlContext = eglCreateContext( myGlDisplay, myGlConfig, NULL, NULL );
-    if ( myGlContext == 0 )
+    m_glContext = eglCreateContext( m_glDisplay, m_glConfig, NULL, NULL );
+    if ( m_glContext == 0 )
     {
-    	Err() << "Failed to create context: " << glGetError() << std::endl;
+    	err() << "Failed to create context: " << glGetError() << std::endl;
     	return;
     }
     
     // Create surface
-    myGlSurface = eglCreateWindowSurface( myGlDisplay, myGlConfig, myWindow, NULL );
-    if ( myGlSurface == NULL )
+    m_glSurface = eglCreateWindowSurface( m_glDisplay, m_glConfig, m_window, NULL );
+    if ( m_glSurface == NULL )
     {
-    	Err() << "Failed to create surface: " << glGetError() << std::endl;
+    	err() << "Failed to create surface: " << glGetError() << std::endl;
     	return;
     }
 }
