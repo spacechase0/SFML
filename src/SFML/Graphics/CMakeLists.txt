@@ -64,16 +64,9 @@ set(SRC
     ${INCROOT}/VertexArray.hpp
     ${SRCROOT}/stb_image/stb_image.h
     ${SRCROOT}/stb_image/stb_image_write.h
+	${SRCROOT}/RenderTextureImplFBO.cpp
+	${SRCROOT}/RenderTextureImplFBO.hpp
 )
-
-# The Wiz doesn't support framebuffers. At all :P
-if(NOT GP2X_WIZ)
-	set(SRC
-		$(SRC)
-		${SRCROOT}/RenderTextureImplFBO.cpp
-		${SRCROOT}/RenderTextureImplFBO.hpp
-	)
-endif()
 
 # let CMake know about our additional graphics libraries paths (on Windows and OSX)
 if (WINDOWS OR MACOSX)
