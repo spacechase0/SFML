@@ -77,13 +77,13 @@ else() # MACOSX
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
-        ${SRCROOT}/OSX/SFApplication.m
+        ${SRCROOT}/OSX/SFApplication.mm
         ${SRCROOT}/OSX/SFContext.hpp
         ${SRCROOT}/OSX/SFContext.mm
         ${SRCROOT}/OSX/SFOpenGLView.h
         ${SRCROOT}/OSX/SFOpenGLView.mm
         ${SRCROOT}/OSX/SFWindow.h
-        ${SRCROOT}/OSX/SFWindow.m
+        ${SRCROOT}/OSX/SFWindow.mm
         ${SRCROOT}/OSX/SFWindowController.h
         ${SRCROOT}/OSX/SFWindowController.mm
         ${SRCROOT}/OSX/SFViewController.h
