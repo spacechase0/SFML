@@ -86,7 +86,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 -(void)initModifiersState;
 
 ////////////////////////////////////////////////////////////
-/// Converte the NSEvent mouse button type to SFML type.
+/// Convert the NSEvent mouse button type to SFML type.
 ///
 /// Returns ButtonCount if the button is unknown
 /// 
@@ -154,34 +154,53 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    // Flip for SFML window coordinate system
-    y = NSHeight([[self window] frame]) - y;
+    if (m_requester == 0) return;
     
-    // Adjust for view reference instead of window
-    y -= NSHeight([[self window] frame]) - NSHeight([self frame]);
-    
-    // Convert to screen coordinates
-    NSPoint screenCoord = [[self window] convertBaseToScreen:NSMakePoint(x, y)];
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[[self window] screen] frame]);
-    screenCoord.y = screenHeight - screenCoord.y;
+    // Create a SFML event.
+    m_requester->mouseMovedAt(x, y);
     
     // Recompute the mouse pos if required.
     if (!NSEqualSizes(m_realSize, NSZeroSize)) {
-        screenCoord.x = screenCoord.x / m_realSize.width  * [self frame].size.width;
-        screenCoord.y = screenCoord.y / m_realSize.height * [self frame].size.height;
+        x = x / m_realSize.width  * [self frame].size.width;
+        y = y / m_realSize.height * [self frame].size.height;
     }
+
+    // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
+    //        but the recommended -[NSWindow convertRectToScreen] is not
+    //        available until 10.7.
+    //
+    //        So we stick with the old one for now.
+
+    
+    // Flip SFML coordinates to match window coordinates
+    y = [self frame].size.height - y;
+    
+    // Get the position of (x, y) in the coordinate system of the window.
+    NSPoint p = [self convertPoint:NSMakePoint(x, y) toView:self];
+    p = [self convertPoint:p toView:nil]; // nil means window
+    
+    // Convert it to screen coordinates
+    p = [[self window] convertBaseToScreen:p];
+    
+    // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
+    float const screenHeight = [[[self window] screen] frame].size.height;
+    p.y = screenHeight - p.y;
+    
+    x = p.x;
+    y = p.y;
+
+    
+    // Get the id of the screen
+    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[self window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
     
     // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(NULL, 
-                                               kCGEventMouseMoved, 
-                                               CGPointMake(screenCoord.x, 
-                                                           screenCoord.y), 
-                                               /*we don't care about this : */0);
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval function
+    CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(x, y));
+    /*
+     * CGDisplayMoveCursorToPoint -- Discussion :
+     *
+     * No events are generated as a result of this move. 
+     * Points that lie outside the desktop are clipped to the desktop.
+     */
 }
 
 

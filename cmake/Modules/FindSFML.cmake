@@ -28,7 +28,7 @@
 # Moreover, keep in mind that SFML frameworks are only available as release libraries unlike dylibs which
 # are available for both release and debug modes.
 #
-# If SFML is not installed in a standard path, you can use the SFMLDIR CMake (or environment) variable
+# If SFML is not installed in a standard path, you can use the SFML_ROOT CMake (or environment) variable
 # to tell CMake where SFML is.
 #
 # Output
@@ -65,8 +65,8 @@ endif()
 find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           PATH_SUFFIXES include
           PATHS
-          ${SFMLDIR}
-          $ENV{SFMLDIR}
+          ${SFML_ROOT}
+          $ENV{SFML_ROOT}
           ~/Library/Frameworks
           /Library/Frameworks
           /usr/local/
@@ -80,7 +80,13 @@ find_path(SFML_INCLUDE_DIR SFML/Config.hpp
 set(SFML_VERSION_OK TRUE)
 if(SFML_FIND_VERSION AND SFML_INCLUDE_DIR)
     # extract the major and minor version numbers from SFML/Config.hpp
-    FILE(READ "${SFML_INCLUDE_DIR}/SFML/Config.hpp" SFML_CONFIG_HPP_CONTENTS)
+    # we have to handle framework a little bit differently :
+    if("${SFML_INCLUDE_DIR}" MATCHES "SFML.framework")
+        set(SFML_CONFIG_HPP_INPUT "${SFML_INCLUDE_DIR}/Headers/Config.hpp")
+    else()
+        set(SFML_CONFIG_HPP_INPUT "${SFML_INCLUDE_DIR}/SFML/Config.hpp")
+    endif()
+    FILE(READ "${SFML_CONFIG_HPP_INPUT}" SFML_CONFIG_HPP_CONTENTS)
     STRING(REGEX MATCH ".*#define SFML_VERSION_MAJOR ([0-9]+).*#define SFML_VERSION_MINOR ([0-9]+).*" SFML_CONFIG_HPP_CONTENTS "${SFML_CONFIG_HPP_CONTENTS}")
     STRING(REGEX REPLACE ".*#define SFML_VERSION_MAJOR ([0-9]+).*" "\\1" SFML_VERSION_MAJOR "${SFML_CONFIG_HPP_CONTENTS}")
     STRING(REGEX REPLACE ".*#define SFML_VERSION_MINOR ([0-9]+).*" "\\1" SFML_VERSION_MINOR "${SFML_CONFIG_HPP_CONTENTS}")
@@ -108,8 +114,8 @@ endif()
 # find the requested modules
 set(SFML_FOUND TRUE) # will be set to false if one of the required modules is not found
 set(FIND_SFML_LIB_PATHS
-    ${SFMLDIR}
-    $ENV{SFMLDIR}
+    ${SFML_ROOT}
+    $ENV{SFML_ROOT}
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local
