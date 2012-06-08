@@ -143,7 +143,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     // Initialize the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
     #if defined(SFML_SYSTEM_GP2X_WIZ)
-		glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+		glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_actualSize.x, m_actualSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
 	#else
 		glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
 	#endif
