@@ -25,6 +25,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#ifdef _WIN32_WINDOWS
+    #undef _WIN32_WINDOWS
+#endif
+#ifdef _WIN32_WINNT
+    #undef _WIN32_WINNT
+#endif
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
@@ -66,7 +72,9 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false)
+m_isCursorIn      (false),
+m_lastSize        (0, 0),
+m_resizing        (false)
 {
     if (m_handle)
     {
@@ -84,7 +92,9 @@ m_callback        (0),
 m_cursor          (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_isCursorIn      (false)
+m_isCursorIn      (false),
+m_lastSize        (mode.width, mode.height),
+m_resizing        (false)
 {
     // Register the window class at first call
     if (windowCount == 0)
@@ -430,20 +440,48 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE :
         {
-            // Ignore size events triggered by a minimize (size == 0 in this case)
-            if (wParam != SIZE_MINIMIZED)
+            // Consider only events triggered by a maximize or a un-maximize
+            if (wParam != SIZE_MINIMIZED && !m_resizing && m_lastSize != getSize())
             {
-                // Get the new size
-                RECT rectangle;
-                GetClientRect(m_handle, &rectangle);
+                // Update the last handled size
+                m_lastSize = getSize();
 
+                // Push a resize event
                 Event event;
                 event.type        = Event::Resized;
-                event.size.width  = rectangle.right - rectangle.left;
-                event.size.height = rectangle.bottom - rectangle.top;
+                event.size.width  = m_lastSize.x;
+                event.size.height = m_lastSize.y;
                 pushEvent(event);
-                break;
             }
+            break;
+        }
+
+        // Start resizing
+        case WM_ENTERSIZEMOVE:
+        {
+            m_resizing = true;
+            break;
+        }
+
+        // Stop resizing
+        case WM_EXITSIZEMOVE:
+        {
+            m_resizing = false;
+
+            // Ignore cases where the window has only been moved
+            if(m_lastSize != getSize())
+            {
+                // Update the last handled size
+                m_lastSize = getSize();
+
+                // Push a resize event
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = m_lastSize.x;
+                event.size.height = m_lastSize.y;
+                pushEvent(event);
+            }
+            break;
         }
 
         // Gain focus event
@@ -702,7 +740,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case VK_ESCAPE :     return Keyboard::Escape;
         case VK_SPACE :      return Keyboard::Space;
         case VK_RETURN :     return Keyboard::Return;
-        case VK_BACK :       return Keyboard::Back;
+        case VK_BACK :       return Keyboard::BackSpace;
         case VK_TAB :        return Keyboard::Tab;
         case VK_PRIOR :      return Keyboard::PageUp;
         case VK_NEXT :       return Keyboard::PageDown;
@@ -782,7 +820,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case '9' :           return Keyboard::Num9;
     }
 
-    return Keyboard::Key(0);
+    return Keyboard::Unknown;
 }
 
 

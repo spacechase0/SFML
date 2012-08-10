@@ -108,7 +108,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Try to convert a character into a SFML key code.
     ///
-    /// Return sf::Keyboard::KeyCount if it doesn't match any 'localized' keys.
+    /// Return sf::Keyboard::Unknown if it doesn't match any 'localized' keys.
     ///
     /// By 'localized' I mean keys that depend on the keyboard layout
     /// and might not be the same as the US keycode in some country
@@ -121,7 +121,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// Try to convert a virtual keycode into a SFML key code.
     ///
-    /// Return sf::Keyboard::KeyCount if the keycode is unknown.
+    /// Return sf::Keyboard::Unknown if the keycode is unknown.
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Key nonLocalizedKeys(UniChar virtualKeycode);
@@ -220,7 +220,7 @@ private :
     CFSetRef copyDevices(UInt32 page, UInt32 usage);
     
     ////////////////////////////////////////////////////////////
-    /// \brief Converte a HID key usage to its corresponding virtual code
+    /// \brief Convert a HID key usage to its corresponding virtual code
     ///
     /// See IOHIDUsageTables.h
     ///

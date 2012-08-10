@@ -415,7 +415,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         // Translation went fine
         
         // The corresponding SFML key code
-        Keyboard::Key code = Keyboard::KeyCount; // KeyCound means 'none'
+        Keyboard::Key code = Keyboard::Unknown; // KeyCound means 'none'
         
         // First we look if the key down is from a list of characters 
         // that depend on keyboard localization
@@ -425,12 +425,12 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         
         // The key is not a localized one so we try to find a
         // corresponding code through virtual key code
-        if (code == Keyboard::KeyCount) {
+        if (code == Keyboard::Unknown) {
             code = nonLocalizedKeys(virtualCode);
         }
         
         // A code was found, wonderful!
-        if (code != Keyboard::KeyCount) {
+        if (code != Keyboard::Unknown) {
             
             // Ok, everything went fine. Now we have a unique 
             // corresponding sf::Keyboard::Key to one IOHIDElementRef
@@ -455,7 +455,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         //          0x51       | 0x67 | Keypad Equal
         //          0x4c       | 0x77 | Select
         
-        //if (code == Keyboard::KeyCount) { // The key is unknown.
+        //if (code == Keyboard::Unknown) { // The key is unknown.
         //    sf::err() << "This is an unknow key. Virtual key code is 0x"
         //              << std::hex
         //              << (UInt32)virtualCode
@@ -847,7 +847,7 @@ Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
         case 'Z':                   return sf::Keyboard::Z;
             
             // The key is not 'localized'.
-        default:                    return sf::Keyboard::KeyCount;
+        default:                    return sf::Keyboard::Unknown;
     }
 }
 
@@ -934,7 +934,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x31:                      return sf::Keyboard::Space;
 //        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
         case 0x24: /* keyboard       */ return sf::Keyboard::Return;
-        case 0x33:                      return sf::Keyboard::Back;
+        case 0x33:                      return sf::Keyboard::BackSpace;
         case 0x30:                      return sf::Keyboard::Tab;
             
             // Duplicates (see next §).
@@ -1019,7 +1019,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
             // This key is ' on CH-FR, ) on FR and - on US layouts.
             
             // An unknown key.
-        default:                        return sf::Keyboard::KeyCount;
+        default:                        return sf::Keyboard::Unknown;
     }
 }
 

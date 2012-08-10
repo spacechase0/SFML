@@ -12,6 +12,7 @@ if(MACOSX)
  
     set(CMAKE_PROGRAM_PATH ${CMAKE_PROGRAM_PATH} ${ADDITIONAL_PATHS})
 endif()
+
 find_package(Doxygen REQUIRED)
 
 # set the input and output documentation paths

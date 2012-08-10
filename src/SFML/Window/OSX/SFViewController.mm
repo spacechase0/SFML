@@ -71,6 +71,8 @@
         
         // Set the (OGL) view to the view as its "content" view.
         [m_view addSubview:m_oglView];
+        
+        [m_oglView setAutoresizingMask:[m_view autoresizingMask]];
     }
     
     return self;
@@ -106,27 +108,6 @@
 
 
 ////////////////////////////////////////////////////////
--(void)changeTitle:(NSString *)title
-{
-    sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
-}
-
-
-////////////////////////////////////////////////////////
--(void)enableKeyRepeat
-{
-    [m_oglView enableKeyRepeat];
-}
-
-
-////////////////////////////////////////////////////////
--(void)disableKeyRepeat
-{
-    [m_oglView disableKeyRepeat];
-}
-
-
-////////////////////////////////////////////////////////
 -(void)hideMouseCursor
 {
     [NSCursor hide];
@@ -137,6 +118,56 @@
 -(void)showMouseCursor
 {
     [NSCursor unhide];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
+{
+    // Forward to...
+    [m_oglView setCursorPositionToX:x Y:y];
+}
+
+
+////////////////////////////////////////////////////////////
+-(NSPoint)position
+{
+    // Origin is bottom-left corner of the window
+    return [m_view convertPoint:NSMakePoint(0, 0) toView:nil]; // nil means window
+}
+
+
+////////////////////////////////////////////////////////.
+-(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
+{
+    sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view hanlder directly instead." << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+-(NSSize)size
+{
+    return [m_oglView frame].size;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)resizeTo:(unsigned int)width by:(unsigned int)height
+{
+    NSRect frame = NSMakeRect([m_view frame].origin.x,
+                              [m_view frame].origin.y,
+                              width,
+                              height);
+    
+    [m_view setFrame:frame];
+    [m_oglView setFrame:frame];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)changeTitle:(NSString *)title
+{
+    sf::err() << "Cannot change the title of the SFML area when SFML is integrated in a NSView." << std::endl;
 }
 
 
@@ -158,73 +189,20 @@
 -(void)closeWindow
 {
     sf::err() << "Cannot close SFML area when SFML is integrated in a NSView." << std::endl;
-    [self setRequesterTo:0];
 }
 
 
 ////////////////////////////////////////////////////////
--(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
+-(void)enableKeyRepeat
 {
-    if (m_requester == 0) return;
-    
-    // Create a SFML event.
-    m_requester->mouseMovedAt(x, y);
-    
-    // Flip for SFML window coordinate system
-    y = NSHeight([[m_view window] frame]) - y;
-    
-    // Adjust for view reference instead of window
-    y -= NSHeight([[m_view window] frame]) - NSHeight([m_oglView frame]);
-    
-    // Convert to screen coordinates
-    NSPoint screenCoord = [[m_view window] convertBaseToScreen:NSMakePoint(x, y)];
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[[m_view window] screen] frame]);
-    screenCoord.y = screenHeight - screenCoord.y;
-    
-    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[m_view window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
-    
-    // Place the cursor.
-    CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(screenCoord.x, screenCoord.y));
-    /*
-     CGDisplayMoveCursorToPoint -- Discussion :
-     
-     No events are generated as a result of this move. 
-     Points that lie outside the desktop are clipped to the desktop.
-     */
+    [m_oglView enableKeyRepeat];
 }
 
-
-////////////////////////////////////////////////////////////
--(NSPoint)position
-{
-    // Origin is bottom-left corner of the window
-    return [m_view convertPoint:NSMakePoint(0, 0) toView:nil]; // nil means window
-}
-
-////////////////////////////////////////////////////////.
--(void)setWindowPositionToX:(unsigned int)x Y:(unsigned int)y
-{
-    sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view hanlder directly instead." << std::endl;
-}
-
-
-////////////////////////////////////////////////////////////
--(NSSize)size
-{
-    return [m_view frame].size;
-}
 
 ////////////////////////////////////////////////////////
--(void)resizeTo:(unsigned int)width by:(unsigned int)height
+-(void)disableKeyRepeat
 {
-    NSRect frame = NSMakeRect([m_view frame].origin.x,
-                              [m_view frame].origin.y,
-                              width,
-                              height);
-    
-    [m_view setFrame:frame];
+    [m_oglView disableKeyRepeat];
 }
 
 

@@ -86,7 +86,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 -(void)initModifiersState;
 
 ////////////////////////////////////////////////////////////
-/// Converte the NSEvent mouse button type to SFML type.
+/// Convert the NSEvent mouse button type to SFML type.
 ///
 /// Returns ButtonCount if the button is unknown
 /// 
@@ -97,7 +97,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 /// Convert a key down/up NSEvent into an SFML key event.
 /// Based on localizedKeys and nonLocalizedKeys function.
 ///
-/// Return sf::Keyboard::KeyCount as Code if the key is unknown.
+/// Return sf::Keyboard::Unknown as Code if the key is unknown.
 ///
 ////////////////////////////////////////////////////////////
 +(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent *)anEvent;
@@ -154,34 +154,53 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
 ////////////////////////////////////////////////////////
 -(void)setCursorPositionToX:(unsigned int)x Y:(unsigned int)y
 {
-    // Flip for SFML window coordinate system
-    y = NSHeight([[self window] frame]) - y;
+    if (m_requester == 0) return;
     
-    // Adjust for view reference instead of window
-    y -= NSHeight([[self window] frame]) - NSHeight([self frame]);
-    
-    // Convert to screen coordinates
-    NSPoint screenCoord = [[self window] convertBaseToScreen:NSMakePoint(x, y)];
-    
-    // Flip screen coodinates
-    float const screenHeight = NSHeight([[[self window] screen] frame]);
-    screenCoord.y = screenHeight - screenCoord.y;
+    // Create a SFML event.
+    m_requester->mouseMovedAt(x, y);
     
     // Recompute the mouse pos if required.
     if (!NSEqualSizes(m_realSize, NSZeroSize)) {
-        screenCoord.x = screenCoord.x / m_realSize.width  * [self frame].size.width;
-        screenCoord.y = screenCoord.y / m_realSize.height * [self frame].size.height;
+        x = x / m_realSize.width  * [self frame].size.width;
+        y = y / m_realSize.height * [self frame].size.height;
     }
+
+    // Note : -[NSWindow convertBaseToScreen:] is deprecated on 10.7
+    //        but the recommended -[NSWindow convertRectToScreen] is not
+    //        available until 10.7.
+    //
+    //        So we stick with the old one for now.
+
+    
+    // Flip SFML coordinates to match window coordinates
+    y = [self frame].size.height - y;
+    
+    // Get the position of (x, y) in the coordinate system of the window.
+    NSPoint p = [self convertPoint:NSMakePoint(x, y) toView:self];
+    p = [self convertPoint:p toView:nil]; // nil means window
+    
+    // Convert it to screen coordinates
+    p = [[self window] convertBaseToScreen:p];
+    
+    // Flip screen coodinates to match CGDisplayMoveCursorToPoint referential.
+    float const screenHeight = [[[self window] screen] frame].size.height;
+    p.y = screenHeight - p.y;
+    
+    x = p.x;
+    y = p.y;
+
+    
+    // Get the id of the screen
+    CGDirectDisplayID screenNumber = (CGDirectDisplayID)[[[[[self window] screen] deviceDescription] valueForKey:@"NSScreenNumber"] intValue];
     
     // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(NULL, 
-                                               kCGEventMouseMoved, 
-                                               CGPointMake(screenCoord.x, 
-                                                           screenCoord.y), 
-                                               /*we don't care about this : */0);
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval function
+    CGDisplayMoveCursorToPoint(screenNumber, CGPointMake(x, y));
+    /*
+     * CGDisplayMoveCursorToPoint -- Discussion :
+     *
+     * No events are generated as a result of this move. 
+     * Points that lie outside the desktop are clipped to the desktop.
+     */
 }
 
 
@@ -513,7 +532,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     if (m_useKeyRepeat || ![theEvent isARepeat]) {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
         
-        if (key.code != sf::Keyboard::KeyCount) { // The key is recognized.
+        if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
             m_requester->keyDown(key);
         }
     }
@@ -543,7 +562,25 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
         // Ignore escape key and non text keycode. (See NSEvent.h)
         // They produce a sound alert.
         unichar code = [[ev characters] characterAtIndex:0];
-        if ([ev keyCode] != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
+        unsigned short keycode = [ev keyCode];
+        
+        // Backspace and Delete unicode values are badly handled by Apple.
+        // We do a small workaround here :
+        
+        // Backspace
+        if (keycode == 0x33) {
+            // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
+            m_requester->textEntered(8);
+        } 
+        
+        // Delete
+        else if (keycode == 0x75 || keycode == NSDeleteFunctionKey) {
+            // Instead of the value 63272 we send 127.
+            m_requester->textEntered(127);
+        }
+        
+        // All other unicode values
+        else if (keycode != 0x35 && (code < 0xF700 || code > 0xF8FF)) {
             
             // Let's see if its a valid text.
             NSText* text = [[self window] fieldEditor:YES forObject:self];
@@ -571,7 +608,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
     
-    if (key.code != sf::Keyboard::KeyCount) { // The key is recognized.
+    if (key.code != sf::Keyboard::Unknown) { // The key is recognized.
         m_requester->keyUp(key);
     }
 }
@@ -589,7 +626,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     
     // Setup a potential event key.
     sf::Event::KeyEvent key;
-    key.code    = sf::Keyboard::KeyCount;
+    key.code    = sf::Keyboard::Unknown;
     key.alt     = modifiers & NSAlternateKeyMask;
     key.control = modifiers & NSControlKeyMask;
     key.shift   = modifiers & NSShiftKeyMask;
@@ -1012,7 +1049,7 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     key.system  = modifierFlags & NSCommandKeyMask;
     
     // Key code.
-    key.code = sf::Keyboard::KeyCount;
+    key.code = sf::Keyboard::Unknown;
     
     // First we look if the key down is from a list of caracter 
     // that depend on keyboard localization.
@@ -1023,12 +1060,12 @@ NSUInteger keepOnlyMaskFromData(NSUInteger data, NSUInteger mask);
     
     // The key is not a localized one, so we try to find a corresponding code
     // through virtual key code.
-    if (key.code == sf::Keyboard::KeyCount) {
+    if (key.code == sf::Keyboard::Unknown) {
         key.code = sf::priv::HIDInputManager::nonLocalizedKeys([anEvent keyCode]);
     }
     
 //#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
-//    if (key.code == sf::Keyboard::KeyCount) { // The key is unknown.
+//    if (key.code == sf::Keyboard::Unknown) { // The key is unknown.
 //        sf::err() << "This is an unknow key. Virtual key code is 0x"
 //                  << std::hex
 //                  << [anEvent keyCode]

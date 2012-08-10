@@ -25,6 +25,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#ifdef _WIN32_WINDOWS
+    #undef _WIN32_WINDOWS
+#endif
+#ifdef _WIN32_WINNT
+    #undef _WIN32_WINNT
+#endif
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Window.hpp>
@@ -102,7 +108,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::Dash:       vkey = VK_OEM_MINUS;  break;
         case Keyboard::Space:      vkey = VK_SPACE;      break;
         case Keyboard::Return:     vkey = VK_RETURN;     break;
-        case Keyboard::Back:       vkey = VK_BACK;       break;
+        case Keyboard::BackSpace:  vkey = VK_BACK;       break;
         case Keyboard::Tab:        vkey = VK_TAB;        break;
         case Keyboard::PageUp:     vkey = VK_PRIOR;      break;
         case Keyboard::PageDown:   vkey = VK_NEXT;       break;

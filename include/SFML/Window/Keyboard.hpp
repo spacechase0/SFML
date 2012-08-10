@@ -47,7 +47,8 @@ public :
     ////////////////////////////////////////////////////////////
     enum Key
     {
-        A,            ///< The A key
+        Unknown = -1, ///< Unhandled key
+        A = 0,        ///< The A key
         B,            ///< The B key
         C,            ///< The C key
         D,            ///< The D key
@@ -106,7 +107,7 @@ public :
         Dash,         ///< The - key
         Space,        ///< The Space key
         Return,       ///< The Return key
-        Back,         ///< The Backspace key
+        BackSpace,    ///< The Backspace key
         Tab,          ///< The Tabulation key
         PageUp,       ///< The Page up key
         PageDown,     ///< The Page down key
