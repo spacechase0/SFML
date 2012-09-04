@@ -59,7 +59,40 @@ Http::Request::Request(const std::string& uri, Method method, const std::string&
 ////////////////////////////////////////////////////////////
 void Http::Request::setField(const std::string& field, const std::string& value)
 {
-    m_fields[toLower(field)] = value;
+	FieldTable::iterator found = m_fields.find(field);
+	if (found != m_fields.end())
+	{
+		found->second = value;
+	}
+	else
+	{
+		addField(field, value);
+	}
+}
+
+
+////////////////////////////////////////////////////////////
+void Http::Request::addField(const std::string& field, const std::string& value)
+{
+    m_fields.insert(std::make_pair(toLower(field),value));
+}
+
+
+////////////////////////////////////////////////////////////
+void Http::Request::removeField(const std::string& field)
+{
+	FieldTable::iterator found = m_fields.find(field);
+	if (found != m_fields.end())
+	{
+		m_fields.erase(found);
+	}
+}
+
+
+////////////////////////////////////////////////////////////
+bool Http::Request::hasField(const std::string& field) const
+{
+    return m_fields.find(toLower(field)) != m_fields.end();
 }
 
 
@@ -132,13 +165,6 @@ std::string Http::Request::prepare() const
 
 
 ////////////////////////////////////////////////////////////
-bool Http::Request::hasField(const std::string& field) const
-{
-    return m_fields.find(toLower(field)) != m_fields.end();
-}
-
-
-////////////////////////////////////////////////////////////
 Http::Response::Response() :
 m_status      (ConnectionFailed),
 m_majorVersion(0),
@@ -161,6 +187,11 @@ const std::string& Http::Response::getField(const std::string& field) const
         static const std::string empty = "";
         return empty;
     }
+}
+
+const std::multimap<std::string, std::string>& Http::Response::getFields() const
+{
+	return m_fields;
 }
 
 
@@ -248,7 +279,7 @@ void Http::Response::parse(const std::string& data)
                 value.erase(value.size() - 1);
 
             // Add the field
-            m_fields[toLower(field)] = value;
+            m_fields.insert(std::make_pair(toLower(field), value));
         }
     }
 

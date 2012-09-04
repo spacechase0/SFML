@@ -82,7 +82,8 @@ public :
         ////////////////////////////////////////////////////////////
         /// \brief Set the value of a field
         ///
-        /// The field is created if it doesn't exist. The name of
+        /// The field is created if it doesn't exist. If multiple
+        /// exist, a random one is changed. The name of
         /// the field is case insensitive.
         /// By default, a request doesn't contain any field (but the
         /// mandatory fields are added later by the HTTP client when
@@ -93,6 +94,33 @@ public :
         ///
         ////////////////////////////////////////////////////////////
         void setField(const std::string& field, const std::string& value);
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Add a field with a value
+        ///
+        /// The name of the field is case insensitive.
+        /// By default, a request doesn't contain any field (but the
+        /// mandatory fields are added later by the HTTP client when
+        /// sending the request).
+        ///
+        /// \param field Name of the field to add
+        /// \param value Value of the field
+        ///
+        ////////////////////////////////////////////////////////////
+        void addField(const std::string& field, const std::string& value);
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Remove a field
+        ///
+        /// The name of the field is case insensitive.
+        /// By default, a request doesn't contain any field (but the
+        /// mandatory fields are added later by the HTTP client when
+        /// sending the request).
+        ///
+        /// \param field Name of the field to remove
+        ///
+        ////////////////////////////////////////////////////////////
+        void removeField(const std::string& field);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the request method
@@ -171,7 +199,7 @@ public :
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<std::string, std::string> FieldTable;
+        typedef std::multimap<std::string, std::string> FieldTable;
 
         ////////////////////////////////////////////////////////////
         // Member data
@@ -255,6 +283,17 @@ public :
         const std::string& getField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
+        /// \brief Get all fields
+        ///
+        /// This can be useful for cases where multiple headers of the
+        /// same type can exist (like "Set-Cookie").
+        ///
+        /// \return The list of fields that were received
+        ///
+        ////////////////////////////////////////////////////////////
+        const std::multimap<std::string, std::string>& getFields() const;
+
+        ////////////////////////////////////////////////////////////
         /// \brief Get the response status code
         ///
         /// The status code should be the first thing to be checked
@@ -319,7 +358,7 @@ public :
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<std::string, std::string> FieldTable;
+        typedef std::multimap<std::string, std::string> FieldTable;
 
         ////////////////////////////////////////////////////////////
         // Member data
