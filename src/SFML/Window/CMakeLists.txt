@@ -48,6 +48,21 @@ if(WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
+elseif(GP2X_WIZ)
+	set(SRC
+		${SRC}
+		${SRCROOT}/GP2X_Wiz/WizGlContext.cpp
+		${SRCROOT}/GP2X_Wiz/WizGlContext.hpp
+		${SRCROOT}/GP2X_Wiz/InputImpl.cpp
+		${SRCROOT}/GP2X_Wiz/InputImpl.hpp
+		${SRCROOT}/GP2X_Wiz/JoystickImpl.cpp
+		${SRCROOT}/GP2X_Wiz/JoystickImpl.hpp
+		${SRCROOT}/GP2X_Wiz/VideoModeImpl.cpp
+		${SRCROOT}/GP2X_Wiz/WindowImplWiz.cpp
+		${SRCROOT}/GP2X_Wiz/WindowImplWiz.hpp
+		${SRCROOT}/GP2X_Wiz/WizInputImpl.cpp
+		${SRCROOT}/GP2X_Wiz/WizInputImpl.hpp
+	)
 elseif(LINUX)
     set(SRC
         ${SRC}
@@ -100,8 +115,13 @@ else() # MACOSX
 endif()
 
 # find external libraries
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
+if(GP2X_WIZ)
+	set(OPENGL_gl_LIBRARY nanoGL opengles_lite)
+else()
+	find_package(OpenGL REQUIRED)
+	include_directories(${OPENGL_INCLUDE_DIR})
+enfdif()
+
 if(LINUX)
     find_package(X11 REQUIRED)
     if(NOT X11_Xrandr_FOUND)

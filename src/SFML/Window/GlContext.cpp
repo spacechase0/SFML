@@ -30,7 +30,11 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/OpenGL.hpp>
-#include <SFML/Window/glext/glext.h>
+#if defined(SFML_SYSTEM_GP2X_WIZ)
+	#include <GL/glext.h>
+#else
+	#include <SFML/Window/glext/glext.h>
+#endif
 #include <set>
 #include <cstdlib>
 #include <cassert>
@@ -43,8 +47,17 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Linux/GlxContext.hpp>
-    typedef sf::priv::GlxContext ContextType;
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	
+		#include <SFML/Window/GP2X_Wiz/WizGlContext.hpp>
+		typedef sf::priv::WizGlContext ContextType;
+	
+	#else
+	
+		#include <SFML/Window/Linux/GlxContext.hpp>
+		typedef sf::priv::GlxContext ContextType;
+    
+    #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 

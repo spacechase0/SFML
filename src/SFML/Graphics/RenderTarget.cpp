@@ -201,7 +201,11 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
 
         // Find the OpenGL primitive type
         static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
+                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN,
+		                               #if !defined(SFML_SYSTEM_GP2X_WIZ) // OpenGL ES
+		                               GL_QUADS
+		                               #endif
+		                              };
         GLenum mode = modes[type];
 
         // Draw the primitives
@@ -222,8 +226,10 @@ void RenderTarget::pushGLStates()
 {
     if (activate(true))
     {
-        glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
-        glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+    	#if !defined(SFML_SYSTEM_GP2X_WIZ)
+			glCheck(glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS));
+			glCheck(glPushAttrib(GL_ALL_ATTRIB_BITS));
+        #endif
         glCheck(glMatrixMode(GL_MODELVIEW));
         glCheck(glPushMatrix());
         glCheck(glMatrixMode(GL_PROJECTION));
@@ -247,8 +253,10 @@ void RenderTarget::popGLStates()
         glCheck(glPopMatrix());
         glCheck(glMatrixMode(GL_TEXTURE));
         glCheck(glPopMatrix());
-        glCheck(glPopClientAttrib());
-        glCheck(glPopAttrib());
+    	#if !defined(SFML_SYSTEM_GP2X_WIZ)
+			glCheck(glPopClientAttrib());
+			glCheck(glPopAttrib());
+        #endif
     }
 }
 
@@ -329,9 +337,11 @@ void RenderTarget::applyBlendMode(BlendMode mode)
         // is a RenderTexture -- in this case the alpha value must be written directly to the target buffer
         default :
         case BlendAlpha :
-            if (GLEW_EXT_blend_func_separate)
-                glCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-            else
+			#if !defined(SFML_SYSTEM_GP2X_WIZ)
+			if (GLEW_EXT_blend_func_separate)
+				glCheck(glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+			else
+			#endif
                 glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
             break;
 
@@ -379,10 +389,12 @@ void RenderTarget::applyTexture(const Texture* texture)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyShader(const Shader* shader)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (shader)
         shader->bind();
     else
         glCheck(glUseProgramObjectARB(0));
+	#endif
 }
 
 } // namespace sf

@@ -39,8 +39,17 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
 
-    #include <SFML/Window/Linux/WindowImplX11.hpp>
-    typedef sf::priv::WindowImplX11 WindowImplType;
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	
+		#include <SFML/Window/GP2X_Wiz/WindowImplWiz.hpp>
+		typedef sf::priv::WindowImplWiz WindowImplType;
+	
+	#else
+	
+		#include <SFML/Window/Linux/WindowImplX11.hpp>
+		typedef sf::priv::WindowImplX11 WindowImplType;
+	
+	#endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 

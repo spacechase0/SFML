@@ -47,6 +47,7 @@ m_depthBuffer(0)
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::~RenderTextureImplFBO()
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     ensureGlContext();
 
     // Destroy the depth buffer
@@ -65,24 +66,32 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
 
     // Delete the context
     delete m_context;
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplFBO::isAvailable()
 {
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	return false;
+	#else
     ensureGlContext();
 
     // Make sure that GLEW is initialized
     priv::ensureGlewInit();
 
     return GLEW_EXT_framebuffer_object != 0;
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	return false;
+	#else
     // Create the context
     m_context = new Context;
 
@@ -125,20 +134,27 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
     }
 
     return true;
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplFBO::activate(bool active)
 {
+	#if defined(SFML_SYSTEM_GP2X_WIZ)
+	return false
+	#else
     return m_context->setActive(active);
+    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 void RenderTextureImplFBO::updateTexture(unsigned int)
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     glFlush();
+    #endif
 }
 
 } // namespace priv

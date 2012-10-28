@@ -507,12 +507,14 @@ unsigned int Texture::getValidSize(unsigned int size)
     // Make sure that GLEW is initialized
     priv::ensureGlewInit();
 
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     if (GLEW_ARB_texture_non_power_of_two)
     {
         // If hardware supports NPOT textures, then just return the unmodified size
         return size;
     }
     else
+    #endif
     {
         // If hardware doesn't support NPOT textures, we calculate the nearest power of two
         unsigned int powerOfTwo = 1;

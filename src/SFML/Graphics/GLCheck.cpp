@@ -109,6 +109,7 @@ void glCheckError(const std::string& file, unsigned int line)
 ////////////////////////////////////////////////////////////
 void ensureGlewInit()
 {
+	#if !defined(SFML_SYSTEM_GP2X_WIZ)
     static bool initialized = false;
     if (!initialized)
     {
@@ -122,6 +123,7 @@ void ensureGlewInit()
             err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
         }
     }
+    #endif
 }
 
 } // namespace priv
